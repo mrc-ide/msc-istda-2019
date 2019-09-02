@@ -36,6 +36,8 @@ The course textbook is:
 
 Course content will follow closely to the textbook and specific chapters are assigned corresponding to the lecture each week.
 
+An electronic version of the textbook is available from the Imperial College London library via the following link: [https://library-search.imperial.ac.uk/permalink/f/tlmp2g/44IMP_ALMA_DS5155792570001591].
+
 The textbook will be supplemented by the excellent series of ['Statistics Notes'](https://www.bmj.com/specialties/statistics-notes) authored by J. Martin Bland and Douglas G. Altman in the _British Medical Journal_ between 1994 and 1999. Specific notes will be recommended accompanying relevant lecture material each week. A brief history of the 'Statistics Notes' series is available [here](https://www-users.york.ac.uk/~mb55/pubs/statnote9.pdf) from J Martin Bland's website at the University of York.
 
 #### Statistical computing 
@@ -75,7 +77,7 @@ There are four required and one optional classroom components for the ISTDA cour
 * __Applied Statistics Lab__ sessions will be be on _Monday afternoons from XX to XX_ in room XX (MSc Epi) or XX (MSc HDA).
   * Dr. Deborah Schneider-Luftman
 * __R Statistical Computing__ sessions will be on _Wednesday mornings from XX to XX_ in room XX (MSc Epi) or XX (MSc HDA).
-  * Dr. Ettie Unwin
+  * Dr. Juliette Unwin
 * Optional __Advanced Math Refresher__ sessions will be _Wednesday afternoons from XX to XX_ in room XX.
   * _Dr. Barbara Bodinier?_
 
