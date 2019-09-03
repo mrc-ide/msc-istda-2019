@@ -148,7 +148,9 @@ R: Project 1
 * Grolemund, Project 1 (Chapters 1-3).
 
 
-__Week 2 (14 October):__ Confidence intervals, hypothesis testing, and p-values
+__Week 2 (14 October):__
+
+Confidence intervals, hypothesis testing, and p-values
 
 * Kirkwood and Stern, Chapter 6-8
 
@@ -238,3 +240,5 @@ Study design, Sample size calculation
 * _Applied Statistics Lab Group Presentation 3_
 
 > JE: These chapters double as good course and exam review because they 
+
+R: Revision
