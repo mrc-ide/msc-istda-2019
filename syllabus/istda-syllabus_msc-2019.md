@@ -136,42 +136,77 @@ There will be three modalities of assessment:
 > JE: Ettie -- please fill in reading assignments for R content, or let's discuss and do together
 
 
-__Week 1 (7 October):__ Principles of statistical inference, sampling variability the normal distribution
+__Week 1 (7 October):__
+
+Principles of statistical inference, sampling variability the normal distribution
 
 * Kirkwood and Sterne, Chapters 1-5
 * Kirkwood and Sterne, Chapter 38 (_Strategies for analysis_)
-* Grolemund, Project 1.
+
+R: Project 1
+
+* Grolemund, Project 1 (Chapters 1-3).
 
 
 __Week 2 (14 October):__ Confidence intervals, hypothesis testing, and p-values
 
 * Kirkwood and Stern, Chapter 6-8
-* Grolemund, Projects 2-3
 
-__Week 3 (21 October):__ Analysis of variance and linear regression
+R: Project 2
+
+* Grolemund, Project 2 (Chapters 4-8)
+
+__Week 3 (21 October):__
+
+Analysis of variance and linear regression
 
 * Kirkwood and Stern, Chapters 9-13
-* Grolemund and Wickham, _TBC_
 
-__Week 4 (28 October):__ Binary outcomes, comparing proportions, chi-squared tests
+R: Data visualisation
+
+* Grolemund and Wickham, Chapter 1
+* Chang, Chapter 10
+
+__Week 4 (28 October):__
+
+Binary outcomes, comparing proportions, chi-squared tests
 
 * Kirkwood and Stern, Chapters 14-17
 * _Applied Statistics Lab Group Presentation 1_
 
-__Week 5 (4 November):__ Logistic Regression
+R: Loading and formatting data
+
+* Grolemund and Wickham, Chapters 7, 8 and 13
+
+
+__Week 5 (4 November):__
+
+Logistic Regression
 
 * Kirkwood and Stern, Chapters 18-21
 
-__Week 6 (11 November):__ Longitudinal data, Poisson Regression
+R: Dealing with Data I
+
+__Week 6 (11 November):__
+
+Longitudinal data, Poisson Regression
 
 * Kirkwood and Stern, Chapters 22-25
 
-__Week 7 (18 November):__ Survival analysis
+R: Dealing with Data II
+
+__Week 7 (18 November):__
+
+Survival analysis
 
 * Kirkwood and Stern, Chapters 26-27
 * _Applied Statistics Lab Group Presentation 2_
 
-__Week 8 (25 November):__ Statistical modelling, Maximum likelihood, Bayesian inference
+R: No session
+
+__Week 8 (25 November):__
+
+Statistical modelling, Maximum likelihood, Bayesian inference
 
 * Kirkwood and Stern, Chapters 28-30, 33
 * Supplemental reading: Kirkwood and Stern, Chapters 30-31
@@ -180,7 +215,11 @@ __Week 8 (25 November):__ Statistical modelling, Maximum likelihood, Bayesian in
 
 > JE: The Bayesian chapter (Chapter 33) in Kirkwood and Sterne is a bit of a throw away. We ought to think about what the important take away for them is on this topic to prepare them for future modules and pull in some other content.
 
-__Week 9 (2 December):__ Model building, Missing data
+R: Good programming practises
+
+__Week 9 (2 December):__
+
+Model building, Missing data
 
 * Carpenter JR, Kenward MG. _Missing data in randomised controlled trials— a practical guide_ 2007. http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.468.9391&rep=rep1&type=pdf
 
@@ -188,7 +227,12 @@ __Week 9 (2 December):__ Model building, Missing data
 
 > JE: I'm refusing to teach 'model selection' other than to say don't do it, hence 'model building'.  This topic, and perhaps missing data, might be covered sufficiently in the applied stats lab sessions and the Epi module that we don't need a lecture on it.
 
-__Week 10 (9 December):__ Study design, Sample size calculation
+R: Project 3 Slot machine
+* Grolemund, Project 3 (Chapters 9 - 12).
+
+__Week 10 (9 December):__
+
+Study design, Sample size calculation
 
 * Kirkwood and Sterne, Chapter 34-35
 * _Applied Statistics Lab Group Presentation 3_
