@@ -1,0 +1,32 @@
+/********** Customise logo, and footer disclaimer **********/
+/* Position the corporate logo in the top right of the page */
+#header-footer .slide-logo {
+  position: absolute;
+  top: 15px;
+  left: 50px;
+  height: 60px;
+  width: 200px;
+}
+
+
+/* Style/position the footer text */
+#header-footer .slide-footer {
+    position: fixed; 
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    text-align: center;
+    font-size: 100%;
+}
+
+
+.reveal p {
+  text-align: left;
+}
+.reveal ul {
+  display: block;
+}
+.reveal ol {
+  display: block;
+}
