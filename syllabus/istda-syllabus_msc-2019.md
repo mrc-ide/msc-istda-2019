@@ -145,7 +145,7 @@ Principles of statistical inference, sampling variability the normal distributio
 
 R: Project 1
 
-* Grolemund, Project 1 (Chapters 1-3).
+* Grolemund, Project 1 (Chapters 1-2 in book 1 - 3 online).
 
 
 __Week 2 (14 October):__
@@ -156,7 +156,7 @@ Confidence intervals, hypothesis testing, and p-values
 
 R: Project 2
 
-* Grolemund, Project 2 (Chapters 4-8)
+* Grolemund, Project 2 (Chapters 3 - 6 in book 4 - 8 online)
 
 __Week 3 (21 October):__
 
@@ -166,8 +166,7 @@ Analysis of variance and linear regression
 
 R: Data visualisation
 
-* Grolemund and Wickham, Chapter 1
-* Chang, Chapter 10
+* Grolemund and Wickham, Chapter 1 in book 3 online
 
 __Week 4 (28 October):__
 
@@ -178,8 +177,7 @@ Binary outcomes, comparing proportions, chi-squared tests
 
 R: Loading and formatting data
 
-* Grolemund and Wickham, Chapters 7, 8 and 13
-
+* Grolemund and Wickham, Chapters 7, 8 and 13 in book 10, 11, 16 online
 
 __Week 5 (4 November):__
 
@@ -189,6 +187,8 @@ Logistic Regression
 
 R: Dealing with Data I
 
+* Grolemund and Wickham, Chapter 9 in book 12 online
+
 __Week 6 (11 November):__
 
 Longitudinal data, Poisson Regression
@@ -196,6 +196,8 @@ Longitudinal data, Poisson Regression
 * Kirkwood and Stern, Chapters 22-25
 
 R: Dealing with Data II
+
+* Grolemund and Wickham, Chapter 10 in book 13 online
 
 __Week 7 (18 November):__
 
@@ -219,6 +221,8 @@ Statistical modelling, Maximum likelihood, Bayesian inference
 
 R: Good programming practises
 
+* Grolemund and Wickham, Chapter 15 in book 19 online
+
 __Week 9 (2 December):__
 
 Model building, Missing data
@@ -230,7 +234,8 @@ Model building, Missing data
 > JE: I'm refusing to teach 'model selection' other than to say don't do it, hence 'model building'.  This topic, and perhaps missing data, might be covered sufficiently in the applied stats lab sessions and the Epi module that we don't need a lecture on it.
 
 R: Project 3 Slot machine
-* Grolemund, Project 3 (Chapters 9 - 12).
+
+* Grolemund, Project 3 (Chapters 7 - 10 in book, 9-12 online).
 
 __Week 10 (9 December):__
 
