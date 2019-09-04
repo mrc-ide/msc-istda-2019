@@ -23,7 +23,7 @@ By the end of this module, you will:
 
 4. Gain experience manipulating and analyzing real-world data sets, and preparing, interpreting and communicating statistical analyses.
 
-
+ 
 ## Course outline
 
 In this course you will learn and practice key statistical methods for epidemiologic analysis through lecture, applied statistics group projects, and R software-based practicals. Lectures and the textbook will introduce theory and examples of key statistical concepts. Weekly ‘Applied Statistics Lab’ sessions will provide practice in the application, interpretation, and presentation of data analysis and statistical findings through three group projects over the course of the term. Programming and statistical analysis using the R software programme will be developed through lab tutorials. Weekly problem sets will be provided to practice and review concepts, application, and programming and revised together at the start of each week.  Optional advanced mathematics review sessions will provide an opportunity to review key mathematical underpinnings for second-term advanced statistics elective modules.
@@ -76,6 +76,7 @@ There are four required and one optional classroom components for the ISTDA cour
   * Dr. Jeffrey Eaton and TBC
 * __Applied Statistics Lab__ sessions will be be on _Monday afternoons from XX to XX_ in room XX (MSc Epi) or XX (MSc HDA).
   * Dr. Deborah Schneider-Luftman
+  * Dr. Raha Pazoki
 * __R Statistical Computing__ sessions will be on _Wednesday mornings from XX to XX_ in room XX (MSc Epi) or XX (MSc HDA).
   * Dr. Juliette Unwin
 * Optional __Advanced Math Refresher__ sessions will be _Wednesday afternoons from XX to XX_ in room XX.
