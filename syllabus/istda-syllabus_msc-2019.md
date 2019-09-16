@@ -2,12 +2,20 @@
 title: "Introduction to Statistical Thinking and Data Analysis"
 subtitle: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
 date: "Autumn 2019"
+author: "Module Leader: Jeff Eaton (jeffrey.eaton@imperial.ac.uk)"
+header-includes:
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
 output:
-  html_document:
-    df_print: paged
   pdf_document: default
 ---
 
+\newpage
+
+## Timetable 
+
+\newpage
 
 ## Introduction
 
@@ -36,13 +44,13 @@ The course textbook is:
 
 Course content will follow closely to the textbook and specific chapters are assigned corresponding to the lecture each week.
 
-An electronic version of the textbook is available from the Imperial College London library via the following link: [https://library-search.imperial.ac.uk/permalink/f/tlmp2g/44IMP_ALMA_DS5155792570001591].
+An electronic version of the textbook is available from the Imperial College London library via the following link: https://library-search.imperial.ac.uk/permalink/f/tlmp2g/44IMP_ALMA_DS5155792570001591.
 
 The textbook will be supplemented by the excellent series of ['Statistics Notes'](https://www.bmj.com/specialties/statistics-notes) authored by J. Martin Bland and Douglas G. Altman in the _British Medical Journal_ between 1994 and 1999. Specific notes will be recommended accompanying relevant lecture material each week. A brief history of the 'Statistics Notes' series is available [here](https://www-users.york.ac.uk/~mb55/pubs/statnote9.pdf) from J Martin Bland's website at the University of York.
 
 #### Statistical computing 
 
-The course will utilize the [statistical software programme _R_](https://www.r-project.org), a free software environment for statistical computing and data visualisation. R runs on all major computer platforms (Windows / Mac / Unix). Download and install the most recent release of R for your computing platform here: https://cloud.r-project.org. 
+The course will utilize the [statistical software programme _R_](https://www.r-project.org), a free software environment for statistical computing and data visualisation. R runs on all major computer platforms (Windows / Mac / Unix). Download and install the most recent release of R for your computing platform from: https://cloud.r-project.org. 
 
 We recommend using the [_RStudio_ integrated development environment](http://www.rstudio.com/download), a freely available software programme providing features to interact with R more efficiently. You will need to install both the R software and RStudio.
 
@@ -52,9 +60,11 @@ We will use three texts for learning R computing including data manipulation, vi
 
 * _Hands-On Programming with R_ by Garrett Grolemund: https://rstudio-education.github.io/hopr/
 * _R for Data Science_ by Garrett Grolemund and Hadley Wickham: https://r4ds.had.co.nz
-* _Cookbook for R_ by Winston Chang: http://cookbook-r.com
+* _The R Software: Fundamentals of Programming and Statistical Analysis_ by Pierre Lafaye de Micheaux, Rémy Drouilhet, Benoit Liquet
 
-All three texts are fully and freely available online at the links above. Physical copies of the books are available for purchase if desired.
+The first two texts are fully and freely available online at the links above. Physical copies of the books are available for purchase if desired.
+
+Lafaye de Micheaux, Drouilhet, and Liquet text is available as an e-book version from the Imperial College London library: https://library-search.imperial.ac.uk/permalink/f/tlmp2g/44IMP_ALMA_DS51105617330001591.
 
 There are myriad other resources available online for learning and practicimg R. You are encouraged to explore them, and please share with your colleagues and demonstrators which materials you find most useful and effective.
 
@@ -66,21 +76,21 @@ In advance of the course, we recommend the following preparation:
 * Install and become familiar with R and RStudio. The Appendices of _Hands-On Programming with R_ by Garrett Grolemund describe how to install R and RStudio ([Appendix A](https://rstudio-education.github.io/hopr/starting.html)), installing and loading R packages ([Appendix B](https://rstudio-education.github.io/hopr/packages2.html)), and loading and saving data in R ([Appendix D](https://rstudio-education.github.io/hopr/dataio.html)).
 * Read and work through Projects 1-3 of _Hands-On Programming with R_ by Garrett Grolemund.
 
-## Course structure and timetable
+## Course structure and components
 
 There are four required and one optional classroom components for the ISTDA coures:
 
-* __Tutorial Review__ sessions will be _Monday mornings XX to XX_ in room XX (MSc Epi) or XX (MSc HDA).
+* __Tutorial Review__ sessions will be _Monday mornings 10:00 to 11:00_ in room G64, Bannister Lecture Theatre, or Rothschild Lecture Theatre (see timetable).
   * Dr. Jeff Eaton and TBC
-* __Lectures__ will be _Monday mornings XX to XX_ in room XX.
+* __Lectures__ will be _Monday mornings 11:15 to 12:15_ in room G64, Bannister Lecture Theatre, or Rothschild Lecture Theatre (see timetable).
   * Dr. Jeffrey Eaton and TBC
-* __Applied Statistics Lab__ sessions will be be on _Monday afternoons from XX to XX_ in room XX (MSc Epi) or XX (MSc HDA).
-  * Dr. Deborah Schneider-Luftman
+* __Applied Statistics Lab__ sessions will be be on _Monday afternoons from 14:00 to 15:30_ in the MSc Room (MSc Epi) or G64 (MSc HDA).
   * Dr. Raha Pazoki
-* __R Statistical Computing__ sessions will be on _Wednesday mornings from XX to XX_ in room XX (MSc Epi) or XX (MSc HDA).
+  * Dr. Deborah Schneider-Luftman
+* __R Statistical Computing__ sessions will be on _Wednesday mornings from 9:30 to 11:00_ in room G64.
   * Dr. Juliette Unwin
-* Optional __Advanced Math Refresher__ sessions will be _Wednesday afternoons from XX to XX_ in room XX.
-  * _Dr. Barbara Bodinier?_
+* Optional __Advanced Math Refresher__ sessions will be _Wednesday afternoons from 13:30 to 15:30_ in the MSc Room.
+  * Dr. James Truscott, Dr. Barbara Bodinier
 
 #### Lectures
 
@@ -112,9 +122,11 @@ Tutorial sheets with practice problem sets will be provided at the start of each
 
 #### Maths review (optional)
 
-Optional Maths Review sessions on Wednesday afternoons will review core mathematical used in advanced statistics. 
+Optional Maths Review sessions on Wednesday afternoons will review core mathematical used in advanced statistics. They will involve a mixture of lecture and interactive problem sets to practice concepts.
 
-> JE: Marc, Barbara -- please add brief summary of topics to be covered in maths review sessions.
+* Weeks 1 through 3: Calculus (Derivatives, Integrals, Differential Equations).
+* Weeks 4 through 7: Matrix Algebra.
+* Weeks 8 through 10: Introduction to Python.
 
 These sessions are recommended for any students not recently familiar with these topics who are planning to proceed to mathematical modelling, advanced statistics (e.g. Bayesian statistics, spatial statistics), or machine learning modules in the second term.
 
@@ -132,119 +144,147 @@ There will be three modalities of assessment:
 
 > JE: To add Bland and Altman notes and other relevant readings (e.g. good missing data review)
 
-> JE: Marc, Barbara -- please add any readings or content relevant to Maths refresher sessions.
 
-> JE: Ettie -- please fill in reading assignments for R content, or let's discuss and do together
+#### Week 1 (7 October)
 
+_Lecture:_ Principles of statistical inference, sampling variability the normal distribution.
+  
+* Reading: Kirkwood and Sterne, Chapters 1-5
+  
+_Special Lecture:_ The Role of Statistics in Epidemiology and Public Health 
+ 
+* _Professor Christl Donnelly CBE FMedSci FRS_
 
-__Week 1 (7 October):__
-
-Principles of statistical inference, sampling variability the normal distribution
-
-* Kirkwood and Sterne, Chapters 1-5
+_Applied Statistics Lab:_ Reading a Journal Paper, Designing a Statistical Analysis
+ 
 * Kirkwood and Sterne, Chapter 38 (_Strategies for analysis_)
 
-R: Project 1
+_Statistical Computing:_ Project 1 -- R Basics
 
 * Grolemund, Project 1 (Chapters 1-2 in book 1 - 3 online).
 
+_Maths Refresher (optional):_ Calculus I: Derivatives
 
-__Week 2 (14 October):__
+#### Week 2 (14 October)
 
-Confidence intervals, hypothesis testing, and p-values
+_Lecture:_ Confidence intervals, hypothesis testing, and p-values
 
-* Kirkwood and Stern, Chapter 6-8
+* Reading: Kirkwood and Stern, Chapter 6-8
 
-R: Project 2
+_Applied Statistics Lab:_ Project 1: Continuous Outcome
 
-* Grolemund, Project 2 (Chapters 3 - 6 in book 4 - 8 online)
+_Statistical Computing:_ Project 2 -- Manipulating R Objects
 
-__Week 3 (21 October):__
+* Reading: Grolemund, Project 2 (Chapters 3 - 6 in book 4 - 8 online)
 
-Analysis of variance and linear regression
+_Maths Refresher (optional):_ Calculus II: Integrals
 
-* Kirkwood and Stern, Chapters 9-13
+#### Week 3 (21 October)
 
-R: Data visualisation
+_Lecture:_ Analysis of variance and linear regression
 
-* Grolemund and Wickham, Chapter 1 in book 3 online
+* Reading: Kirkwood and Stern, Chapters 9-13
 
-__Week 4 (28 October):__
+_Applied Statistics Lab:_ Project 1: Continuous Outcome
 
-Binary outcomes, comparing proportions, chi-squared tests
+_Statistical Computing:_ Data visualisation
 
-* Kirkwood and Stern, Chapters 14-17
-* _Applied Statistics Lab Group Presentation 1_
+* Reading: Grolemund and Wickham, Chapter 1 in book 3 online
 
-R: Loading and formatting data
+_Maths Refresher (optional):_ Calculus III: Differential Equations
 
-* Grolemund and Wickham, Chapters 7, 8 and 13 in book 10, 11, 16 online
+#### Week 4 (28 October)
 
-__Week 5 (4 November):__
+_Lecture:_ Binary outcomes, comparing proportions, chi-squared tests
 
-Logistic Regression
+* Reading: Kirkwood and Stern, Chapters 14-17
 
-* Kirkwood and Stern, Chapters 18-21
+_Applied Statistics Lab:_ __Project 1 Group Presentation__
 
-R: Dealing with Data I
+_Statistical Computing:_ Loading and formatting data
 
-* Grolemund and Wickham, Chapter 9 in book 12 online
+* Reading: Grolemund and Wickham, Chapters 7, 8 and 13 in book 10, 11, 16 online
 
-__Week 6 (11 November):__
+_Maths Refresher (optional):_ Matrix Algebra I: < TBC >
 
-Longitudinal data, Poisson Regression
+#### Week 5 (4 November)
 
-* Kirkwood and Stern, Chapters 22-25
+_Lecture:_ Logistic Regression
 
-R: Dealing with Data II
+* Reading: Kirkwood and Stern, Chapters 18-21
 
-* Grolemund and Wickham, Chapter 10 in book 13 online
+_Applied Statistics Lab:_ Project 2: Binary Outcome
 
-__Week 7 (18 November):__
+_Statistical Computing:_ Dealing with Data I
 
-Survival analysis
+* Reading: Grolemund and Wickham, Chapter 9 in book 12 online
 
-* Kirkwood and Stern, Chapters 26-27
-* _Applied Statistics Lab Group Presentation 2_
+_Maths Refresher (optional):_ Matrix Algebra II: < TBC >
 
-R: No session
+#### Week 6 (11 November)
 
-__Week 8 (25 November):__
+_Lecture:_ Longitudinal data, Poisson Regression
 
-Statistical modelling, Maximum likelihood, Bayesian inference
+* Reading: Kirkwood and Stern, Chapters 22-25
 
-* Kirkwood and Stern, Chapters 28-30, 33
+_Applied Statistics Lab:_ Project 2: Binary Outcome
+
+_Statistical Computing:_ Dealing with Data II
+
+* Reading: Grolemund and Wickham, Chapter 10 in book 13 online
+
+_Maths Refresher (optional):_ Matrix Algebra III: < TBC >
+
+#### Week 7 (18 November)
+
+_Lecture:_ Survival analysis
+
+* Reading: Kirkwood and Stern, Chapters 26-27
+
+_Applied Statistics Lab:_ __Project 2 Group Presentation__
+
+_No Statistical Computing Session this week._
+
+_Maths Refresher (optional):_ Matrix Algebra IV: < TBC >
+
+#### Week 8 (25 November)
+
+Statistical modelling and Maximum likelihood,
+
+* Reading: Kirkwood and Stern, Chapters 28-29
 * Supplemental reading: Kirkwood and Stern, Chapters 30-31
 
-> JE: This week feels a bit full to give more than a cursory introduction to these topics. It would also be nice to at least cover clustered data a bit (Chapter 31). 
+_Applied Statistics Lab:_ Project 3: Survival Outcome
 
-> JE: The Bayesian chapter (Chapter 33) in Kirkwood and Sterne is a bit of a throw away. We ought to think about what the important take away for them is on this topic to prepare them for future modules and pull in some other content.
-
-R: Good programming practises
+_Statistical Computing:_ Good programming practises
 
 * Grolemund and Wickham, Chapter 15 in book 19 online
 
-__Week 9 (2 December):__
+_Maths Refresher (optional):_ Introduction to Python I: <TBC>
 
-Model building, Missing data
+#### Week 9 (2 December)
 
-* Carpenter JR, Kenward MG. _Missing data in randomised controlled trials— a practical guide_ 2007. http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.468.9391&rep=rep1&type=pdf
+_Lecture:_ Bayesian Inference, Missing data
 
-> JE: We might wish to replace this week with deeper elaboration on some of the previous week topics on model-based statistics.
+* Reading: Kirkwood and Stern: Chapter 33
+* Reading: Carpenter JR, Kenward MG. _Missing data in randomised controlled trials— a practical guide_ 2007. http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.468.9391&rep=rep1&type=pdf
 
-> JE: I'm refusing to teach 'model selection' other than to say don't do it, hence 'model building'.  This topic, and perhaps missing data, might be covered sufficiently in the applied stats lab sessions and the Epi module that we don't need a lecture on it.
+_Applied Statistics Lab:_ Project 3: Survival Outcome
 
-R: Project 3 Slot machine
+_Statistical Computing:_ Advanced R Programming
 
-* Grolemund, Project 3 (Chapters 7 - 10 in book, 9-12 online).
+* Reading: Grolemund, Project 3 (Chapters 7 - 10 in book, 9-12 online).
 
-__Week 10 (9 December):__
+__Maths Refresher (optional):__ Introduction to Python II: <TBC>
 
-Study design, Sample size calculation
+#### Week 10 (9 December)
 
-* Kirkwood and Sterne, Chapter 34-35
-* _Applied Statistics Lab Group Presentation 3_
+_Lecture:_ Study design, Sample size calculation
 
-> JE: These chapters double as good course and exam review because they 
+* Reading: Kirkwood and Sterne, Chapter 34-35
 
-R: Revision
+_Applied Statistics Lab:_ __Project 3 Group Presentation__
+
+_Statistical Computing:_ Revision
+
+_Maths Refresher (optional):_ Introduction to Python III: <TBC>
