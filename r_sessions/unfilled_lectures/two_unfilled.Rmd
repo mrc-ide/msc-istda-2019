@@ -1,0 +1,316 @@
+---
+title: "Session 2: Introduction to R - Project 2"
+author: Dr Juliette Unwin
+date: 16th October 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(viridis)
+
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover:
+
+* Different data structures
+* Loading and saving data
+* Extracting individual values from a data set
+* Changing values within a data set
+* R's missing value symbol
+
+and is based on Part 2 of Hands-On Programming with R by Garrett Grolemund.
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/NFEmw8Cv8S2KVwS18
+
+<img class="plain"  text-align:middle  src="../images/weektwo.png">
+
+***
+
+## Atomic vectors
+
+Most common type of data structure found in R.
+
+```{r, echo = TRUE, collapse = TRUE}
+die <- c(1, 2, 3, 4, 5, 6)
+
+# Test length
+
+# Test if vector
+
+# What about a single value?
+five <- 5
+
+```
+
+***
+
+## Other data types
+
+* doubles (also called numerical) e.g. 1.1
+* integers e.g. 1
+* characters e.g. text
+* logicals e.g. TRUE/ FALSE
+* complex
+* raw
+
+***
+## Doubles vs Integers
+
+```{r, echo = TRUE, collapse = TRUE}
+die <- c(1, 2, 3, 4, 5, 6)
+typeof(die)
+
+die2 <- c(1L, 2L, 3L, 4L, 5L, 6L)
+typeof(die2)
+```
+
+Integers are saved to higher precision as long as they aren't too large.
+
+Mostly you will consider doubles.
+
+***
+## Characters
+
+```{r, echo = TRUE, collapse = TRUE}
+text <- c("hello", "world")
+
+#Print
+print(text)
+
+#type
+typeof(text)
+```
+
+***
+## Logicals
+
+True or False
+
+```{r, echo = TRUE, collapse = TRUE}
+3 > 4
+
+true <- TRUE
+typeof(true)
+
+f <- F
+typeof(f)
+```
+
+***
+## Complex Numbers
+```{r, echo = TRUE, collapse = TRUE}
+complex <- 1 + 7i
+typeof(complex)
+```
+
+***
+## Raw
+```{r, echo = TRUE, collapse = TRUE}
+raw(3)
+raw_number <- raw(3)
+typeof(raw_number)
+```
+
+***
+## Names
+
+Can give vectors names.
+
+```{r, echo = TRUE, collapse = TRUE}
+die <- 1:6
+
+# Check attributes of vector
+
+# Check names
+
+# Set names
+
+# Check names and attributes again
+
+# Add 2 to die
+die + 2
+
+# Remove names
+
+```
+
+## Dimensions of data structures
+
+```{r, echo = TRUE, collapse = TRUE}
+dim(die)
+
+# Set 2 row matrix
+
+# Set array
+
+```
+
+***
+## Matrices
+Can make matrices (2 dimensional objects) straight out
+
+```{r, echo = TRUE, collapse = TRUE}
+matrix(die, nrow = 2)
+```
+
+***
+## Arrays
+Can make arrays (n dimensional objects)
+
+```{r, echo = TRUE, collapse = TRUE}
+array(c(11:14, 21:24, 31:34), dim = c(2, 2, 3))
+```
+
+***
+## Classes
+Changing dimension doesn't change object type but class
+
+```{r, echo = TRUE, collapse = TRUE}
+die <- c(1, 2, 3, 4, 5, 6)
+dim(die)
+class(die)
+
+# Change dimensions
+
+# Check dimension and class
+```
+
+***
+## Coercion
+R always behaves the same when it coerces dara types.
+
+* If an atomic vector contains a string, R converts everything to strings.
+```{r,  echo = TRUE, collapse = TRUE}
+vec <- c(1, TRUE, "seven")
+print(vec)
+```
+
+* If atomic vector only contains logicals and numbers,  R will convert all to numerics
+```{r,  echo = TRUE, collapse = TRUE}
+vec <- c(1, TRUE, FALSE, 7)
+print(vec)
+```
+***
+
+* Same rules happen when doing maths
+```{r,  echo = TRUE, collapse = TRUE}
+# Sum
+sum(c(TRUE, FALSE, TRUE))
+```
+* Can convert manually
+```{r,  echo = TRUE, collapse = TRUE}
+as.character(1)
+as.logical(1)
+as.numeric(FALSE)
+```
+
+***
+## Lists
+
+Lists group different types of data into a one dimensional array
+```{r,  echo = TRUE, collapse = TRUE}
+# Make a list
+```
+
+***
+## Data frames
+
+Data frames are like two dimensional lists.  In a column, data must be the same type, but can vary between columns.
+```{r,  echo = TRUE, collapse = TRUE}
+# Make a data frame
+
+```
+
+*** 
+## How would you make a packet of cards?
+```{r,  echo = TRUE, collapse = TRUE}
+              
+```
+
+***
+## Loading data
+
+File is found here: https://gist.github.com/garrettgman/9629323
+
+```{r,  echo = TRUE, collapse = TRUE}
+
+```
+
+***
+## Saving data
+
+```{r,  echo = TRUE, collapse = TRUE}
+# write.csv
+```
+
+***
+## Selecting values
+
+R indexes from 1!
+
+```{r,  echo = TRUE, collapse = TRUE}
+# Indexing with numbers
+
+
+# Selecting all columns
+
+
+# Using negative indexing
+
+
+# Uses column names
+
+
+# Selects one column
+
+```
+
+## How would you write a card dealing function?
+
+```{r,  echo = TRUE, collapse = TRUE}
+# Write a deal function
+deal <- function(){
+}
+
+deal()
+```
+
+***
+## Modifying values
+```{r,  echo = TRUE, collapse = TRUE}
+# Modify a value
+
+# Add a value at end of vector
+
+# Add a new column to data frame
+
+# Change all aces to be higher than king
+
+```
+
+***
+## Missing values
+
+```{r,  echo = TRUE, collapse = TRUE}
+# Making a vector with a missing value
+missing <- c(NA, 1:10)
+print(missing)
+
+# Calculating mean
+
+# Indexing missing values
+
+```
