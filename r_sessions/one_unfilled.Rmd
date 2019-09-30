@@ -35,7 +35,7 @@ Today's session will cover:
 * Packages
 * Quick plots
 
-and is based on Chapters 1 - 3 of Hands-On Programming with R by Garrett Grolemund.
+and is based on Part 1 of Hands-On Programming with R by Garrett Grolemund.
 
 ***
 
