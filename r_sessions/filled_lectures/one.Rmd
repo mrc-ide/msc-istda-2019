@@ -4,10 +4,10 @@ author: Dr Juliette Unwin
 date: 9th October 2019
 output: 
   revealjs::revealjs_presentation:
-    css: styles.css
+    css: ../styles.css
     center: true
     includes:
-      in_header: header-footer.html
+      in_header: ../header-footer.html
 ---
 
 ```{r include = FALSE}
@@ -43,7 +43,7 @@ Quick quiz ...
 
 https://forms.gle/drXwQ338iy4emUfD6 
 
-<img class="plain"  text-align:middle  src="images/weekone.png">
+<img class="plain"  text-align:middle  src="../images/weekone.png">
 
 ***
 ## R
@@ -56,7 +56,7 @@ https://forms.gle/drXwQ338iy4emUfD6
 
 ***
 ## RStudio
-<img class="plain"  src="images/rstudio.png"/>
+<img class="plain"  src="../images/rstudio.png"/>
 
 ***
 ## Executing code
