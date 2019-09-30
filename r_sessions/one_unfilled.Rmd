@@ -72,19 +72,11 @@ You can execute code
 
 R can be used for simple calculator operations:
 ```{r echo = TRUE, collapse = TRUE}
-1 + 3
 ```
 
 ***
 but to make the calculations easier, you can assign numbers to variables.
 ```{r echo = TRUE, collapse = TRUE}
-a <- 1
-b <- 4
-
-a + b
-a * b
-b / a
-b - a
 ```
 
 ***
@@ -100,13 +92,6 @@ b - a
 
 ## Making the die object and doing algebra with the object
 ```{r echo = TRUE, collapse = TRUE}
-die <- 1:6
-
-1:2
-
-die + 1:2
-
-die*die
 ```
 
 
@@ -117,13 +102,10 @@ Some simple functions are inbuilt
 
 ```{r echo = TRUE, collapse = TRUE}
 # Round
-round(3.14431)
 
 # Factorials
-factorial(3)
 
 # Mean
-mean(die)
 ```
 
 ***
@@ -132,22 +114,10 @@ mean(die)
 What function can we use to roll a dice?
 ```{r echo = TRUE, collapse = TRUE}
 # Sampling
-sample(1:4, 2)
-
-sample(die, 2)
-
-sample(die, 2, replace=TRUE)
 ```
 ***
 ## Rolling a dice in function form
 ```{r rolling dice, echo = TRUE, collapse = TRUE}
-
-roll <- function(){
-  die <- 1:6
-  dice <- sample(die, size = 2, replace = TRUE)
-  sum(dice)
-}
-
 ```
 
 ## Adding arguments to functions
@@ -158,19 +128,6 @@ roll2 <- function(){
   dice <- sample(bones, size = 2, replace = TRUE)
   sum(dice)
 }
-
-# Bones is now defined
-roll2 <- function(bones){
-  dice <- sample(bones, size = 2, replace = TRUE)
-  sum(dice)
-}
-
-# Can add default value for bones
-roll2 <- function(bones = 1:6){
-  dice <- sample(bones, size = 2, replace = TRUE)
-  sum(dice)
-}
-
 ```
 
 ***
@@ -206,25 +163,17 @@ If still stuck google or try stack overflow.
 ## Making a quick plot
 <div id = "left">
 ```{r echo = TRUE, collapse = TRUE}
-x <- 1:10
-y <- x^3 + 4*x -7
+# Plotting a simple polynomial
 ```
-</div>
-<div id="right">
-```{r echo = TRUE, collapse = TRUE}
-qplot(x,y)
-```
-</div>
+
 
 ***
 ## Plotting the dice
 ```{r echo = TRUE, collapse = TRUE}
-# Repeated rolls of the dice
+# Repeated rolls of the dice (replicate)
 
-# Plotting it
+# Plot it
 
-# Improving the plot
-qplot(replicate(100, roll()), binwidth=1)
 ```
 
 ***
@@ -232,9 +181,8 @@ qplot(replicate(100, roll()), binwidth=1)
 ```{r echo = TRUE, collapse = TRUE}
 roll_unfair <- function(){
   die <- 1:6
-  dice <- sample(die, size = 2, replace = TRUE, prob = c(1/8, 1/8, 1/8, 1/8, 1/8, 3/8))
+  dice <- sample(die, size = 2, replace = TRUE)
   sum(dice)
 }
 
-qplot(replicate(100, roll()), binwidth=1)
 ```
