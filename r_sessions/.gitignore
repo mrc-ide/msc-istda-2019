@@ -1,0 +1,5 @@
+# Just removes html from r sessions
+*.html
+
+# An output from session two
+data/cards.csv
