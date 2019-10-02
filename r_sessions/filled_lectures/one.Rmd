@@ -14,8 +14,14 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 library(viridis)
 ```
+## Wednesday morning sessions
 
-The following R sessions are based on these two texts:
+Part 1: Lecture on R.
+
+Part 2: Chance to ask questions on stats tutorial sheet.
+
+***
+The R lectures are based on these two texts:
 
 *  Hands-On Programming with R by Garrett Grolemund:
 https://rstudio-education.github.io/hopr/ 

@@ -187,6 +187,100 @@ Can use, but no time to go over all the options now.
 ***
 ## Plotting with ggplot
 
+Plotting with ggplot isn't like plotting with the others.
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+library(ggplot2)
+ggplot(mpg)
+```
+
+***
+## Plotting with ggplot
+```
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+```
+
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+ggplot(data = mpg) + 
+  geom_point(aes(x = displ, y = hwy, col = displ))
+```
+
+***
+## Some of the different aesthetics
+
+* x - x values
+* y - y values
+* shape - changes the shape of points depending on variable
+* col - changes the colour of points depending on variable
+* alpha - changes the transparancy of points depending on variable
+
+***
+## Some useful geoms
+* geom_point - scatter graph
+* geom_line - line graph
+* geom_vline, geom_hline, geom_abline - straight lines
+* geom_bar - bar graph
+* geom_histogram - histogram
+
+https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+
+*** 
+## A few examples - well presented graph
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+ggplot(data = mpg) +
+  geom_point(aes(x = displ, y = hwy, col = displ)) +
+  geom_line(aes(x = displ, y = hwy, col = displ)) +
+  xlim(-1, 8) + 
+  xlab("Engine dispacement") + ylab("Highway miles per gallon")
+```
+
+*** 
+## A few examples - line graph
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+x <- 1:10
+y <- x^2 + 3*x - 6
+y2 <- - x^2 - 3*x + 52
+
+df <- data.frame("x" = x, "y" = y, "y2" = y2)
+
+ggplot(df) + 
+  geom_line(aes(x=x, y= y, colour = "y")) + 
+  geom_line(aes(x=x, y= y2,  colour = "y2")) + 
+  scale_colour_manual(name="Lines", values = c("y" = "red", "y2" = "blue")) 
+```
+
+*** 
+## A few examples - histogram
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+ggplot(mpg) + geom_histogram(aes(displ), bins = 10)
+```
+
+***
+## Themes
+Can change the theme of graphs to make them look more to your taste
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+p <- ggplot(data = mpg) + 
+  geom_point(aes(x = displ, y = hwy, col = displ))
+
+p +  theme(legend.title = element_blank())
+p + theme_bw()
+```
+
+***
+## Multiple plots using cowplot
+
+```{r echo = TRUE}
+library(cowplot)
+```
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+p1 <- ggplot(data = mpg) + 
+  geom_point(aes(x = displ, y = hwy, col = displ))
+p2 <- ggplot(data = mpg) + 
+  geom_point(aes(x = displ, y = hwy, col = displ))
+
+plot_grid(p1, p2)
+```
+
 *** 
 ## Summary
 
