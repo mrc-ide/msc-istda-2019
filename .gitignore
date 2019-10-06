@@ -38,3 +38,6 @@ rsconnect/
 
 # Mac
 .DS_Store
+
+# Emacs
+*~

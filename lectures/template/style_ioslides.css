@@ -1,0 +1,50 @@
+slides > slide.backdrop {
+  background: white;
+}
+
+
+slides > slide {
+
+  /* Change default text color */
+  color: #515151;
+
+  /* Insert Imperial logo in top right */ 
+  background-image: url(../template/imperial-logo.jpg) !important;
+  background-size: 175px !important;
+  background-repeat: no-repeat !important;
+  background-position: 1% 2% !important;
+}
+
+/* Center slide header */
+h2 {
+  text-align: center;
+}
+
+/* Center the title slide */
+.title-slide hgroup {
+  position: relative;
+  top: 20%;
+}
+
+/* Change default slide header color to black*/
+.title-slide hgroup h1 {
+  font-size: 50px;
+  text-align: center;
+  line-height: 1.2;    
+  color: black;
+}
+
+/* Change subtitle color to dark grey */
+.title-slide hgroup h2 {
+  margin-top: 30px;
+  font-size: 30px;
+  line-height: 1.1;    
+  color: #515151;
+}
+/* line 904, ../scss/default.scss */
+.title-slide hgroup p {
+  font-size: 20px;
+  color: #797979;
+  line-height: 1.3;
+  margin-top: 2em;
+}
