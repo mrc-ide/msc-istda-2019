@@ -222,12 +222,13 @@ Texts:
 <br>
 * Statistical Theory and Practice Written Exam: 40%
   * One hour multiple choice and short answer.
-  * Tuesay 7 January
+  * Tuesday 7 January
 <br>
 <br>
 * Applied Statistics Mini-Project: 40%
   * Paper reporting the results of an applied statistical analysis (3000 words maximum).
   * Dataset and research question provided on 30 December.
+  * Paper due on Friday 10 January.
 
 ## {.flexbox .vcenter}
 
