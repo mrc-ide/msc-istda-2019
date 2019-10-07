@@ -1,0 +1,71 @@
+---
+title: "Week 1 Tutorial: Sampling from a population, summarizing data, and the normal distribution"
+subtitle: Introduction to Statistical Thinking and Data Analysis
+author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
+date: 7 October 2020
+output:
+  pdf_document: default
+---
+
+
+1. The dataset `perulung_ems.csv` contains data from a study of lung function among a sample of 636 children aged 7 to 10 years living in a deprived suburb of Lima, Peru, introduced on page 27 of Kirkwood and Sterne. FEV1 is the _forced expiratory volume_ in 1 second, the maximum amount of air which children could breath out in 1 second measured using a spirometer.
+    
+    | Variable     | Description                                                      |
+    |--------------| -----------------------------------------------------------------|
+    | id           | Participant ID number                                            |
+    | fev1         | Forced Expiratory Volume in 1 second                             |
+    | age          | Age in years                                                     |
+    | height       | Height in centimeters                                            |
+    | sex          | Sex (0 = female, 1 = male)                                       |
+    | respsymptoms | Presence of respiratory symptoms (0 = no symptoms; 1 = symptoms) |
+    
+    a. What type of variable is each variable in the dataset?
+    b. What shape is the frequency distribution of each of the variables?
+    c. What are some research questions which these data could have been collected to address?
+    d. Use R to create appropriate univariate graphical summaries of each of the variables.
+    e. Create a single table summarizing key characteristics of the sample---an appropriate 'Table 1' for a medical or epidemiologic paper. (It is probably possible to construct a full table with R commands, but you might find it easier to do calculations of summary statistics with R and copy the R output into a separate table in MS Word, Excel, or similar.)
+    f. In this sample of 636 children, does there appear to be an association between: 
+       (i) sex and height, 
+       (ii) age and height,
+       (iii) sex and lung function, 
+       (iv) sex and presence of respiratory symptoms,
+       (v) respiratory symptoms and lung function.
+	   
+	   Support your answers with graphical or numerical evidence.
+
+   g. What is the target population to which your conclusions about these questions might generalize? 
+
+\newpage
+
+2. The _National Health and Nutrition Examination Survey_ (NHANES) is a nationally representative survey to assess the health and nutrition of adults and children in the United States. The survey was first conducted in the 1960s and has been conducted continuously since 1999 with around 5000 respondents sampled and interviewed in their homes every year. The survey consists of a combination of questionnaire responses and physical and biomarker measurements. Further information about the survey and datasets can be found here: https://www.cdc.gov/nchs/nhanes/index.htm.
+
+   The R package [`NHANES`](https://cran.r-project.org/package=NHANES) contains an extract of 75 variables about 10,000 respondents to NHANES between 2009 and 2012 abstracted for educational purposes. The actual NHANES survey datasets include sampling weights to account for non-equal sampling probability of certain population groups to increase the statistical efficiency of the survey, which is not covered in this course. The dataset of 10,000 respondents in the `NHANES` R package has been constructed such that the dataset can analysed as if it were a simple random sample from the American population. See the package documentation for information and links about accessing and analysing the actual NHANES data for research purposes; there are other R packages available on CRAN to assist with accessing and processing the actual NHANES survey data.
+   
+   The objective of this exercise is to practice loading large datasets into R, understanding the structure and variables in a dataset, and conducting exploratory analysis.
+   
+   a. Open and explore the NHANES dataset in R through the following steps:
+   
+      * Install the `NHANES` R package: `install.packages("NHANES")`
+	  * Load the R package: `library(NHANES)`
+	  * Load the NHANES dataset into your workspace: `data(NHANES)`
+	  * Use the command `?` to access the help page for the dataset: `?NHANES`
+	  
+	  Review the dataset edocumentation, particularly looking 
+	  
+	  (i) What was the purpose for collecting the data?
+	  (ii) When and how were the data in the dataset collected?
+  	  (iii) What is the target population of the sample?
+	  (iv) What is the sample size? Who was eligible to be included in the dataset? Are there different eligibility or inclusion criteria for certain variables?
+	  (v) What are the areas of information available in the dataset?
+	  
+	  In the documentation, note that several of the variables are only collected for respondents of a certain age range or in one of the survey rounds but not the other. This is important to take note because it may affect what questions can be addressed by the data, or result in errant conclusions and incorrect interpretation if eligibility and inclusion criteria are not appropriately considered during analysis. For the remainder of the tutorial, we will only consider the subset of the sample who are adults aged 20 years and older. 
+	  
+	  Construct this dataset with the R command: `nhanes20pl <- NHANES[NHANES$Age >= 20, ]`
+	  
+	  (vi) Confirm that your new dataset has 7235 respondents remaining. Use at least one different R command to acheive construction of the same subsetted dataset. Confirm that your alternate command has the same number of rows and columns.
+
+   b. _Types of variables._ Using the subsetted `nhanes20pl` dataset, identify at least one variable of each of the types of variables: continuous, discrete numeric, binary, categorical, and ordered categorical.  For an identified variable of each type, create an appropriate summary of the frequency distribution and calculate an appropriate measure of central tendency and variation.
+   c. _Frequency distributions._ Identify at least one variable in the dataset that has a frequency distribution matching each of the shapes described in Kirkman and Sterne Figures 3.5 and 3.6 (pages 20-21).  For each of the identified variables, calculated the mean, median, mode, variance, standard devation, range, and interquartile range.
+   d. _Missing data._ Using the `nhanes20pl` dataset, review the amount of missing data for each of the variables pertaining to _Demographic Variables_ and _Physical Measurements_.
+       (i) Amongst each grouping (_Demographic Variables_ and _Physical Measurements_) identify the one variable with the highest proportion of missing cases. (Do not consider variables that were available for only one of the survey rounds or not recorded for this age range when making your assessment.)
+	   (ii) For each of these two variables, in this sample, is there any relationship between `Gender` or `Race1` and the probability that data on the outcome is missing?
