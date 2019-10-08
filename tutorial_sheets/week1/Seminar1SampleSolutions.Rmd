@@ -4,7 +4,7 @@ subtitle: Introduction to Statistical Thinking and Data Analysis
 author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
 date: 7 October 2019
 output:
-pdf_document: default
+  pdf_document: default
 params: 
   filename: 'perulung_ems.csv'
 ---
@@ -12,7 +12,7 @@ params:
   
   1. The dataset `perulung_ems.csv` contains data from a study of lung function among a sample of 636 children aged 7 to 10 years living in a deprived suburb of Lima, Peru, introduced on page 27 of Kirkwood and Sterne. FEV1 is the _forced expiratory volume_ in 1 second, the maximum amount of air which children could breath out in 1 second measured using a spirometer.
 
-| Variable     | Description                                                      |
+  | Variable     | Description                                                      |
   |--------------| -----------------------------------------------------------------|
   | id           | Participant ID number                                            |
   | fev1         | Forced Expiratory Volume in 1 second                             |
@@ -23,48 +23,54 @@ params:
   
   a. What type of variable is each variable in the dataset?
   
-  ```{r echo=FALSE}
-  data1 <- read.csv(params$filename)
-  ```
+```{r echo=FALSE}
+data1 <- read.csv(params$filename)
+```
 
-   ```{r eval=TRUE} 
-   str(data1)
-   ```
+```{r eval=TRUE} 
+str(data1)
+```
    * sex and respsymptoms are binary variables although encoded in the dataframe as integers.
 
   b. What shape is the frequency distribution of each of the variables?
   
   * id: each appears just once so the data are uniformly distributed.
   
-   ```{r eval=TRUE} 
-   plot(density(data1$Ã¯..id),main="Frequency distribution of ID")
-   ```
+```{r eval=TRUE} 
+plot(density(data1$ï..id),main="Frequency distribution of ID")
+hist(data1$ï..id,main="Frequency distribution of ID",xlab="")
+```
   
   * fev1: normally distributed
   
-  ```{r eval=TRUE}
-  plot(density(data1$fev1),main="Frequency distribution of Forced Expiratory Volume in 1 second")
-  ```
+```{r eval=TRUE}
+#plot(density(data1$fev1),main="Frequency distribution of Forced Expiratory Volume in 1 second")
+hist(data1$fev1,main="Frequency distribution of Forced Expiratory Volume in 1 second",xlab="")
+```
   
   * age: bimodal
-  ```{r eval=TRUE }
-  plot(density(data1$age),main="Frequency distribution of Age")
-  ```
+```{r eval=TRUE }
+#plot(density(data1$age),main="Frequency distribution of Age")
+hist(data1$age,main="Frequency distribution of Age",xlab="")
+```
   
   * height: normally distributed
-  ```{r eval=TRUE }
-   plot(density(data1$height),main="Frequency distribution of Height")
-  ```
+```{r eval=TRUE }
+#plot(density(data1$height),main="Frequency distribution of Height")
+hist(data1$height,main="Frequency distribution of Height",xlab="")
+```
   
-  * sex: bimodal (response fairly well balanced)
-  ```{r eval=TRUE }
-   plot(density(data1$sex),main="Frequency distribution of Sex")
-  ```
+* sex: bimodal (response fairly well balanced)
+```{r eval=TRUE }
+#plot(density(data1$sex),main="Frequency distribution of Sex")
+hist(data1$sex,main="Frequency distribution of Sex",xlab="")
+```
   
   * respsymptoms: bimodal (response imbalanced - more without symptoms)
-  ```{r eval=TRUE }
-  plot(density(data1$respsymptoms),main="Frequency distribution of Respiratory Symptoms")
-  ```
+```{r eval=TRUE }
+#plot(density(data1$respsymptoms),main="Frequency distribution of Respiratory Symptoms")
+hist(data1$respsymptoms,main="Frequency distribution of Respiratory Symptoms",xlab="")
+```
   
   
   
@@ -82,33 +88,33 @@ params:
   
   * fev1: histogram
   
-  ```{r eval=TRUE}
-  hist(data1$fev1,main="Histogram of fev1",xlab="")
-  ```
+```{r eval=TRUE}
+hist(data1$fev1,main="Histogram of fev1",xlab="")
+```
   
   * age: boxplot
-  ```{r eval=TRUE}
-  boxplot(data1$age,main="Age Boxplot")
-  ```
+```{r eval=TRUE}
+boxplot(data1$age,main="Age Boxplot")
+```
   
   
   * height: histogram
-  ```{r eval=TRUE}
-   plot(density(data1$height),main="Height Density")
-  ```
+```{r eval=TRUE}
+plot(density(data1$height),main="Height Density")
+```
 
   * sex: barplot
-  ```{r eval=TRUE}
-  sex_counts <- table(data1$sex)
-  barplot(sex_counts,main="Barplot of Sex Distribution",names.arg=c("Female","Male"))
-  ```
+```{r eval=TRUE}
+sex_counts <- table(data1$sex)
+barplot(sex_counts,main="Barplot of Sex Distribution",names.arg=c("Female","Male"))
+```
   
   
   * respsymptoms: piechart 
-  ```{r eval=TRUE}
-  resp_counts <- table(data1$respsymptoms); labels <- c("No Symptoms","Symptoms")
-  pie(resp_counts,labels=labels,main="Pie Chart of Respiratory Symptoms")
-  ```
+```{r eval=TRUE}
+resp_counts <- table(data1$respsymptoms); labels <- c("No Symptoms","Symptoms")
+pie(resp_counts,labels=labels,main="Pie Chart of Respiratory Symptoms")
+```
   
   
   
@@ -116,7 +122,9 @@ e. Create a single table summarizing key characteristics of the sample---an appr
 
 * continuous variables: fev1, age, height 
 ```{r eval=TRUE}
-summary(data1$fev1)
+quantile(data1$fev1) #can also do min(data1$fev1); median(data1$fev1); max(data1$fev1)
+mean(data1$fev1)
+summary(data1$fev1) #alternatively use this function to get all of this in one line of code
 summary(data1$age)
 summary(data1$height)
 ```
@@ -131,10 +139,10 @@ table(data1$respsymptoms)
 f. In this sample of 636 children, does there appear to be an association between:
 
   (i) sex and height, 
-(ii) age and height,
-(iii) sex and lung function, 
-(iv) sex and presence of respiratory symptoms,
-(v) respiratory symptoms and lung function.
+  (ii) age and height,
+  (iii) sex and lung function, 
+  (iv) sex and presence of respiratory symptoms,
+  (v) respiratory symptoms and lung function.
 
 Support your answers with graphical or numerical evidence.
 
