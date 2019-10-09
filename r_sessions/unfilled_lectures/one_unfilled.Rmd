@@ -79,11 +79,14 @@ You can execute code
 
 R can be used for simple calculator operations:
 ```{r echo = TRUE, collapse = TRUE}
+1+2
 ```
 
 ***
 but to make the calculations easier, you can assign numbers to variables.
 ```{r echo = TRUE, collapse = TRUE}
+a <- 1
+a+2
 ```
 
 ***
@@ -99,6 +102,11 @@ but to make the calculations easier, you can assign numbers to variables.
 
 ## Making the die object and doing algebra with the object
 ```{r echo = TRUE, collapse = TRUE}
+die <- 1:6
+
+die+2
+
+die*3
 ```
 
 
@@ -109,13 +117,14 @@ Some simple functions are inbuilt
 
 ```{r echo = TRUE, collapse = TRUE}
 # Round
+round(3.1567, digits = 2)
 
 # Factorials
-
+factorial(3)
 # Mean
-
+mean(1:6)
 # Structure of an object - mtcars
-
+str(mtcars)
 ```
 
 ***
@@ -124,20 +133,33 @@ Some simple functions are inbuilt
 What function can we use to roll a dice?
 ```{r echo = TRUE, collapse = TRUE}
 # Sampling
+sample(die,size=2)
+
+sample(die, size=6, replace = TRUE)
 ```
 ***
 ## Rolling a dice in function form
 ```{r rolling dice, echo = TRUE, collapse = TRUE}
+
+roll <- function(){
+  
+  return (sum(sample(die, size=2, replace = TRUE)))
+}
+
+roll()
 ```
 
 ## Adding arguments to functions
 
 ```{r rolling dice 2, echo = TRUE, collapse = TRUE}
 # This won't work as haven't defined bones
-roll2 <- function(){
+roll2 <- function(bones = 1:4){
   dice <- sample(bones, size = 2, replace = TRUE)
   sum(dice)
 }
+
+bones <- 1:4
+roll2(bones = 1:4)
 ```
 
 ***
@@ -151,7 +173,7 @@ In this course will use a number of different packages such as ggplot and tidyve
 ## Installing packages
 ```{r echo = TRUE, collapse = TRUE}
 # Install ggplot
-#install.packages("ggplot")
+install.packages("ggplot")
 ```
 
 ***
@@ -174,6 +196,10 @@ If still stuck google or try stack overflow.
 <div id = "left">
 ```{r echo = TRUE, collapse = TRUE}
 # Plotting a simple polynomial
+x <- 1:10
+y <- x^2
+
+plot(x,y)
 ```
 
 
@@ -181,6 +207,13 @@ If still stuck google or try stack overflow.
 ## Plotting the dice
 ```{r echo = TRUE, collapse = TRUE}
 # Repeated rolls of the dice (replicate)
+N <- 10000
+die_rolls <- vector(length = N)
+for (i in 1:N){
+  die_rolls[i] <- roll()
+}
+
+hist(die_rolls)
 ```
 
 ***
@@ -188,8 +221,17 @@ If still stuck google or try stack overflow.
 ```{r echo = TRUE, collapse = TRUE}
 roll_unfair <- function(){
   die <- 1:6
-  dice <- sample(die, size = 2, replace = TRUE)
+  dice <- sample(die, size = 2, replace = TRUE, prob = c(1/8, 1/8, 1/8, 1/8, 1/8, 3/8))
   sum(dice)
 }
 
+roll_unfair()
+
+N <- 10000
+die_rolls <- vector(length = N)
+for (i in 1:N){
+  die_rolls[i] <- roll_unfair()
+}
+
+hist(die_rolls)
 ```
