@@ -113,6 +113,9 @@ Some simple functions are inbuilt
 # Factorials
 
 # Mean
+
+# Structure of an object - mtcars
+
 ```
 
 ***
@@ -162,12 +165,12 @@ library(ggplot2)
 ## Getting help
 Each function comes with its own help page.
 ```{r echo = TRUE, collapse = TRUE}
-?qplot
+?plot
 ```
 If still stuck google or try stack overflow.
 
 ***
-## Making a quick plot
+## Making simple plots
 <div id = "left">
 ```{r echo = TRUE, collapse = TRUE}
 # Plotting a simple polynomial
@@ -178,9 +181,6 @@ If still stuck google or try stack overflow.
 ## Plotting the dice
 ```{r echo = TRUE, collapse = TRUE}
 # Repeated rolls of the dice (replicate)
-
-# Plot it
-
 ```
 
 ***
