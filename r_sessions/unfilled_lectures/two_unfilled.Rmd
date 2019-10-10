@@ -12,7 +12,6 @@ output:
 
 ```{r include = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-library(viridis)
 
 library(knitr)
 opts_knit$set(root.dir = '../')
@@ -107,6 +106,13 @@ typeof(true)
 
 f <- F
 typeof(f)
+```
+
+***
+## If/ else statements
+Logicals are used in if else statements.
+```{r, echo = TRUE, collapse = TRUE}
+
 ```
 
 ***

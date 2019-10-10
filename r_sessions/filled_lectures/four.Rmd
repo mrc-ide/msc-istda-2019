@@ -1,0 +1,80 @@
+---
+title: "Session 4: Loading and formatting data"
+author: Dr Juliette Unwin
+date: 16th October 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+library(knitr)
+opts_chunk$set(echo = FALSE)
+opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover:
+
+* Loading and saving data
+* Dates
+* Factors
+* Recap of loops
+
+and is based on various chapters of R for data science.
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/RL7Fdz39S9HgSg228
+
+<img class="plain"  text-align:middle  src="../images/weekfour.png">
+
+***
+## Loading in data
+
+What types of data may you want to load in?
+* csv
+* text files
+* r objects
+
+***
+## Loading in csvs
+
+***
+## Loading in text files
+
+***
+## Loading in r objects
+* RDS
+* Rdata
+
+***
+## Saving csvs
+
+***
+## Saving r objects
+
+***
+## Dealing with dates
+Introduce the lubridate package and base R.
+Need to find a data set with real dates.
+
+Converting dates to real numbers
+
+***
+## Dealing with factors
+Show difference of factors through plots
+
+*** 
+## Recap of loops
+* for loops
+* while loops
+* if/else statements
+
+***
+## Avoiding loops
