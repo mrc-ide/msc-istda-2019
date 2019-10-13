@@ -1,0 +1,22 @@
+3. _Statistical modelling: using the normal distribution to estimate population distributions._ This purpose of this exercise is to practice applying the normal distribution to estimate the distribution of an outcome in a population using data from a sample drawn from the population. The version of the NHANES dataset we are using is constructed to approximate a simple random sample from the American population. Thus we can use the observations in our sample to make inference about the American population.
+
+   We will use dataset `nhanes20pl` subsetted to the adult respondents aged 20 plus. For each of the questions below, consider three continuous variables: 
+   * `BMI`: Body Mass Index
+   * `BPSysAve`: Systolic blood pressure (averaged over three observations)
+   * `Age`: Age in years
+
+a. Create a graph of the frequency distribution for each of the variables, either using histograms or density plots. Do the variables 
+c. For each age of the variables 
+
+
+b. < what proportion between x and y >
+
+d. Why might the our sampling strategy of asking random people walking down Praed Street be
+
+4. Revisit the male height example from lecture
+
+< simulation and analytically calculate quantiles of the normal distribution >
+ * calcualte quantiles of normal
+
+
+4. _Distribution of the sample mean._ In this
