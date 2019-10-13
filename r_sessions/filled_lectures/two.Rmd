@@ -219,6 +219,7 @@ print(vec)
 # Sum
 sum(c(TRUE, FALSE, TRUE))
 ```
+
 * Can convert manually
 ```{r,  echo = TRUE, collapse = TRUE}
 as.character(1)
@@ -333,6 +334,7 @@ deck2$new <- 1:52
 # Change all aces to be higher than king
 deck2$value[deck$face == "ace"] <- 14
 ```
+
 ***
 ## Missing values
 

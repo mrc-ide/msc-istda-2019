@@ -1,0 +1,253 @@
+---
+title: "Session 1: Introduction to R - Project 1"
+author: Dr Juliette Unwin
+date: 9th October 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(viridis)
+```
+## Wednesday morning sessions
+
+Part 1: Lecture on R.
+
+Part 2: Chance to ask questions on stats tutorial sheet.
+
+***
+
+The R lectures are based on these two texts:
+
+*  Hands-On Programming with R by Garrett Grolemund:
+https://rstudio-education.github.io/hopr/ 
+* R for Data Science by Garrett Grolemund and Hadley Wickham: https://r4ds.had.co.nz
+
+With two other texts in mind: 
+
+* Cookbook for R by Winston Chang
+* The R Software: Fundamentals of Programming and Statistical Analysis by Pierre Lafaye de Micheaux at al.
+
+***
+Today's session will cover:
+
+* An introduction into programming in R - making a weighted dice
+* Using R as calculator
+* Writing and using functions
+* Packages
+* Quick plots
+
+and is based on Part 1 of Hands-On Programming with R by Garrett Grolemund.
+
+***
+
+Quick quiz ...
+
+https://forms.gle/drXwQ338iy4emUfD6 
+
+<img class="plain"  text-align:middle  src="../images/weekone.png">
+
+***
+## R
+
+* Free language for statistical computing and graphics.
+* Easier to use than some other languages.
+* Effective at handeling and storing data.
+* Has lots of inbuilt statistical functions.
+* Can produce really nice graphs.
+
+***
+## RStudio
+<img class="plain"  src="../images/rstudio.png"/>
+
+***
+## Executing code
+
+You can execute code
+
+* in console
+* in scripts
+* using Rmarkdown (how lectures are done)
+
+***
+## R as a calculator
+
+R can be used for simple calculator operations:
+```{r echo = TRUE, collapse = TRUE}
+1+2
+```
+
+***
+but to make the calculations easier, you can assign numbers to variables.
+```{r echo = TRUE, collapse = TRUE}
+a <- 1
+a + 2
+```
+
+***
+## Variable naming 
+
+* Want to name variables short sensible names that descibe what they are.
+* R understands capitalisation so `name` and `Name` point to different variables.
+* A variable name can't use characters like @, !, $, +, - / or *.
+* ```ls()``` tells you what variables you have.
+
+
+***
+
+## Making the die object and doing algebra with the object
+```{r echo = TRUE, collapse = TRUE}
+die <- 1:6
+
+die+2
+
+die*3
+```
+
+
+***
+## Using functions
+
+Some simple functions are inbuilt
+
+```{r echo = TRUE, collapse = TRUE}
+# Round
+round(3.1567, digits = 2)
+# Factorials
+factorial(3)
+# Mean
+mean(1:6)
+# Structure of an object - mtcars
+str(mtcars)
+```
+
+***
+## Rolling a dice 
+
+What function can we use to roll a dice?
+```{r echo = TRUE, collapse = TRUE}
+# Sampling without replacement
+sample(die, size=2)
+# Sampling with replacement
+sample(die, size=6, replace = TRUE)
+```
+***
+## Rolling a dice in function form
+R by default returns the last line of a function.  In this case you do not need the return keyword.
+```{r rolling dice, echo = TRUE, collapse = TRUE}
+
+roll <- function(){
+  return (sum(sample(die, size=2, replace = TRUE)))
+}
+
+roll()
+```
+
+## Adding arguments to functions
+
+```{r rolling dice 2, echo = TRUE, collapse = TRUE}
+# This function requires the argument bones unless I define it 
+# within the function.
+# In this example I have defined bones as a default argument.
+roll2 <- function(bones = 1:4){
+  dice <- sample(bones, size = 2, replace = TRUE)
+  sum(dice)
+}
+
+roll2()
+
+bones <- 1:6
+roll2(bones)
+```
+
+***
+## Packages
+
+You won't always be the only ones writing functions.  You may like to use functions that are written by other people.  These are known as packages.
+
+In this course will use a number of different packages such as ggplot and tidyverse.
+
+***
+## Installing packages
+```{r echo = TRUE, collapse = TRUE}
+# Install ggplot
+#install.packages("ggplot")
+```
+
+***
+## Loading packages
+```{r echo = TRUE, collapse = TRUE}
+# Loading ggplot
+library(ggplot2)
+```
+
+***
+## Getting help
+Each function comes with its own help page.
+```{r echo = TRUE, collapse = TRUE}
+?plot
+```
+If still stuck google or try stack overflow.
+
+***
+## Making simple plots
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+# Plotting a simple polynomial
+x <- 1:10
+y <- x^2
+plot(x,y)
+```
+
+
+***
+## Plotting the dice
+<div id = "left">
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+# Repeated rolls of the dice
+N <- 10000
+die_rolls <- vector(length = N)
+for (i in 1:N){
+  die_rolls[i] <- roll()
+}
+```
+</div>
+<div id = "right">
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+hist(die_rolls)
+```
+</div>
+
+***
+## What about an unfair dice?
+```{r echo = TRUE, collapse = TRUE}
+roll_unfair <- function(){
+  die <- 1:6
+  dice <- sample(die, size = 2, replace = TRUE, 
+                 prob = c(1/8, 1/8, 1/8, 1/8, 1/8, 3/8))
+  sum(dice)
+}
+
+roll_unfair()
+```
+
+***
+## Potting the unfair distribution
+<div id = "left">
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+N <- 10000
+die_rolls <- vector(length = N)
+for (i in 1:N){
+  die_rolls[i] <- roll_unfair()
+}
+```
+</div>
+<div id = "right">
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+hist(die_rolls)
+```
+</div>
