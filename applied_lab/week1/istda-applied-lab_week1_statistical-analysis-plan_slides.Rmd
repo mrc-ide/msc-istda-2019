@@ -1,0 +1,228 @@
+---
+title: "Applied Statistics Lab 1: Developing a Statistical Analysis"
+subtitle: Introduction to Statistical Thinking and Data Analysis <br> MSc in Epidemiology / HDA 2019-20
+author: Deborah Schneider-Luftman (deborah.schneider-luftman11@imperial.ac.uk)<br>Raha Pazoki (r.pazoki@imperial.ac.uk)<br>Jeff Eaton (jeffrey.eaton@imperial.ac.uk)
+date: 7th October 2019
+output: 
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+    css: ../../lectures/template/style_ioslides.css
+    transition: 0	
+---
+
+## Applied statistical analysis {.build}
+
+<div>
+* Statistics is the science of:
+  * collecting, summarizing, presenting, and interpreting data,
+  * estimating the magnitude of associations,
+  * testing hypotheses.
+</div>
+<div>
+* Developing, conducting, and communicating  statistics involves each of these components.
+</div>
+<div>
+* Both written and oral communication are important. 
+  * Written: journal articles, reports, _mini-project assessments_, _MSc theses_.
+  * Oral: Meetings, lectures and seminars, conferences, policy presentations.
+</div>
+<div>
+* Communication of statistical findings almonst _never_ involves computer code or screen output from statistical programs.
+</div>
+<div>
+* The exact steps and processes of statistical analysis (R commands run, assumptions checked, etc.) 
+   are usually not the focus reporting on an analysis.
+</div>
+<div>
+* But it is important that the reporting
+   of results communicates that statistical steps have been done properly.
+  * This will also be the standard for assessment in this course.
+</div>
+
+## Applied Statistics Lab {.columns-2}
+
+* Practice _doing_ statistics:
+  * Data preparation and exploratory analysis.
+  * Developing an analysis plan.
+  * Conducting analysis and interpreting results.
+  * Presenting findings.
+
+* Randomly allocated into groups of 4-5 students each (6 total).
+
+* Three group projects analysing a dataset to address a research question. 
+  * Continuous outcomes and linear regression
+  * Binary data and logistic regression, and
+  * Longitudinal data and survival analysis.
+
+* Culminating in 10 minute group presentation of findings (weeks 4, 7, 10).
+
+|        |                                                                                |
+|--------|---------------------------------------------------------------|
+| 7 Oct  | Developing a statistical analysis plan and reading a paper    |
+| 14 Oct | Project 1: Analysis plan and exploratory analysis             |
+| 21 Oct | Project 1: Inferential analysis and interpretation of results |
+| 28 Oct | **Project 1: Communicating finding (presentation)**           |
+| 4 Nov  | Project 2: Analysis plan and exploratory analysis             |
+| 11 Nov | Project 2: Inferential analysis and interpretation of results |
+| 18 Nov | **Project 2: Communicating finding (presentation)**           |
+| 25 Nov | Project 3: Analysis plan and exploratory analysis             |
+| 2 Dec  | Project 3: Inferential analysis and interpretation of results |
+| 9 Dec  | **Project 3: Communicating finding (presentation)**           |
+
+
+## Applied Statistics Lab Team
+
+<div>
+
+<img src="images/davis.jpg" align="right" width="12%" style="margin:0px 5px">
+<img src="images/eales.jpg" align="right" width="9%" style="margin:0px 5px">
+<img src="images/pazoki.jpg" align="right" width="9%" style="margin:0px 5px">
+
+* MSc in Epidemiology---MSc Room
+  * Dr. Raha Pazoki (Lead; r.pazoki@imperial.ac.uk)
+  * Oliver Eales (o.eales18@imperial.ac.uk)
+  * Katherine Davis (k.davis18@imperial.ac.uk)
+</div>
+
+<div>
+<br>
+<br>
+
+<img src="images/bajaj.jpg" align="right" width="9%" style="margin:0px 5px">
+<img src="images/Thomas.jpg" align="right" width="9%" style="margin:0px 5px">
+<img src="images/Schneider-Luftman.jpg" align="right" width="9%" style="margin:0px 5px">
+
+* MSc in Health Data Analytics---G64
+  * Dr. Deborah Schneider-Luftman (Lead; deborah.schneider-luftman11@imperial.ac.uk)
+  * Matthew Thomas (matthew.thomas@imperial.ac.uk)
+  * Sumali Bajaj (s.bajaj@imperial.ac.uk)
+</div>
+
+## Today
+
+* Introduction: steps in developing a statistical analysis (15 minutes)
+
+* Group exercise: reading a scientific paper (30 minutes)
+  *	Lui C. _et al._ Ambient Particulate Air Pollution and Daily Mortality in 652 Citis. _N Engl J Med_ 2019; 381:705-15. 
+
+* Group exercise: developing a statistical analysis plan (45 minutes)
+  * CDC Field Epidemiology Training Program (FETP): NCD Training Module on _Creating an Analysis Plan_
+    https://www.cdc.gov/globalhealth/healthprotection/fetp/training_modules/9/Creating-Analysis-Plan_PW_Final_09242013.pdf
+  * Practice Exercise 1: Hypertension case study
+  * _Strongly encouraged to work through rest of the workbook._
+
+## Steps in a statistical analysis
+
+1. Identify the research question and hypothesis
+1. Define target population
+1. Select the dataset and define inclusion/exclusion criteria.
+1. Identify variables to be used in main analysis (outcome, main exposure, stratifying variables)
+1. Define key shell tables
+
+2. Conduct exploratory data analysis: understand your dataset.
+3. Conduct inferential statistics: answer your research quesiton
+4. Check assumptions and sensitivity analysis: are the findings robust
+5. Interpret the results: state the conclusion to the research question
+   * Should be as close to a 'yes'/'no' answer to your hypothesis as possible.
+6. Contextualize the findings: how do the findings compare to existing evidence.
+7. Implications for policy and practice,
+
+
+## Two types of statistics
+
+**Descriptive statistics: _Exploratory analysis_**
+
+  * Describe and summarise key features of the dataset
+  * _Understanding the characteristics of a particular sample._
+  
+<br>
+<br> 
+
+**Inferential statistics: _Hypothesis driven_**
+
+  * Use data from a _sample_ to draw conclusions about the _population_.
+  * Generalizable scientific conclusions that add to general body of knowledge.
+
+## Reading a paper 
+
+* Scientific papers in medicine, epidemiology, and public health follow a formulaic format that map to the steps of a statistical analysis.
+
+* Introduction:
+ 
+  * What is the research question?
+  * Why is it important?
+  * What is the target population
+  
+* Methods 
+  * Define the dataset
+  * Inclusion and exclusion criteria
+  * Statistical methods and assumptions
+
+## Reading a paper 
+
+* Results
+
+  * 'Table 1': descriptive statistics
+  * Statistical inference results: answers to the research questions.
+  
+* Conclusions
+  
+  * Answer primary research question
+  * Contextualize findings, compare with other literature
+  * Implications for policy, practice, future research
+  
+
+
+## MSc Epidemiology Groups (MSc Room)
+
+* Randomly allocated groups: `matrix(epi_student_names[sample.int(29)], nrow = 6)`
+
+| Group 1          | Group 2          | Group 3                  | Group 4                   | Group 5            | Group 6        |
+|------------------|------------------|--------------------------|---------------------------|--------------------|----------------|
+| Lucy Williams    | Daniel Anderson  | Isa Ahmad                | Zeynep Betul Ersoy Guller | T S Mehreen Begum  | Xiaochu Zhong  |
+| Atsunori Nanjo   | Alexandra Santos | Xiaolin Zhang            | Ben Griffiths             | Ipsita Sutradhar   | Abagael Sykes  |
+| Nurin Abdul Aziz | Dana Kappel      | Rachael Piper            | Tianhang Zhang            | Nick Jayanth       | Nisa Wahyuni   |
+| Pinle Li         | Fionnuala McDaid | Bethan Cracknell Daniels | Devleena Ray              | Vinh Ho            | Anna Ionnidou  |
+|                  | Katherine Jia    | Aaron Patterson          |                           |                    |                |
+
+## MSc HDA Groups (G64)
+
+* Randomly allocated groups: `matrix(hda_student_names[sample.int(25)], nrow = 6)`
+
+| Group 1               | Group 2       | Group 3               | Group 4        | Group 5             | Group Sibo          |
+|-----------------------|---------------|-----------------------|----------------|---------------------|------------------|
+| Sibo Cheng            | Minyue Wang   | Victor Lhoste         | Chen Xie       | Nina De Toro        | Mantej Sehmbhi   |
+| Vasiliki Nikolodimou  | Danielle Rose | Thomas Wright         | Adam Marcus    | Tang Sonja          | Timothée Rolland |
+| Fatima Shahid         | Imogen Younge | Tous Shahedian-Farid  | Khezia Asamoah | Tarana Mehdikhanova | Tresnia Berah    |
+| Frances Conti-Ramsden | Luis Chavez   | Vasilios Karageorgiou | Ana Pengelly   | Nael Alqatati       | Catriona Mackay  |
+| Anran Yu              | Yiwen Xu      |                       |                |                     |                  |
+
+## Exercise 1: Reading a paper---_Liu et al._
+
+* _Systematically_ Read the paper by Liu and colleagues on ambient air pollution and daily mortality.
+  * On Blackboard supplementary appendix and accompanying commentary are also provided for interest.
+  
+* Identify the key parts of the statistical analysis plan communicated in each section.
+  
+  1. What is the research question and main hypothesis?
+  2. What is the target population?
+  3. What is the data set? Is it generalizable to the target population? Are there any inclusion/exclusion criteria that limit the generalizability of the findings?
+  4. What are the statistical methods and key assumptions?
+  5. Identify where and how descriptive statistics and exploratory analysis are reported.
+  6. Identify where and how inferential statistical analysis is reported.
+  7. What is the answer to the research question enumerated in question 1? Does the evidence of the analysis **support the hypothesis**?
+  8. How do the findings compared to other evidence and what is the added value of this study?
+  9. What are the consequence fo the interpretation for public health and policy?
+
+## Exercise 2: CDC Hypertension Case Study
+
+* Read the Hypertension Case Study on pages 16-21.
+
+* In your group address and record the following components of the analysis plan:
+  
+  1. Research question(s) and/or hypotheses.
+  2. Dataset(s) to be used.
+  3. Inclusion/exclusion criteria.
+  4. Variables to be used in the main analysis (List 3-4 outcome and exposure variables).
+  5. Statistical methods and software to be used.
