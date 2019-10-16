@@ -196,7 +196,7 @@ class(die)
 
 ***
 ## Coercion
-R always behaves the same when it coerces dara types.
+R always behaves the same when it coerces data types.
 
 * If an atomic vector contains a string, R converts everything to strings.
 ```{r,  echo = TRUE, collapse = TRUE}
