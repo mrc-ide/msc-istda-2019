@@ -1,0 +1,343 @@
+---
+title: "Session 2: Introduction to R - Project 2"
+author: Dr Juliette Unwin
+date: 16th October 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(knitr)
+#opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover:
+
+* Different data structures
+* Loading and saving data
+* Extracting individual values from a data set
+* Changing values within a data set
+* R's missing value symbol
+
+and is based on Part 2 of Hands-On Programming with R by Garrett Grolemund.
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/NFEmw8Cv8S2KVwS18
+
+<img class="plain"  text-align:middle  src="../images/weektwo.png">
+
+***
+## Atomic vectors
+
+Most common type of data structure found in R.
+
+```{r, echo = TRUE, collapse = TRUE}
+die <- c(1, 2, 3, 4, 5, 6)
+
+# Test length
+length(die)
+# What type of variable is die?
+typeof(die)
+# Is die a vector?  Returns a logical
+is.vector(die)
+```
+
+***
+## Atomic vectors
+```{r, echo = TRUE, collapse = TRUE}
+# What about a single value?
+five <- 5.4
+typeof(five)
+is.vector(five)
+```
+
+***
+
+## Other data types
+
+* doubles (also called numerical) e.g. 1.1
+* integers e.g. 1
+* characters e.g. text
+* logicals e.g. TRUE/ FALSE
+* complex
+* raw
+
+***
+## Doubles vs Integers
+
+```{r, echo = TRUE, collapse = TRUE}
+die <- c(1, 2, 3, 4, 5, 6)
+typeof(die)
+
+die2 <- c(1L, 2L, 3L, 4L, 5L, 6L)
+typeof(die2)
+```
+
+Integers are saved to higher precision as long as they aren't too large.
+
+Mostly you will consider doubles.
+
+***
+## Characters
+
+```{r, echo = TRUE, collapse = TRUE}
+text <- c("hello", "world")
+
+#Print
+print(text)
+
+#type
+typeof(text)
+```
+
+***
+## Logicals
+
+True or False
+
+```{r, echo = TRUE, collapse = TRUE}
+3 > 4
+
+true <- TRUE
+typeof(true)
+
+f <- F
+typeof(f)
+
+```
+
+***
+## If/ else statements
+Logicals are used in if else statements.
+```{r, echo = TRUE, collapse = TRUE}
+a <- 3
+if (a > 4){ # The part in () is the logical
+  print(a*b) # The part in {} is the code that is evaluated if 
+             # statement is TRUE
+}
+```
+
+***
+## Complex Numbers
+```{r, echo = TRUE, collapse = TRUE}
+complex <- 1 + 7i
+typeof(complex)
+```
+
+***
+## Raw
+```{r, echo = TRUE, collapse = TRUE}
+raw(3)
+raw_number <- raw(3)
+typeof(raw_number)
+```
+
+***
+## Names
+
+Can give vectors names.
+
+```{r, echo = TRUE, collapse = TRUE}
+die <- 1:6
+# Check attributes of vector
+attributes(die)
+# Check names
+names(die)
+# Set names
+names(die) <- c("one", "two", "three", "four", "five", "six")
+
+# Check names and attributes again
+names(die)
+attributes(die)
+```
+***
+## Names
+```{r, echo = TRUE, collapse = TRUE}
+# Add 2 to die
+die + 2
+
+# Remove names
+names(die) <- NULL
+die
+```
+
+## Dimensions of data structures
+
+```{r, echo = TRUE, collapse = TRUE}
+dim(die)
+
+# Set 2 row matrix
+dim(die) <- c(2, 3)
+die
+
+# Set array
+die <- 1:6
+dim(die) <- c(1, 2, 3)
+die
+```
+
+***
+## Matrices
+Can make matrices (2 dimensional objects) straight out
+
+```{r, echo = TRUE, collapse = TRUE}
+matrix(die, nrow = 2)
+```
+
+***
+## Arrays
+Can make arrays (n dimensional objects)
+
+```{r, echo = TRUE, collapse = TRUE}
+array(c(11:14, 21:24, 31:34), dim = c(2, 2, 3))
+```
+
+***
+## Classes
+Changing dimension doesn't change object type but class
+
+```{r, echo = TRUE, collapse = TRUE}
+die <- c(1, 2, 3, 4, 5, 6)
+dim(die)
+class(die)
+
+# Change dimensions
+dim(die) <- c(2, 3)
+# Check dimension and class
+dim(die)
+class(die)
+```
+
+***
+## Coercion
+R always behaves the same when it coerces data types.
+
+* If an atomic vector contains a string, R converts everything to strings.
+```{r,  echo = TRUE, collapse = TRUE}
+vec <- c(1, TRUE, "seven")
+print(vec)
+```
+
+* If atomic vector only contains logicals and numbers,  R will convert all to numerics
+```{r,  echo = TRUE, collapse = TRUE}
+vec <- c(1, TRUE, FALSE, 7)
+print(vec)
+```
+***
+
+* Same rules happen when doing maths
+```{r,  echo = TRUE, collapse = TRUE}
+# Sum
+sum(c(TRUE, FALSE, TRUE))
+```
+* Can convert manually
+```{r,  echo = TRUE, collapse = TRUE}
+as.character(1)
+as.logical(1)
+as.numeric(FALSE)
+```
+
+***
+## Lists
+
+Lists group different types of data into a one dimensional array
+```{r,  echo = TRUE, collapse = TRUE}
+# Make a list
+my_list <- list("hello", c(1, 2, 3), FALSE)
+my_list 
+```
+
+***
+## Data frames
+
+Data frames are like two dimensional lists.  In a column, data must be the same type, but can vary between columns.
+```{r,  echo = TRUE, collapse = TRUE}
+# Make a data frame
+df <- data.frame(1:3, c("Alice", "Mary", "John"))
+df
+
+```
+
+***
+## Loading data
+
+File is found here: https://gist.github.com/garrettgman/9629323
+
+```{r,  echo = TRUE, collapse = TRUE}
+card <- read.csv("../data/deck.csv")
+```
+
+***
+## Saving data
+
+```{r,  echo = TRUE, collapse = TRUE}
+write.csv(card, "../data/deck.csv")
+```
+
+***
+## Selecting values
+
+R indexes from 1!
+
+```{r,  echo = TRUE, collapse = TRUE}
+# Indexing with numbers
+card[1, ]  # Whole row
+card[1, 2] # One item
+# Selecting columns
+card[, 1]
+# Using negative indexing
+a <- card[-1, ] # Removes first row
+# Uses column names
+b <- card$face
+```
+
+## How would you write a card dealing function?
+
+```{r,  echo = TRUE, collapse = TRUE}
+# Write a deal function
+deal <- function(card){
+  #return top card
+  card[1,]
+}
+
+new_card <- deal(card)
+```
+
+***
+## Modifying values
+```{r,  echo = TRUE, collapse = TRUE}
+# Modify a value
+subset_card <- card[1:3,]
+# Add a value at end of vector
+subset_card[2,3] <- 15
+# Add a new column to data frame
+subset_card$new <- c(1, 2, 3)
+
+# Change all aces to be higher than king
+card$value[which(card$face == "ace")] <- 14 
+card
+```
+
+***
+## Missing values
+
+```{r,  echo = TRUE, collapse = TRUE}
+# Making a vector with a missing value
+missing <- c(NA, 1:10)
+print(missing)
+
+# Calculating mean
+mean(missing, na.rm = TRUE)
+# Indexing missing values
+which(is.na(missing))
+```

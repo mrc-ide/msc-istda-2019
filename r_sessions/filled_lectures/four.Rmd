@@ -1,7 +1,7 @@
 ---
 title: "Session 4: Loading and formatting data"
 author: Dr Juliette Unwin
-date: 16th October 2019
+date: 30th October 2019
 output: 
   revealjs::revealjs_presentation:
     css: ../styles.css
