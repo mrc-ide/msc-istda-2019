@@ -13,7 +13,7 @@ High blood pressure (hypertension) is one of the leading risk factors for stroke
 
 Averting the negative health impacts of cardiovascular and kidney disease requires identifying populations at risk of high blood pressure who would benefit from public health interventions to treat and prevent high blood pressure. 
 
-Though effective medicines for high blood pressure exist (ACE inhibitors, ARBs, calcium channel blockers),^3^ lifelong treatment to reduce blood pressure are expensive for the health system and may be undesirable for patients. Previous research has suggested several mutable lifestyle factors that are associated with high blood pressure and may be targets for intervention for persons wishing to reduce their blood pressure. Targeting precise public health promototion required identification of which lifestyle factors are most strongly and directly related to high blood pressure in the American population.
+Though effective medicines for high blood pressure exist (ACE inhibitors, ARBs, calcium channel blockers),^3^ lifelong treatment to reduce blood pressure are expensive for the health system and may be undesirable for patients. Previous research has suggested several mutable lifestyle factors that are associated with high blood pressure and may be targets for intervention for persons wishing to reduce their blood pressure. Targeting public health promotion required identification of lifestyle factors that are most strongly and directly related to high blood pressure in the American population.
 
 
 # Aims 
@@ -61,7 +61,7 @@ __End of session:__ Each group give a brief 2-minute presentation stating your h
 * Interpret the results of your analysis with respect to each of your research questions and hypotheses.
 * Check any important assumptions underpinning your analysis and conclusions and conduct any sensitivity analyses to confirm the robustness of your results. Enumerate any important limitations to your results or interpretations.
 * Contextualize your findings compared to other existing evidence.
-* Identify key recommendaions from your study for advanced scientific understanding, public health policy or practice, and future research priorities.
+* Identify key recommendations from your study for advanced scientific understanding, public health policy or practice, and future research priorities.
 * Prepare a 10-minute presentation of your results, including:
   * Background, research question, and hypotheses.
   * Methods: variables used and statistical analyses.
@@ -80,3 +80,4 @@ There will be 10 minutes at the start of the session for any final coordination 
 2. GBD 2017 Risk Factor Collaborators. Global, regional, and national comparative risk assessment of 84 behavioural, environmental and occupational, and metabolic risks or clusters of risks for 195 countries and territories, 1990-2017: a systematic analysis for the Global Burden of Disease Study 2017. _Lancet_ 2018; 392:1923-1994.
 
 3. https://www.nhs.uk/conditions/high-blood-pressure-hypertension/treatment/
+f

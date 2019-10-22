@@ -1,0 +1,413 @@
+---
+title: "Week 1 Tutorial: Sampling from a population, summarizing data, and the normal distribution -- Solutions"
+subtitle: Introduction to Statistical Thinking and Data Analysis
+author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
+date: "7 October 2019; reviewed 14 October 2019"
+output:
+  pdf_document: default
+params: 
+  filename: 'perulung_ems.csv'
+header-includes:
+- \usepackage{xcolor}
+- \definecolor{darkred}{RGB}{139,0,0}
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE)
+```
+  
+  1. The dataset `perulung_ems.csv` contains data from a study of lung function among a sample of 636 children aged 7 to 10 years living in a deprived suburb of Lima, Peru, introduced on page 27 of Kirkwood and Sterne. FEV1 is the _forced expiratory volume_ in 1 second, the maximum amount of air which children could breath out in 1 second measured using a spirometer.
+
+  | Variable     | Description                                                      |
+  |--------------| -----------------------------------------------------------------|
+  | id           | Participant ID number                                            |
+  | fev1         | Forced Expiratory Volume in 1 second                             |
+  | age          | Age in years                                                     |
+  | height       | Height in centimeters                                            |
+  | sex          | Sex (0 = female, 1 = male)                                       |
+  | respsymptoms | Presence of respiratory symptoms (0 = no symptoms; 1 = symptoms) |
+  
+  a. What type of variable is each variable in the dataset?
+
+\color{darkred}
+```{r eval=TRUE} 
+perulung <- read.csv("perulung_ems.csv")
+str(perulung)
+```
+
+* `fev1` and `age` are __continuous__ numerical variables.
+* `sex` and `respsymptoms` are __binary__ variables although encoded in the dataframe as integers.
+
+For the categorical variables `sex` and `respsymptoms`, add factor labels to the variables.
+
+```{r}
+perulung$sex <- factor(perulung$sex, c(0, 1), c("female", "male"))
+perulung$respsymptoms <- factor(perulung$respsymptoms, c(0, 1), c("no symptoms", "symptoms"))
+
+str(perulung)
+```
+
+\color{black}
+     
+  b. What shape is the frequency distribution of each of the variables?
+
+\color{darkred}  
+
+* fev1: has a symmetrical distribution
+* age: has a bimodal distribution (this is a bit surprising)
+* height: has a symmetrical distribution
+* sex: binary (response fairly well balanced)
+* respsymptoms: binary (response imbalanced - more without symptoms)
+
+
+```{r}
+par(mfrow = c(3, 3),   # panel of plots with 3 rows and 3 columns
+    mar = c(2, 3, 2, 1)) 
+hist(perulung$fev1, main = "FEV1", xlab = "")
+hist(perulung$age, main = "Age")
+hist(perulung$height, main = "Height", xlab = "")
+plot(density(perulung$fev1), main = "FEV1", xlab = "")
+plot(density(perulung$age), main = "Age", xlab = "")
+plot(density(perulung$height), main = "Height", xlab = "")
+barplot(table(perulung$sex), main = "Sex", ylab = "Frequency")
+barplot(table(perulung$respsymptoms), main = "Respiratory symptoms", ylab = "Frequency")
+
+## Frequency table
+table(perulung$sex)
+
+## Frequency proportions
+prop.table(table(perulung$sex))
+
+## Frequency table
+table(perulung$respsymptoms)
+
+## Frequency proportions
+prop.table(table(perulung$respsymptoms))
+```
+
+\color{black}  
+
+  c. What are some research questions which these data could have been collected to address?
+
+      \color{darkred}  
+
+      * What is the epidemiology of respiratory systems by age and gender?
+      * Do respiratory symptoms negatively affect pulmonary function measured by forced expiratory volume in 1 second (FEV1)?
+      * How does pulmonary function develop with age and height?
+      * What groups of children are most at risk for respiratory illness?  
+  
+      \color{black}
+  
+  d. Use R to create appropriate univariate graphical summaries of each of the variables.
+  
+      \color{darkred}
+  
+      * fev1: histogram
+      * age: boxplot
+      * height: density plot
+  
+```{r eval=TRUE}
+par(mfrow = c(2, 3),
+    mar = c(2, 3, 2, 1)) 
+hist(perulung$fev1, main="Histogram of fev1", xlab="")
+boxplot(perulung$age, main="Age Boxplot")
+plot(density(perulung$height), main="Height Density")
+barplot(table(perulung$sex), main="Barplot of Sex Frequency")
+barplot(table(perulung$respsymptoms), main = "Frequency of Respiratory Symptoms")
+```
+```{r, results = "hold", fig.height = 2.5, fig.width = 3.5, fig.align = "center"}
+## Replicate same figures with ggplot
+library(ggplot2)
+ggplot(perulung, aes(fev1)) +
+  geom_histogram()
+
+ggplot(perulung, aes(y = age)) +
+  geom_boxplot()
+
+ggplot(perulung, aes(height)) + 
+  geom_density(fill = "navy")
+
+ggplot(perulung, aes(sex)) +
+  geom_bar()
+
+ggplot(perulung, aes(respsymptoms)) +
+  geom_bar()
+```
+\color{black}
+  
+  e. Create a single table summarizing key characteristics of the sample---an appropriate 'Table 1' for a medical or epidemiologic paper. (It is probably possible to construct a full table with R commands, but you might find it easier to do calculations of summary statistics with R and copy the R output into a separate table in MS Word, Excel, or similar.)
+  
+\color{darkred}
+
+  | Group 1             |   No symptoms  |    Symptoms    |      Total     |
+  |---------------------|:--------------:|:--------------:|:--------------:|
+  | N (%)               |    491 (77%)   |    145 (23%)   |   636 (100%)   |
+  | Sex: male (% of N)  |    237 (48%)   |    64 (44%)    |    301 (47%)   |
+  | Median age (IQR)    | 9.0 (8.5--9.7) | 8.7 (8.5--9.1) | 8.9 (8.5--9.6) |
+  | Mean height cm (SD) |    124 (6.2)   |    123 (6.4)   |    124 (6.2)   |
+  | Mean FEV1 (SD)      |   1.63 (0.29)  |   1.48 (0.33)  |   1.59 (0.30)  |
+  
+  ```{r, results = "hide"}
+  
+  summary(perulung$height)
+  summary(perulung$fev1)
+  
+  aggregate(cbind(height, fev1) ~ respsymptoms, perulung, function(x) c(mean = mean(x), sd= sd(x)))
+  aggregate(fev1 ~ respsymptoms, perulung, mean)
+  
+  ## Calculate with dyplyr
+  library(dplyr)
+  
+  count(perulung, respsymptoms) %>% 
+    mutate(p = n/sum(n))
+  count(perulung)
+  
+   perulung %>%
+   group_by(respsymptoms) %>%
+   summarise(male_freq = sum(sex == "male"), 
+             male_prop = mean(sex == "male"),
+             age_med = median(age),
+             age_iqr1 = quantile(age, 0.25),
+             age_iqr2 = quantile(age, 0.75),
+             height_mean = mean(height),
+             height_sd = sd(height),
+             fev1_mean = mean(fev1),
+             fev1_sd = sd(fev1))
+            
+   perulung %>%
+   summarise(male_freq = sum(sex == "male"), 
+             male_prop = mean(sex == "male"),
+             age_med = median(age),
+             age_iqr1 = quantile(age, 0.25),
+             age_iqr2 = quantile(age, 0.75),
+             height_mean = mean(height),
+             height_sd = sd(height),
+             fev1_mean = mean(fev1),
+             fev1_sd = sd(fev1))
+  ```             
+
+\color{black}
+
+
+f. In this sample of 636 children, does there appear to be an association between:
+
+   (i) sex and height, 
+   (ii) age and height,
+   (iii) sex and lung function, 
+   (iv) sex and presence of respiratory symptoms,
+   (v) respiratory symptoms and lung function.
+
+   Support your answers with graphical or numerical evidence.
+
+   \color{darkred}
+   
+   (i) There does appear to be a strong relationship between sex and height in our dataset. The average height and quartiles are very similar for male and female children.
+   
+    ```{r eval=TRUE, out.width = "50%"}
+    aggregate(height ~ sex, perulung, mean)
+    boxplot(height ~ sex, perulung)
+    ```
+
+   (ii) Height is positively correlated with age, based on a scatterplot of the two variables.
+    ```{r eval=TRUE, fig.height = 4, fig.width = 4, out.width = "50%", fig.align = "center"}
+    plot(perulung$age, perulung$height)
+    ```   
+
+    (iii) The mean FEV1 was slighlty higher for male children at 1.66 versus 1.54 for females.
+   
+    ```{r eval=TRUE, out.width = "50%", fig.align = "center"}
+    aggregate(fev1 ~ sex, perulung, mean)
+    boxplot(fev1 ~ sex, perulung)
+    ```   
+    (iv) There does not appear to be a strong relationship between sex and respiratory symptoms. 24% of female children had respiratory symptoms compared to 21% of male children.
+    
+    ```{r}
+    prop.table(table(perulung$sex, perulung$respsymptoms), 1)
+    ```
+
+   (v) Children with respiratory symptoms had substantially lower FEV1 compared to children with no respiratory symptoms.
+   ```{r, out.width = "50%", fig.align = "center"}
+   aggregate(fev1 ~ respsymptoms, perulung, mean)
+   boxplot(fev1 ~ respsymptoms, perulung)
+   ```
+
+   \color{black}
+   
+   g. What is the target population to which your conclusions about these questions might generalize? 
+
+   \color{darkred}
+   * Children from deprived areas in urban Latin America.
+   \color{black}
+  
+  \newpage
+
+2. The _National Health and Nutrition Examination Survey_ (NHANES) is a nationally representative survey to assess the health and nutrition of adults and children in the United States. The survey was first conducted in the 1960s and has been conducted continuously since 1999 with around 5000 respondents sampled and interviewed in their homes every year. The survey consists of a combination of questionnaire responses and physical and biomarker measurements. Further information about the survey and datasets can be found here: https://www.cdc.gov/nchs/nhanes/index.htm.
+
+   The R package [`NHANES`](https://cran.r-project.org/package=NHANES) contains an extract of 75 variables about 10,000 respondents to NHANES between 2009 and 2012 abstracted for educational purposes. The actual NHANES survey datasets include sampling weights to account for non-equal sampling probability of certain population groups to increase the statistical efficiency of the survey, which is not covered in this course. The dataset of 10,000 respondents in the `NHANES` R package has been constructed such that the dataset can analysed as if it were a simple random sample from the American population. See the package documentation for information and links about accessing and analysing the actual NHANES data for research purposes; there are other R packages available on CRAN to assist with accessing and processing the actual NHANES survey data.
+
+   
+   The objective of this exercise is to practice loading large datasets into R, understanding the structure and variables in a dataset, and conducting exploratory analysis.
+   
+   a. Open and explore the NHANES dataset in R through the following steps:
+   
+      * Install the `NHANES` R package: `install.packages("NHANES")` 
+      * Load the R package: `library(NHANES)` 
+      * Load the NHANES dataset into your workspace: `data(NHANES)` 
+      * Use the command `?` to access the help page for the dataset: `?NHANES` 
+	  
+	  Review the dataset documentation, particularly paying attention to:
+	  
+	  (i) What was the purpose for collecting the data?
+	  (ii) When and how were the data in the dataset collected?
+	  (iii) What is the target population of the sample?
+	  (iv) What is the sample size? Who was eligible to be included in the dataset? Are there different eligibility or inclusion criteria for certain variables?
+	  (v) What are the areas of information available in the dataset?
+
+    \color{darkred}
+    ```{r, results = "hold"}
+    ## install.packages("NHANES")
+    library(NHANES)
+    data(NHANES)
+    ?NHANES
+    ```
+    (i) The data were collected to monitor the health and nutrition of children and adults in the United States>
+    (ii) The data were collected in two survey rounds between 2009-2012. Data were collected through interviews in the respondent's home and a health examination conducted in a mobile examination centre. 
+    (iii) The target population was the non-institutionalised civilian resident population of the United States. 
+    (iv) The sample size for the analytical dataset is 10,000 adults and children. All non-institutionalised civilian residents of the United States are eligible to be included in the sample. Several variables have different inclusion criteria. For example, educational level and marital status are recorded for participants aged 20 or over only; length only for children under 3; head circumference is measured only for children aged 0-6 months.
+    (v) Data are available about demographic characteristics, physical health measurements, health biomarkers and reported health state, and lifestyle variables.
+
+   \color{black}
+   
+   In the documentation, note that several of the variables are only collected for respondents of a certain age range or in one of the survey rounds but not the other. This is important to take note because it may affect what questions can be addressed by the data, or result in errant conclusions and incorrect interpretation if eligibility and inclusion criteria are not appropriately considered during analysis. For the remainder of the tutorial, we will only consider the subset of the sample who are adults aged 20 years and older. 
+
+   Construct this dataset with the R command: `nhanes20pl <- NHANES[NHANES$Age >= 20, ]`
+
+   ```{r echo=TRUE}
+   nhanes20pl <- NHANES[NHANES$Age >= 20, ]
+   ```
+
+   (vi) Confirm that your new dataset has 7235 respondents remaining. Use at least one different R command to acheive construction of the same subsetted dataset. Confirm that your alternate command has the same number of rows and columns.
+
+   \color{darkred}
+   ```{r eval=TRUE}
+   nrow(nhanes20pl)
+   subset(NHANES, Age >= 20) %>% nrow()
+   NHANES[which(NHANES$Age >= 20), ] %>% nrow()
+   filter(NHANES, Age >= 20) %>% nrow()
+   ```
+   \color{black}
+
+
+   b. _Types of variables._ Using the subsetted `nhanes20pl` dataset, identify at least one variable of each of the types of variables: continuous, discrete numeric, binary, categorical, and ordered categorical.  For an identified variable of each type, create an appropriate summary of the frequency distribution and calculate an appropriate measure of central tendency and variation.
+  
+   \color{darkred}
+  
+   * Continous variable: Weight --- mean and standard deviation
+   * Discrete numeric variable: HomeRooms --- median and interquartile range due to positive skew (mean & SD probably also reasonble)
+   * Binary variable: Gender --- frequency table, frequency proportions
+   * Categorical variable: Race1 --- frequency table, frequency proportions
+   * Ordered categorical: Education --- frequency table, frequency proportions
+  
+   ```{r}
+   par(mfrow = c(2, 3))
+   hist(NHANES$Weight)
+   hist(NHANES$HomeRooms)
+   barplot(table(NHANES$Gender), main = "Barplot of Gender")
+   barplot(table(NHANES$Race1), main = "Barplot of Race1")
+   barplot(table(NHANES$Education), main = "Barplot of Education")
+   ```
+   ```{r}
+   mean(NHANES$Weight, na.rm=TRUE)
+   sd(NHANES$Weight, na.rm=TRUE)
+   
+   median(NHANES$HomeRooms, na.rm=TRUE)
+   quantile(NHANES$HomeRooms, c(0.25, 0.75), na.rm=TRUE)
+
+   table(NHANES$Gender)
+   prop.table(table(NHANES$Gender))
+  
+   table(NHANES$Race1)
+   prop.table(table(NHANES$Race1))
+  
+   table(NHANES$Education)
+   prop.table(table(NHANES$Education))
+   ```
+   \color{black}
+
+
+
+   c. _Frequency distributions._ Identify at least one variable in the dataset that has a frequency distribution matching each of the shapes described in Kirkman and Sterne Figures 3.5 and 3.6 (pages 20-21).  For each of the identified variables, calculated the mean, median, mode, variance, standard devation, range, and interquartile range.
+   
+   \color{darkred}
+   
+   * Symmetric: Height
+   * Positive skew: SmokeAge
+   * Negative skew: DiabetesAge
+   * Bimodal: Testosterone
+   * Reverse-J: DaysMentHlthBad  (tenuous example)
+   * Uniform: _no good example_
+   
+    ```{r}
+    summary(nhanes20pl[c("Height", "SmokeAge", "DiabetesAge", "Testosterone", "DaysMentHlthBad")])
+    par(mfrow = c(2,3))
+    hist(nhanes20pl$Height, breaks = 50)
+    hist(nhanes20pl$SmokeAge, breaks = 50)
+    hist(nhanes20pl$DiabetesAge, breaks = 50)
+    hist(nhanes20pl$Testosterone, breaks = 50)
+    hist(nhanes20pl$DaysMentHlthBad, breaks = 50)
+    ```
+
+   Note: here's a bit of R code to select all of the numeric or integer variables and plot a histogram of each.
+   ```{r, eval = FALSE}
+   df <- nhanes20pl[sapply(nhanes20pl, class) %in% c("integer", "numeric")]
+   df <- df[!apply(is.na(df), 2, all)]
+   
+   par(mfrow = c(6, 8))
+   Map(hist, df, main = names(df), breaks = 100)
+   
+   ```
+   
+   \color{black}
+
+   d. _Missing data._ Using the `nhanes20pl` dataset, review the amount of missing data for each of the variables pertaining to _Demographic Variables_ and _Physical Measurements_.
+
+      (i) Amongst each grouping (_Demographic Variables_ and _Physical Measurements_) identify the one variable with the highest proportion of missing cases. (Do not consider variables that were available for only one of the survey rounds or not recorded for this age range when making your assessment.)
+
+      \color{darkred}
+      * Demographic Variables go from Gender to HomeOwn. Race3 has 3648 missing values because it was only asked for the second survey round 2011-2012.  HHIncome and HHIncomeMid have the greatest number of NAs (missing for 603 observations)
+      
+      * Physical measurements go from Weight to Testosterone. Excluding Testosterone which was only measured in 2011-2012 and variables measured only for children, BPSys1 and BPDia1 have the largest number of missing observations (missing for 519 cases).
+      
+      ```{r}
+      ## Demographic variables are Gender to HomeOwn: columns 3:15
+      names(nhanes20pl[3:15])
+      colSums(is.na(nhanes20pl[3:15]))  # number missing values for each column
+      
+      ## Physical Measurements go from Weight to Testosterone (columns 17:33) columns 3:15
+      names(nhanes20pl[17:33])
+      colSums(is.na(nhanes20pl[17:33]))
+      ```
+      
+      \color{black}
+
+
+    (ii) For each of these two variables, in this sample, is there any relationship between `Gender` or `Race1` and the probability that data on the outcome is missing?
+
+\color{darkred}
+
+* HHIncome is slightly more likely to be missing for female respondents (9.0%) than male respondents (7.6%). HHIncom is much less likely to be missing for white respondents (5.9%) compared to other groups for whom it is missing between 12.2% and 14.8%.
+
+* BPSys1 is more likely to be missing for females (8.6%) than for males (5.7%). BPSys1 is more likely to be missing for Black and Other race groups.
+
+```{r eval=TRUE}
+prop.table(table(nhanes20pl$Race1, is.na(nhanes20pl$HHIncome)), 1)
+prop.table(table(nhanes20pl$Gender, is.na(nhanes20pl$HHIncome)), 1)
+```
+
+```{r eval=TRUE}
+prop.table(table(nhanes20pl$Gender, is.na(nhanes20pl$BPSys1)), 1)
+prop.table(table(nhanes20pl$Race1, is.na(nhanes20pl$BPSys1)), 1)
+```
+
+
+

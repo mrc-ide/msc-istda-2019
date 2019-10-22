@@ -4,9 +4,11 @@ subtitle: Introduction to Statistical Thinking and Data Analysis
 author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
 date: 14 October 2019; reviewed 21 October 2019
 output:
-  pdf_document: default
+  pdf_document: 
+    keep_tex: yes
 header-includes:
 - \usepackage{xcolor}
+- \usepackage[utf8]{inputenc}
 - \definecolor{darkred}{RGB}{139,0,0}
 ---
 
@@ -52,16 +54,16 @@ knitr::knit_hooks$set(plot = my_plot_hook)
 
        ## A function to return requested outputs as a vector
        calc_ex1a <- function(x, digits = 3) {
-       mu <- mean(x)
-       se <- sd(x) / sqrt(length(x))
+         mu <- mean(x)
+         se <- sd(x) / sqrt(length(x))
        
-       print_ci <- function(ci) paste0("(", round(ci[1], digits), ", ", 
-                                       round(ci[2], digits), ")")
+         print_ci <- function(ci) paste0("(", round(ci[1], digits), ", ", 
+                                         round(ci[2], digits), ")")
         
-       c(mean = round(mu, digits),  
-         ci_norm = print_ci(mu + c(-1, 1) * qnorm(0.975) * se),
-         ci_tdist = print_ci(mu + c(-1, 1) * qt(0.975, length(x)-1) * se),
-         ci_t.test = print_ci(t.test(x)$conf.int))
+         c(mean = round(mu, digits),  
+           ci_norm = print_ci(mu + c(-1, 1) * qnorm(0.975) * se),
+           ci_tdist = print_ci(mu + c(-1, 1) * qt(0.975, length(x)-1) * se),
+           ci_t.test = print_ci(t.test(x)$conf.int))
        }
        
        rbind(
@@ -78,24 +80,144 @@ knitr::knit_hooks$set(plot = my_plot_hook)
        The confidence intervals reported by `t.test()` are exactly the same as the small-sample 95% CI. They are very slightly wider than the large-sample CIs, but both are very close because the sample size is large.
        \color{black}
 
+```{r, echo = FALSE}
+print_ci <- function(ci, digits = 3) paste0("(", round(ci[1], digits), ", ", 
+                                             round(ci[2], digits), ")")
+```
+
     b. For each of the following research questions:
         
        * articulate an appropriate null and alternative hypothesis,
        * calculate an appropriate estimate and uncertainty range,
        * determine an appropriate statistical test for your hypothesis, and
-       * report the results of your hypothesis test to answer the question..
+       * report the results of your hypothesis test to answer the question.
     
        i. Is the average height of children aged 7 to 10 years in Lima greater than 124cm?
-       ii. Is the average height of girls in Lima equal to 123.5cm?
-       iii. Is there an association between sex and height amongst children in Lima?
-       iv. Is there an association between age and height amongst children in Lima?
-       v. Do children with respiratory symptoms have reduced pulmonary function compared to children with no respiratory symptoms?
-       vi. Do children who are taller than average for their age also have greater pulmonary function?
-    
-    c. What is the probability that your analyses have correctly answered all six of these questions?
        
        \color{darkred}
-       < This question is not straightforward. I need to think a bit more about it, but probably we should simply remove it. >
+       
+        H0: The average height of children is $\leq124$cm.  
+        H1: The average height of children is >124cm.
+                
+        We used a one-sample t-test with a one-sided alternative hypothesis that the average height is >124cm. We will reject the null hypothesis that if the _p_-value is less than $\alpha = 0.05$.
+        
+        The average height among children aged 7 to 10 was `r round(mean(perulung$height), 2)`cm with 95% confidence interval `r print_ci(t.test(perulung$height)$conf.int, 2)`, representating a range of values
+        within which the true mean height likely falls. The _p_-value was `r round(t.test(perulung$height, mu = 124, alternative = "greater")$p.value, 3)`, indicating a reasonably high probability of observing a sample mean of `r round(mean(perulung$height), 3)` under the null hypthosis that height is $\leq 124$cm.  Thus we fail to reject the null hypothesis at the $\alpha = 0.05$ level.
+         
+        ```{r}
+        mean(perulung$height)
+        t.test(perulung$height)$conf.int
+        t.test(perulung$height, mu = 124, alternative = "greater")
+        ```
+       \color{black}
+       
+       ii. Is the average height of girls in Lima equal to 123.5cm?
+       
+       \color{darkred}
+       H0: Average height of girls in Lima is equal to\ 123.5cm.  
+       H1: Average height of girls in Lima not equal to 123.5cm.  
+       
+       Test: One-sample t-test, two-sided alternative hypothesis.
+       
+       The average height among our sample of 335 girls aged 7 to 10 in Lima is 124.01cm with 95% confidence interval from 123.3cm to 124.7cm.  Compared to the reference value of 123.5cm, the t-statistic is 1.45 with 334 degrees of freedom, corresponding to a p-value of 0.147. Based on the 95% confidence range and/or the p-value, we conclude that our data are not inconsistent with the average height of girls aged 7 to 10 in Lima being 123.5cm
+       
+       _Note: we cannot conclude that the average height is 123.5cm (we can never prove the null hypothesis), only conclude that our data are not inconsistent with this value._
+       
+       ```{r}
+       x_female <- perulung$height[perulung$sex == "female"]
+       length(x_female)
+       mean(x_female)
+       t.test(x_female, mu = 123.5)
+       
+       ```
+       \color{black}
+       
+       
+       iii. Is there an association between sex and height amongst children in Lima?
+       
+       \color{darkred}
+       
+       H0: The average height of female children is equal to the average height of male children.
+       H1: The average height of female children is not equal to the average height of male children.
+       
+       Hypothesis test: two-sample t-test with equal variance (unequal variance t-test also acceptable); two-sided alternative hypothesis.
+       
+       In our sample of 301 male children and 335 female children, the male children were 0.09cm taller than the female children (95% CI -0.89--1.06cm). The t-value was 0.172 on 634 degrees of freedom, corresponding to a two-sided p-value of 0.86. Is is very probable that we would have observed a difference this large or greater if there was no true height difference between male and female children. Thus we conclude that our data do not provide evidence to reject the null hypothesis that the average heights of male and female children are equal.
+       
+       ```{r}
+       table(perulung$sex)
+       x_female <- perulung$height[perulung$sex == "female"]
+       x_male <- perulung$height[perulung$sex == "male"]
+       
+       mean(x_male) - mean(x_female)
+       t.test(x_male, x_female, var.equal = TRUE)
+       ```
+       
+       \color{black}
+       
+       iv. Is there an association between age and height amongst children in Lima?
+       
+       \color{darkred}
+       We use linear regression to estimate the relationship between the outcome height as a linear function of age. The regression coefficient $\beta_1$ indicates the average change in height per additional year of age.
+       
+       H0: There is no association between height and age. $\beta_1 = 0$
+       H1: There is an association between height and age. $\beta_1 != 0$
+       
+       Each additional year of age was associated with 5.2cm greater height, with 95% confidence interval from 4.6cm to 5.7cm.  The t-value was 18.6 on 634 degrees of freedom, with associated two-sided p-value less than 0.001.  This is strong evidence to reject the null hypothesis of no association between height and age, and conclude that height is positively associated with age amongst children aged 7 to 10.
+       
+       ```{r}
+       fit <- lm(height ~ age, data = perulung)
+       summary(fit)
+       confint(fit)
+       ```
+       \color{black}
+       
+       v. Do children with respiratory symptoms have reduced pulmonary function compared to children with no respiratory symptoms?
+       
+       \color{darkred}
+      
+       H0: FEV1 for children with respitory symptoms is greater than or equal to FEV1 for children with no symptoms.  
+       H1: FEV1 for chidren with respiratory symptoms is less than FEV1 for children with no symptoms.
+       
+       Hypothesis test: two-sample t-test, unequal variance (equal variance also justifiable), **one-sided** alternative hypothesis.
+       
+       The FEV1 for children with with respiratory symptoms was 0.15 litres/second lower than children with no respiratory symptoms (95% CI 0.09--0.21 litres/second). The t-statistic was -4.90 on 211.5 degrees of freedom. The corresponding one-sided _p_-value was <0.001, indicating strong evidence to reject the null hypothesis of no difference and conclude that FEV1 is statistically significantly lower for children with respiratory symptoms compared to those with no symptoms.
+       
+       ```{r}
+       fev1_symp <- perulung$fev1[perulung$respsymptoms == "symptoms"]
+       fev1_nosymp <- perulung$fev1[perulung$respsymptoms == "no symptoms"]
+       mean(fev1_symp) - mean(fev1_nosymp)
+       t.test(fev1_symp, fev1_nosymp)
+       t.test(fev1_symp, fev1_nosymp, alternative = "less")
+       ```
+       \color{black}
+       
+       vi. Do children who are taller than average for their age also have greater pulmonary function?
+       
+       \color{darkred}
+       We used multiple linear regression to estimate the relationship linear relationship between the outcome FEV1 and height, adjusted for age.
+       
+       H0: There is no association between height and FEV1, after adjusting for the effect of age on FEV1.
+       H1: There is an independent effect of height on FEV1, after adjusting for the effect of age.
+       
+       Adjusted for age, each centimeter greater height was associated with 0.025 litres/second greater FEV1 (95% CI 0.021--0.029 liters/s; p <0.001). Thus our data provide strong evidence that greater height is associated with greater FEV1, even after adjusting for the positive association between of older age and FEV1.
+       
+       ```{r}
+       fit6 <- lm(fev1 ~ height + age, data = perulung)
+       summary(fit6)
+       confint(fit6)
+       
+       ```
+       
+       \color{black}
+    
+    c. ~~What is the probability that your analyses have correctly answered all six of these questions?~~
+       CORRECTED QUESTION: If the null hypothesis were true for all of the above six questions, what is the probability of erroneously rejecting at least one null hypothesis and incorrectly concluding an association exists?
+       
+       \color{darkred}
+       Using a Type I error rate threshold of $\alpha = 0.05$, if the null hypothesis is true, there is a 95% probability of correctly failing to reject the null hypothesis and a 5% probability of erroneously rejecting the null hypothesis and incorrectly concluding that there is an association.
+       
+       If all six null hypotheses are true (and all of the tests are independent), the probability of correctly rejecting all of them is 0.95^6^ = 0.735.  Thus the probability that we erroneously reject at least one null hypothesis is 1 - 0.735 = 26.5%.
        \color{black}
 \newpage
 
