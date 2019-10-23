@@ -1,22 +1,103 @@
-3. _Statistical modelling: using the normal distribution to estimate population distributions._ This purpose of this exercise is to practice applying the normal distribution to estimate the distribution of an outcome in a population using data from a sample drawn from the population. The version of the NHANES dataset we are using is constructed to approximate a simple random sample from the American population. Thus we can use the observations in our sample to make inference about the American population.
+---
+title: "Week 2 Tutorial: Normal distribution, t-distribution and hypothesis testing"
+subtitle: Introduction to Statistical Thinking and Data Analysis
+author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
+date: 14 October 2019
+output:
+  pdf_document: default
+---
 
-   We will use dataset `nhanes20pl` subsetted to the adult respondents aged 20 plus. For each of the questions below, consider three continuous variables: 
+1. Revisit the `perulung_ems.csv` dataset from the week 1 tutorial sheet, introduced on page 27 of Kirkwood and Sterne.
+    
+    | Variable     | Description                                                      |
+    |--------------| -----------------------------------------------------------------|
+    | id           | Participant ID number                                            |
+    | fev1         | Forced Expiratory Volume in 1 second                             |
+    | age          | Age in years                                                     |
+    | height       | Height in centimeters                                            |
+    | sex          | Sex (0 = female, 1 = male)                                       |
+    | respsymptoms | Presence of respiratory symptoms (0 = no symptoms; 1 = symptoms) |
+    
+    a. Calculate an estimate and 95% confidence interval for each of the following quantities:
+      
+       i. Height in the whole population.
+       ii. FEV1 in the population
+       iii. Height for male and females children separately.
+       iv. FEV1 for children with respiratory symptoms and those without respiratory symptoms.
+       
+       For each of these outcomes calculate the large sample CI using the normal distribution and the small-sample CI using the t-distribution. Compare your calculations to the 95% CI estimate output by the `t.test()` function.
+    
+    b. For each of the following research questions:
+        
+       * articulate an appropriate null and alternative hypothesis,
+       * calculate an appropriate estimate and uncertainty range,
+       * determine an appropriate statistical test for your hypothesis, and
+       * report the results of your hypothesis test to answer the question..
+    
+       i. Is the average height of children aged 7 to 10 years in Lima greater than 124cm?
+       ii. Is the average height of girls in Lima equal to 123.5cm?
+       iii. Is there an association between sex and height amongst children in Lima?
+       iv. Is there an association between age and height amongst children in Lima?
+       v. Do children with respiratory symptoms have reduced pulmonary function compared to children with no respiratory symptoms?
+       vi. Do children who are taller than average for their age also have greater pulmonary function?
+    
+    c. What is the probability that your analyses have correctly answered all six of these questions?
+       
+\newpage
+
+2. _Statistical modelling: using the normal distribution to estimate population distributions._ The purpose of this exercise is to practice applying the normal distribution to estimate the distribution of an outcome in a population using data from a sample drawn from the population. The version of the NHANES dataset we are using is constructed to approximate a simple random sample from the American population. Thus we can use the observations in our sample to make inference about the American population.
+
+   We will use dataset `nhanes20pl` subsetted to the adult respondents aged 20 plus.
+
+   ```{r}
+   library(NHANES)
+   data(NHANES)
+   nhanes20pl <- NHANES[NHANES$Age >= 20, ]
+   ```
+
+   For each of the questions below, consider three continuous variables: 
+
+   * `Height`: Standing height in centimeters.
    * `BMI`: Body Mass Index
-   * `BPSysAve`: Systolic blood pressure (averaged over three observations)
-   * `Age`: Age in years
+   * `AlcoholYear`: Number of days over the past year that participant drank alcoholic beverages.
 
-a. Create a graph of the frequency distribution for each of the variables, either using histograms or density plots. Do the variables 
-c. For each age of the variables 
+   a.  Create a graph of the frequency distribution for each of the variables, either using histograms or density plots. Does each outcome appear consistent with arising from a normal distribution?
 
+   b. Calculate and report the sample mean and standard deviation for each of the outcomes.
 
-b. < what proportion between x and y >
+   c. Use the normal distribution as a model to estimate the following:
 
-d. Why might the our sampling strategy of asking random people walking down Praed Street be
+      i. The proportion of adults who are above 165cm tall.
+      ii. The proportion of adults between 153cm and 160cm tall.
+      iii. The height of a door in order that 90% of adults can walk under without ducking.
+      iv. The proportion of adults who are obese, defined as BMI above 30.
+      v. The proportion of adults who are overweight, defined as BMI between 25 and 30.
+      vi. The BMI threshold at which 25% of adults are below.
+      vii. The proportion adults who drink alcohol on more than 100 days per year.
+      viii. The proportion of adults who drink alcohol on fewer than 10 days per year.
+      ix. The interquartile range for the number of days per year that American adults drink alcohol.
 
-4. Revisit the male height example from lecture
+   d. Check your estimates based on the normal distribution by directly calculating each of the above proportions amongst the observed sample. Based on this comparison, do you think that the normal distribution is a good model for the population distribution of each outcome in the population?
 
-< simulation and analytically calculate quantiles of the normal distribution >
- * calcualte quantiles of normal
+\newpage
 
+3. _Distribution of the sample mean and confidence intervals._ This exercise will use the NHANES dataset as 'true' population from which to simulate samples and study the properties of the sample mean as an estimator of the population mean. We will use the same three variables studied in exercise 2.  Start by creating a vector of responses removing any `NA` values.
 
-4. _Distribution of the sample mean._ In this
+   ```r
+   height <- nhanes20pl$Height[!is.na(nhanes20pl$Height)]
+   bmi <- nhanes20pl$BMI[!is.na(nhanes20pl$BMI)]
+   alcohol <- nhanes20pl$AlcoholYear[!is.na(nhanes20pl$AlcoholYear)]
+  ```
+
+   Do the following steps for each variable: 
+   
+   a. Simulate a large number of samples with replacement of size 5, 10, 25, 50, 100, and 500. See the function `?sample`. (The function `?replicate` might also be helpful for simulating a large number of samples.)
+   
+   b. For each sample, calculate the sample mean, the large-sample 95% CI using the normal distribution, and the small-sample 95% CI using the t-distribution. (The function `?apply` might be useful.)
+   
+   c. Plot the distribution of the sample mean for each of the increasing sample size. What do you notice about the distribution of the sample mean with increasing sample size for each variable?
+   
+   d. Calculate the coverage of the 95% confidence intervals by calculating for what proportion of samples the 95% confidence interval contains the true population mean (calculated in exercise 2b). Create a figure to visually summarise the analysis of 95% CI coverage at different sample sizes, for the large-sample and small-sample CI, and for different variables.
+     
+      i. How do the coverage of the large-sample CI (using normal distribution) and small-sample CI (using t-distribution) compare at different sample sizes?
+      ii. For a given sample size, how does the coverage compare for each of the three variables? Can you relate this to your findings in exercise 2?

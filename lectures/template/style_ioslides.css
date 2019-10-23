@@ -48,3 +48,14 @@ h2 {
   line-height: 1.3;
   margin-top: 2em;
 }
+
+/* Remove all transitions */
+* {
+  -webkit-transition: none !important;
+  -webkit-transition-delay: 0s !important;
+  -moz-transition-delay: 0s !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  -o-transition-delay: 0s !important;
+  transition: none !important;
+}

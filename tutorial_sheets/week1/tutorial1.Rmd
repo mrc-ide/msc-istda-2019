@@ -45,7 +45,7 @@ output:
    
    a. Open and explore the NHANES dataset in R through the following steps:
    
-      * Install the `NHANES` R package: `install.packages("NHANES")`
+    * Install the `NHANES` R package: `install.packages("NHANES")`
 	  * Load the R package: `library(NHANES)`
 	  * Load the NHANES dataset into your workspace: `data(NHANES)`
 	  * Use the command `?` to access the help page for the dataset: `?NHANES`
