@@ -109,6 +109,19 @@ plot(x, y, type = 'l', lty=2)
 plot(mpg$displ, mpg$hwy)
 abline(lm(mpg$hwy ~ mpg$displ))
 ```
+***
+## Linear models
+```{r echo = TRUE, collapse = TRUE}
+linear_model <- lm(mpg$hwy ~ mpg$displ)
+linear_model_residual <- resid(linear_model)
+
+plot(mpg$displ, linear_model_residual, 
+     ylab="Residuals", xlab="Engine displacement", 
+     main="Linear models residuals") 
+abline(0, 0) 
+
+help(resid)
+```
 
 ***
 ## Bar graph
@@ -124,6 +137,8 @@ barplot(count, las=2)
 # Changing colours
 barplot(count, col="blue")
 ```
+
+***
 ## Plotting bar graphs side by side
 
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
@@ -287,3 +302,32 @@ plot_grid(p1, p2)
 * Base r and qplot are generally thought to be easier to use.
 * ggplot2 is more flexible and can make nicer plots visually.
 * Which you use is up to you and sometimes one may be better than the other.
+
+***
+## Linear regression with categorical variables or factors
+```{r echo = TRUE, collapse = TRUE}
+data <- readRDS("../data/nhanes.RDS")
+
+data$respsymptoms <- as.factor(data$respsymptoms)
+data$sex <- as.factor(data$sex)
+
+mod <- lm(height ~ age + sex, data=data)
+summary(mod)
+mod$fitted.values
+
+```
+y <- 77.5085 + 5.1624*age + 0.330*sex
+
+```{r echo = TRUE, collapse = TRUE}
+df <- as.data.frame(data)
+p <- ggplot(df) + geom_point(aes(x = age, y = height, col = sex))
+
+df$fitted <- mod$fitted.values
+p + geom_line(data = df[which(df$sex == 0),], aes(x = age, y = fitted)) + 
+  geom_line(data = df[which(df$sex == 1),], aes(x = age, y = fitted))
+```
+```{r echo = TRUE, collapse = TRUE}
+warpbreaks$tension
+warpbreaks$tension <- relevel(warpbreaks$tension, ref = "M")
+warpbreaks$tension
+```
