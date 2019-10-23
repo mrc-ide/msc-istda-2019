@@ -12,17 +12,14 @@ output:
 
 ```{r include = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-library(viridis)
-
 library(knitr)
-opts_knit$set(root.dir = '../')
+#opts_knit$set(root.dir = '../')
 ```
 
 ***
 Today's session will cover data visualisation using
 
 * base R
-* qplot
 * ggplot
 
 and is based on data visualisation chapter in R for Data Science by Gorlemund and Wickham.
@@ -56,41 +53,31 @@ plot(mpg$displ, mpg$hwy)
 
 # What else is needed to make this a good plot?
 # Titles
-plot(mpg$displ, mpg$hwy, xlab = "Engine displacement", ylab = "Highway miles per gallon", 
-     main = "Car plot", cex.main=1.5, cex.lab=1.5)
+
 # Grid lines
-grid()
 
 # Specifying shape of points - ?pch
-plot(mpg$displ, mpg$hwy, xlab = "Engine displacement", ylab = "Highway miles per gallon", 
-     main = "Car plot", cex.main=1.5, cex.lab=1.5, pch = 16)
 
 # Specifying colour of points
-plot(mpg$displ, mpg$hwy, col = "red")
-plot(mpg$displ, mpg$hwy, col = mpg$cyl)
+
 # Adding legend
-legend(6, 45, legend = unique(mpg$cyl), col = c(4, 6, 8, 5), pch = 16)
+
 ```
 
 ***
 ## Line plots
 
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
-
 x <- 1:10
 y <- x^2 + 3*x - 6
 plot(x, y, type = 'l')
 
 # Adding a second line 
-y2 <- - x^2 - 3*x + 52
-plot(x, y, type = 'l')
-lines(x, y2, col = "red")
 
-# Line weight
-plot(x, y, type = 'l', lwd=2)
+# Line weight - lwd
 
-# Line style
-plot(x, y, type = 'l', lty=2)
+# Line style - lty
+
 ```
 
 ***
@@ -107,8 +94,9 @@ plot(x, y, type = 'l', lty=2)
 ## Scatter graph with trend lines
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
 plot(mpg$displ, mpg$hwy)
-abline(lm(mpg$hwy ~ mpg$displ))
+
 ```
+
 ***
 ## Linear models
 ```{r echo = TRUE, collapse = TRUE}
@@ -138,7 +126,6 @@ barplot(count, las=2)
 barplot(count, col="blue")
 ```
 
-***
 ## Plotting bar graphs side by side
 
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
@@ -168,19 +155,17 @@ hist(mpg$displ)
 hist(mpg$displ, freq=FALSE)
 
 # Changing size of bins
-hist(mpg$displ, breaks = 20)
+
 
 # Looking at information about histograms
-hist_info <- hist(mpg$displ, breaks = 20)
-hist_info
+
 ```
 
 ***
 ## Vertical and horizontal lines
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
 plot(x = 1:10, y = x^2, type = 'l')
-abline(v = 5)
-abline(h = 60)
+
 ```
 
 ***
@@ -188,21 +173,13 @@ abline(h = 60)
 
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
 par(mfrow=c(1,2))
-plot(x = 1:10, y = x^2, type = 'l')
-plot(x = 1:10, y = x^3, type = 'l')
+
 ```
-
-***
-## Plotting with qplot (ggplot2)
-
-This is what you did last week.
-It's simple plotting with the package ggplot2.  
-Can use, but no time to go over all the options now.
 
 ***
 ## Plotting with ggplot
 
-Plotting with ggplot isn't like plotting with the others.
+Plotting with ggplot isn't like plotting with plot.
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
 library(ggplot2)
 ggplot(mpg)
@@ -216,8 +193,8 @@ ggplot(data = <DATA>) +
 ```
 
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
-ggplot(data = mpg) + 
-  geom_point(aes(x = displ, y = hwy, col = displ))
+# Plot displ against hwy with col displ
+
 ```
 
 ***
@@ -242,11 +219,9 @@ https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
 *** 
 ## A few examples - well presented graph
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
-ggplot(data = mpg) +
-  geom_point(aes(x = displ, y = hwy, col = displ)) +
-  geom_line(aes(x = displ, y = hwy, col = displ)) +
-  xlim(-1, 8) + 
-  xlab("Engine dispacement") + ylab("Highway miles per gallon")
+# Plot displ against hwy with col displ
+# Limits labels
+
 ```
 
 *** 
@@ -258,16 +233,15 @@ y2 <- - x^2 - 3*x + 52
 
 df <- data.frame("x" = x, "y" = y, "y2" = y2)
 
-ggplot(df) + 
-  geom_line(aes(x=x, y= y, colour = "y")) + 
-  geom_line(aes(x=x, y= y2,  colour = "y2")) + 
-  scale_colour_manual(name="Lines", values = c("y" = "red", "y2" = "blue")) 
-```
 
+
+```
+scale_colour_manual(name="Lines", values = c("y" = "red", "y2" = "blue")) 
 *** 
 ## A few examples - histogram
 ```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
-ggplot(mpg) + geom_histogram(aes(displ), bins = 10)
+# histogram of displ
+
 ```
 
 ***
@@ -277,7 +251,7 @@ Can change the theme of graphs to make them look more to your taste
 p <- ggplot(data = mpg) + 
   geom_point(aes(x = displ, y = hwy, col = displ))
 
-p +  theme(legend.title = element_blank())
+p + theme(legend.title = element_blank())
 p + theme_bw()
 ```
 
@@ -293,7 +267,6 @@ p1 <- ggplot(data = mpg) +
 p2 <- ggplot(data = mpg) + 
   geom_point(aes(x = displ, y = hwy, col = displ))
 
-plot_grid(p1, p2)
 ```
 
 *** 
@@ -325,9 +298,4 @@ p <- ggplot(df) + geom_point(aes(x = age, y = height, col = sex))
 df$fitted <- mod$fitted.values
 p + geom_line(data = df[which(df$sex == 0),], aes(x = age, y = fitted)) + 
   geom_line(data = df[which(df$sex == 1),], aes(x = age, y = fitted))
-```
-```{r echo = TRUE, collapse = TRUE}
-warpbreaks$tension
-warpbreaks$tension <- relevel(warpbreaks$tension, ref = "M")
-warpbreaks$tension
 ```
