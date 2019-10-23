@@ -1,0 +1,323 @@
+---
+title: "Session 3: Data visualisation"
+author: Dr Juliette Unwin
+date: 23rd October 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+#opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover data visualisation using
+
+* base R
+* ggplot
+
+and is based on data visualisation chapter in R for Data Science by Gorlemund and Wickham.
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/asekqiTJRPyHK7gB9
+
+<img class="plain"  text-align:middle  src="../images/weekthree.png">
+
+***
+## Exploring the test data set
+
+```{r echo = TRUE, collapse = TRUE}
+library(tidyverse)
+mpg
+
+head(mpg)
+?mpg
+```
+
+***
+## Plotting with base R
+
+***
+## Scatter plots
+
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+plot(mpg$displ, mpg$hwy)
+
+# What else is needed to make this a good plot?
+# Titles
+plot(mpg$displ, mpg$hwy, ylab='y axis', xlab='x axis', main = 'Title')
+
+# Grid lines
+grid()
+# Specifying shape of points - ?pch
+plot(mpg$displ, mpg$hwy, ylab='y axis', xlab='x axis', main = 'Title', pch=17)
+
+# Specifying colour of points
+plot(mpg$displ, mpg$hwy, ylab='y axis', xlab='x axis', main = 'Title', col="red")
+
+# Adding legend
+legend()
+```
+
+***
+## Line plots
+
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+x <- 1:10
+y <- x^2 + 3*x - 6
+y2 <- x^2 + 3*x - 8
+plot(x, y, type = 'l')
+
+# Adding a second line 
+lines(x, y2)
+# Line weight - lwd
+plot(x, y, type = 'l', lwd=10)
+# Line style - lty
+plot(x, y, type = 'l', lty =3)
+```
+
+***
+## Line plots - line styles
+* 0: blank, 
+* 1: solid (default) 
+* 2: dashed
+* 3: dotted 
+* 4: dotdash
+* 5: longdash 
+* 6: twodash.
+
+***
+## Scatter graph with trend lines
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+plot(mpg$displ, mpg$hwy)
+abline(lm(mpg$hwy ~ mpg$displ))
+```
+
+***
+## Linear models
+```{r echo = TRUE, collapse = TRUE}
+linear_model <- lm(mpg$hwy ~ mpg$displ)
+
+linear_model_residual <- resid(linear_model)
+
+plot(mpg$displ, linear_model_residual, 
+     ylab="Residuals", xlab="Engine displacement", 
+     main="Linear models residuals") 
+abline(0, 0) 
+
+help(resid)
+```
+
+***
+## Bar graph
+
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+# Making a bar graph for the different numbers of cars from each manufacturer
+count <- table(mpg$manufacturer)
+barplot(count)
+
+# Rotating axis names
+barplot(count, las=2)
+
+# Changing colours
+barplot(count, col="blue")
+```
+
+## Plotting bar graphs side by side
+
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+table <- table(mpg$cyl, mpg$class, dnn=c("Cylinders", "Class")) # Creates a contingency table
+table
+
+# Stacked
+barplot(table)
+
+# Sidebyside
+barplot(table, 
+        col = c("turquoise4", "turquoise2", "turquoise", "turquoise3"),
+        beside=TRUE)
+
+legend("left", title="Cylinders", 
+       legend = sort(unique(mpg$cyl)), 
+       fill =c("turquoise4", "turquoise2", "turquoise", "turquoise3"),
+       box.lty=0)
+```
+
+***
+## Histograms
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+hist(mpg$displ)
+
+# Normalising histogram
+hist(mpg$displ, freq=FALSE)
+
+# Changing size of bins
+hist(mpg$displ, breaks=20)
+
+# Looking at information about histograms
+hist_variable <- hist(mpg$displ, breaks=20)
+hist_variable
+
+```
+
+***
+## Vertical and horizontal lines
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+plot(x = 1:10, y = x^2, type = 'l')
+abline(h=40)
+abline(v=6)
+```
+
+***
+## Multiple plots
+
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+par(mfrow=c(1,2))
+plot(x = 1:10, y = x^2, type = 'l')
+abline(h=40)
+plot(x = 1:10, y = x^2, type = 'l')
+abline(h=40)
+
+
+```
+
+***
+## Plotting with ggplot
+
+Plotting with ggplot isn't like plotting with plot.
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+library(ggplot2)
+ggplot(mpg)
+```
+
+***
+## Plotting with ggplot
+```
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+```
+
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+# Plot displ against hwy with col displ
+p <- ggplot(mpg) + geom_point(aes(hwy, cyl))
+print (p)
+
+mpg$
+```
+
+***
+## Some of the different aesthetics
+
+* x - x values
+* y - y values
+* shape - changes the shape of points depending on variable
+* col - changes the colour of points depending on variable
+* alpha - changes the transparancy of points depending on variable
+
+***
+## Some useful geoms
+* geom_point - scatter graph
+* geom_line - line graph
+* geom_vline, geom_hline, geom_abline - straight lines
+* geom_bar - bar graph
+* geom_histogram - histogram
+
+https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+
+*** 
+## A few examples - well presented graph
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+# Plot displ against hwy with col displ
+# Limits labels
+ggplot(mpg) + geom_line(aes(hwy, displ)) + geom_point(aes(hwy, displ))+ ylim(0,10)
+
+```
+
+*** 
+## A few examples - line graph
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+x <- 1:10
+y <- x^2 + 3*x - 6
+y2 <- - x^2 - 3*x + 52
+
+df <- data.frame("x" = x, "y" = y, "y2" = y2)
+ggplot(df) + geom_line(aes(x=x, y=y, col="red")) + geom_line(aes(x=x, y=y2, col="blue"))
+
+
+
+```
+scale_colour_manual(name="Lines", values = c("y" = "red", "y2" = "blue")) 
+*** 
+## A few examples - histogram
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+# histogram of displ
+ggplot(mpg) + geom_histogram(aes(displ), bins =20)
+
+```
+
+***
+## Themes
+Can change the theme of graphs to make them look more to your taste
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+p <- ggplot(data = mpg) + 
+  geom_point(aes(x = displ, y = hwy, col = displ))
+
+p + theme(legend.title = element_blank())
+p + theme_bw()
+```
+
+***
+## Multiple plots using cowplot
+
+```{r echo = TRUE}
+library(cowplot)
+```
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+p1 <- ggplot(data = mpg) + 
+  geom_point(aes(x = displ, y = hwy, col = displ) + geom_abline(slope = 0))
+p2 <- ggplot(data = mpg) + 
+  geom_point(aes(x = displ, y = hwy, col = displ))
+plot_grid(p1, p2)
+```
+
+*** 
+## Summary
+
+* Base r and qplot are generally thought to be easier to use.
+* ggplot2 is more flexible and can make nicer plots visually.
+* Which you use is up to you and sometimes one may be better than the other.
+
+***
+## Linear regression with categorical variables or factors
+```{r echo = TRUE, collapse = TRUE}
+data <- readRDS("../data/nhanes.RDS")
+
+data$respsymptoms <- as.factor(data$respsymptoms)
+data$sex <- as.factor(data$sex)
+
+mod <- lm(height ~ age + sex, data=data)
+summary(mod)
+mod$fitted.values
+
+```
+y <- 77.5085 + 5.1624*age + 0.330*sex
+
+```{r echo = TRUE, collapse = TRUE}
+df <- as.data.frame(data)
+p <- ggplot(df) + geom_point(aes(x = age, y = height, col = sex))
+
+df$fitted <- mod$fitted.values
+p + geom_line(data = df[which(df$sex == 0),], aes(x = age, y = fitted)) + geom_line(data = df[which(df$sex == 1),], aes(x = age, y = fitted))
+
+warpbreaks$tension
+warpbreaks$tension <- relevel(warpbreaks$tension, ref ="M")
+```
