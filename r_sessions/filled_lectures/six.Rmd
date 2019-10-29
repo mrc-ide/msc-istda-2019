@@ -1,0 +1,35 @@
+---
+title: "Session 6:  Dealing with data II"
+author: Dr Juliette Unwin
+date: 13th November 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover data visualisation using
+
+
+
+and is based on data visualisation chapter in R for Data Science by Gorlemund and Wickham.
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/X5YtLkfmutrwj5fk8
+
+<img class="plain"  text-align:middle  src="../images/weeksix.png">
+
+***
