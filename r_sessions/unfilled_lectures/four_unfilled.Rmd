@@ -1,0 +1,223 @@
+---
+title: "Session 4: Loading and formatting data"
+author: Dr Juliette Unwin
+date: 30th October 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+library(knitr)
+opts_chunk$set(echo = FALSE)
+#opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover:
+
+* Loading and saving data
+* Dates
+* Factors
+* Recap of loops
+
+and is based on various chapters of R for data science.
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/RL7Fdz39S9HgSg228
+
+<img class="plain"  text-align:middle  src="../images/weekfour.png">
+
+***
+## Loading in data
+
+What types of data may you want to load in?
+
+* csv
+* text files
+* R objects
+
+***
+## Loading in csvs
+```{r echo = TRUE, collapse = TRUE}
+?read.csv
+
+# Read in a csv
+data <- read.csv("../data/perulung_ems.csv")
+
+# Getting / setting working directory
+
+```
+***
+## Project files
+
+***
+## Loading in text files
+```{r echo = TRUE, collapse = TRUE}
+df <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.txt", 
+                 header = FALSE)
+
+# Headers
+# Separation
+
+```
+***
+## Loading in r objects
+
+* RDS - r object with one variable
+```{r echo = TRUE, collapse = TRUE}
+data_rds <- readRDS(file = "../data/test.RDS")
+```
+
+* Rdata - r object with multiple variables
+```{r echo = TRUE, collapse = TRUE}
+data_rdata <- load(file = "../data/test.Rdata")
+```
+
+***
+## Saving csvs
+```{r echo = TRUE, collapse = TRUE}
+data <- data.frame("a" = 1:10, "b" = runif(10))
+write.csv(data, "../data/test.csv")
+```
+
+***
+## Saving r objects
+```{r echo = TRUE, collapse = TRUE}
+data <- data.frame("a" = 1:10, "b" = runif(10))
+saveRDS(data, "../data/test.RDS")
+```
+```{r echo = TRUE, collapse = TRUE}
+data <- data.frame("a" = 1:10, "b" = runif(10))
+data_str <- "another variable"
+save(data, data_str, file = "../data/test.Rdata")
+```
+
+***
+## What file type should I save my data as?
+
+* csvs can be opened outside R, so are easier to share
+* R objects are quicker and easier to read into R
+* Don't lose any formatting / data structure types on loading
+
+***
+## Factors - what are they?
+```{r echo = TRUE, collapse = TRUE}
+ages <- c(3, 5, 5, 6, 7, 8, 9, 3, 7, 7, 7)
+factor_ages <- factor(ages)
+
+# Check if factos
+```
+
+***
+## Factors
+* Useful for telling R your data is categorical.
+* Tidyverse package - forcats (factors chapter - R for data science)
+
+```{r echo = TRUE, collapse = TRUE}
+#install.packages("forcats")
+library(forcats)
+?forcats
+```
+
+***
+## Factors - ordering them
+```{r echo = TRUE, collapse = TRUE}
+mons <- c("March","April","January","November","January", 
+         "September","October","September","November","August", 
+         "January","November","November","February","May","August", 
+         "July","December","August","August","September","November",
+         "February","April")
+mons <-  factor(mons)
+
+ordered_months <- c("January","February","March",
+                    "April","May","June","July","August","September",
+                    "October","November","December")
+
+# Order the factors - check ordered with table
+
+```
+
+***
+## Factors - what to do when reading in data
+```{r echo = TRUE, collapse = TRUE}
+df <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.txt", 
+                 header = FALSE)
+
+# Check stringsAsFactors
+
+
+```
+
+***
+## Dealing with dates
+```{r echo = TRUE, collapse = TRUE}
+data <- read.csv("../data/dates_data.csv")
+head(data)
+
+# Converting to date
+data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
+# Calculating difference in dates
+
+# Turning into numeric
+
+
+# Converting dates to numeric: origin = "1970-01-01"
+
+```
+
+***
+## Dealing with dates using lubridate
+```{r echo = TRUE, collapse = TRUE}
+#install.packages("lubridate")
+library(lubridate)
+?lubridate
+
+today()
+now()
+
+ymd("2019/10/04")
+mdy("07/10/2019")
+
+ymd(c("2019/10/04", "bananas"))
+```
+Lots more information about dates in Dates and Times chapter in R for data science.
+
+*** 
+## Recap of loops
+
+* for loops
+* while loops
+* if/else statements
+
+When would you use each type of loop?
+
+***
+## Avoiding loops
+
+Computationally quicker to use the apply family of functions.
+```{r echo = TRUE, collapse = TRUE}
+complicated_function <- function(num){
+  sqrt(num*5)
+}
+
+vec_num <- 1:10
+
+for (i in 1:length(vec_num)){
+  print(complicated_function(vec_num[i]))
+}
+
+# Use lapply
+
+
+# Use sapply
+
+
+```
+
