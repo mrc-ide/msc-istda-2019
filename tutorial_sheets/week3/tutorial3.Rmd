@@ -1,0 +1,117 @@
+---
+title: "Week 3 Tutorial: Linear Regression"
+subtitle: Introduction to Statistical Thinking and Data Analysis
+author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
+date: 21 October 2019
+output:
+  pdf_document: default
+header-includes:
+- \usepackage{xcolor}
+- \definecolor{darkred}{RGB}{139,0,0}
+---
+
+1. Revisit the `perulung_ems.csv` dataset from the week 1 tutorial sheet, introduced on page 27 of Kirkwood and Sterne.
+
+    | Variable     | Description                                                      |
+    |--------------| -----------------------------------------------------------------|
+    | id           | Participant ID number                                            |
+    | fev1         | Forced Expiratory Volume in 1 second                             |
+    | age          | Age in years                                                     |
+    | height       | Height in centimeters                                            |
+    | sex          | Sex (0 = female, 1 = male)                                       |
+    | respsymptoms | Presence of respiratory symptoms (0 = no symptoms; 1 = symptoms) |
+
+    a. Calculate parameter estimates for a linear regression of the outcome FEV1 as a function of height, and the associated standard errors, t-statistics, and p-values using the formulas from Chapter 10 of Kirkwood and Sterne and the R code from lecture. Plot the fit of your model compared to the data. Check that your calculations agree with the outputs of the `lm(...)` function in R.
+
+    b. Interpret the regression coefficients. State the null and alternative hypothesis that is being tested with the _p_-value reported for the height coefficient and your assessment of this hypothesis.
+
+    c. State and check the assumptions of your regression model---do each of them appear to be satsified?
+
+    d. Convert height into a categorical three groups: height below 120cm, between 120 to 130cm, and above 130cm.  Refit your regression model for FEV1 this time using the height categories as your predictor. Interpret the regression coefficient estimates.
+
+    e. When analysing categorical predictors, it is often conventional to use the group with greatest frequency as the reference category (though there are other reasonable choices depending on the analysis). Change the reference category for your categorical height variable so that it is the group with the largest number of observations and refit your model. How do the parameter estimates change? What is the interpretation of the new parameters?
+
+    f. Amongst the models estimated in parts (a), (d), and (e), which do you prefer and why?
+
+    g. Fit a linear regression model to test the null hypothesis that FEV1 is not associated with respiratory symptoms. What is your conclusions about this hypothesis? How do your effect estimates, statistical inference, and conclusions compare to what you estimated using the equal variance t-test last week?
+
+\newpage
+
+2. In this exercise we will use the NHANES dataset to study child growth by estimating the relationship between height in centimeters age in months for children aged zero to 10 years (less than 120 months).
+
+   Age in months is only reported for children of all ages in the 2009 to 2010 data. For 2011 and 2012, age in months is available only for children aged 0 to 2 years. This is fine for the purposes of our analysis; we will retain the subset of data for which age in months is recorded and below 120 months:
+
+   ```{r results = "hide"}
+   library(NHANES)
+   data(NHANES)
+   nhanes_child <- subset(NHANES, AgeMonths < 120)
+   ```
+
+   Height is measured in two different ways depending on the child age.  For children aged 2 and older, standing height is measured and recorded in the variable `Height`.  For children aged 0 to 3 years, recumbent length is measured and recorded in the variable `Length`.  
+
+   a. For children aged 24 to 47 months, both standing height (cm) and recumbent length (cm) were measured. Are standing height and recumbent length equivalent measures of height? Articulate, conduct, and report a hypothesis test to assess this question and report the estimated magnitude of any difference.  
+
+   b. Proceed with your analysis assuming recumbent length is a reasonably good approximation for height for children under age 2. Create a single height variable that takes the variable `Length` for children under age 24 months and the variable `Height` for children age 24 to 119 months.  Fit a linear regression model to estimate the relationship between age in months and height and give interpretations of both parameters.  
+
+   c. Check the assumptions of your regression model fitted in part (b). Do any of the assumptions appear to be violated?  
+
+   d. Consider transformations for both your outcome variable height and predictor variable age in months in order to more satisfactorily meet the linear regression assumptions. (See Chapter 13 of Kirkwood and Sterne for ideas to address your observations in part (c).)  
+
+   e. Interpret the parameter estimates of your final model from part (d).  
+
+   _Comment:_ Even though the regression between height and age in months in part (b) does not satisfy the the linear regression assumptions, we might nonetheless be interested in estimating the best-fitting linear trend between these variables, and estimate a standard error for this slope. This is called a _Generalized Estimating Equation_ (GEE) approach.
+
+   Section 12.2 of Kirkwood and Sterne describes that one option to address deviations from the linear regression assumptions is to derive alternative standard errors that relax these assumptions. One such approach is to derive standard errors that rely solely on the large sample properties of the Central Limit Theorem, but do not require an uncorrelated normal distribution for the model residuals. These are typically referred to as _robust standard errors_ because they are robust to the assumptions of least-squares linear regression.
+
+   The R package `sandwich` implements calculation of robust parameter covariance matrix.  (The name _sandwich_ comes from the form of the mathematical formula used to estimate the covariance matrix.). The function below wraps the key function `sandwich::vcovHC(...)` to produce 95% confidence intervals for the regression coefficients based on the robust standard errors.
+
+   ```{r}
+   ## install.packages("sandwich")
+   library(sandwich)
+
+   confint_robust <- function(object, parm, level = 0.95, type = "HC3") {
+
+     cf <- coef(object)
+     vcov <- sandwich::vcovHC(object, type = type)
+
+      pnames <- names(cf)
+      if (missing(parm))
+          parm <- pnames
+      else if (is.numeric(parm))
+          parm <- pnames[parm]
+      a <- (1 - level)/2
+      a <- c(a, 1 - a)
+      pct <- stats:::format.perc(a, 3)
+      fac <- qnorm(a)
+      ci <- array(NA, dim = c(length(parm), 2L), dimnames = list(parm, pct))
+      ses <- sqrt(diag(vcov))[parm]
+      ci[] <- cf[parm] + ses %o% fac
+      ci
+   }
+   ```  
+
+   f. Load the `confint_robust()` function into R and use it to calculate robust 95% CIs for the model you estimated in part (b).  How do the 95% CIs compare those estimated by the base `confint()` function?  Intuitively, can you explain why you think this is the case?
+ 
+\newpage 
+
+3. _Consequences of violating regression assumptions._ In exercise 2, we demonstrated that regressing child height on age in months did not satisify several of the linear regression assumptions. In this exercise, we will use simulation to explore the consequences of this for our statistical inference.
+
+   Similarly to exercise 3 last week, this exercise will use the `nhanes_child` dataset constructed in exercise 2 as a 'true' population from which to simulate smaller samples and study the properties of statistical inference for linear regression coefficient estimates. Consider the regression parameter estimates using the full dataset in exercise 2(b) as true population values for $\beta_0$ and $\beta_1$.
+   
+   Do the following steps:
+
+   a. Simulate smaller datasets by sampling rows from the `nhanes_child` dataset. Sample a large number of datasets with replacement of size 10, 25, 50, 100, and 500. Since both the outcome height and covariate AgeMonths are needed, entire rows must be resampled rather than simply resampling values from a vector. Instead of using the function `sample()`, use `sample.int()` to randomly sample rows to retain, and then subset the data frame to only these rows. Example code for generating one simulated dataset:
+
+      ```
+      maxrow <- nrow(nhanes_child)
+      n <- <sample sizze>
+      df <- nhanes_child[sample.int(maxrow, n, replace = TRUE), ]
+      ```
+
+   b. For each simulated dataset, fit a linear regression model for the height outcome constructed in exercise 2(b) and AgeMonths as the linear predictor (the same regression model estimated in 2(b)). Extract the $\hat \beta_1$ coefficient estimate for the slope associated with age. For each sample size, plot a histogram of the distribution of $\hat \beta_1$ estimates and compare them to the true best population value (the coefficient estimated in exercise 2(b)).  What do you observe about the distribution of $\hat \beta_1$.
+
+   c. For the regression model fitted to each simulated dataset, extract the 95% confidence interval using the `confint()` function. For each simulated sample size, calculate the proportion of 95% confidence intervals that contain the true value of $\beta_1$. How does this change with sample size relative to the nominal 95% coverage target?
+
+   d. Repeat your confidence interval coverage calculation from part (c) using the `confint_robust()` function from part 2(f). For each sample size, compare the coverage of the robust confidence intervals with the coverage of the least-squares regression confidence intervals from part (c). Is this what you you expected?
+
+   e. For a bit of bonus fun, replicate this simulation study investigating a linear regression between the three outcome variables studied last week (Height, BMI, and AlcoholYear) and adult age as a covariate.
