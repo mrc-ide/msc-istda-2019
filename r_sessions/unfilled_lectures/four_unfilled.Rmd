@@ -53,7 +53,8 @@ What types of data may you want to load in?
 data <- read.csv("../data/perulung_ems.csv")
 
 # Getting / setting working directory
-
+getwd()
+setwd("")
 ```
 ***
 ## Project files
@@ -65,8 +66,10 @@ df <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.
                  header = FALSE)
 
 # Headers
+df2 <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.txt", 
+                 header = TRUE)
 # Separation
-
+read.table()
 ```
 ***
 ## Loading in r objects
@@ -78,7 +81,7 @@ data_rds <- readRDS(file = "../data/test.RDS")
 
 * Rdata - r object with multiple variables
 ```{r echo = TRUE, collapse = TRUE}
-data_rdata <- load(file = "../data/test.Rdata")
+load(file = "../data/test.Rdata")
 ```
 
 ***
@@ -142,7 +145,8 @@ ordered_months <- c("January","February","March",
                     "October","November","December")
 
 # Order the factors - check ordered with table
-
+o_mons <- factor(x=mons, levels = ordered_months, ordered=is.ordered(mons))
+o_mons
 ```
 
 ***
@@ -152,8 +156,10 @@ df <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.
                  header = FALSE)
 
 # Check stringsAsFactors
-
-
+head(df)
+df <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.txt", 
+                 header = FALSE, stringsAsFactors = FALSE)
+head(df)
 ```
 
 ***
@@ -164,13 +170,20 @@ head(data)
 
 # Converting to date
 data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
+head(data)
+
 # Calculating difference in dates
+diff = data$Date - data$Date[1]
+diff
 
 # Turning into numeric
-
-
+numeric = as.numeric(data$Date)
+numeric
 # Converting dates to numeric: origin = "1970-01-01"
+as.Date(numeric, origin = "1970-01-01")
 
+zoo
+as.yearmon
 ```
 
 ***
@@ -200,6 +213,15 @@ Lots more information about dates in Dates and Times chapter in R for data scien
 When would you use each type of loop?
 
 ***
+```{r echo = TRUE, collapse = TRUE}
+a = 7
+if (a < 5) {
+  a + 5
+} else if () {
+  a - 7
+}
+```
+***
 ## Avoiding loops
 
 Computationally quicker to use the apply family of functions.
@@ -209,16 +231,22 @@ complicated_function <- function(num){
 }
 
 vec_num <- 1:10
-
+empty_vector <- vector(length=length(vec_num))
 for (i in 1:length(vec_num)){
-  print(complicated_function(vec_num[i]))
+  empty_vector[i] <- (complicated_function(vec_num[i]))
 }
 
+while (a <5 & count < 10){
+  count = count +1
+}
 # Use lapply
-
+list <- lapply(vec_num, complicated_function)
+list
+vec <- unlist(list)
+vec
 
 # Use sapply
-
-
+vec2 <- sapply(vec_num, complicated_function)
+vec2
 ```
 
