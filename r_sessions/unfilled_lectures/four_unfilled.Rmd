@@ -26,6 +26,15 @@ Today's session will cover:
 
 and is based on various chapters of R for data science.
 
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/4sj4LAE5SXHekide9
+
+<img class="plain"  text-align:middle  src="../images/weekfour.png">
+
 ***
 ## Loading in data
 

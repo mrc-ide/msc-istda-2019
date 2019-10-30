@@ -1892,6 +1892,12 @@ document.getElementsByTagName('head')[0].appendChild(style);
 </ul>
 <p>and is based on various chapters of R for data science.</p>
 </section>
+<section class="slide level2">
+
+<p>What do you remember from last week?</p>
+<p><a href="https://forms.gle/4sj4LAE5SXHekide9" class="uri">https://forms.gle/4sj4LAE5SXHekide9</a></p>
+<p><img class="plain" text-align:middle src="data:image/png;base64,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"></p>
+</section>
 <section id="loading-in-data" class="slide level2">
 <h2>Loading in data</h2>
 <p>What types of data may you want to load in?</p>
@@ -2025,9 +2031,9 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <a class="sourceLine" id="cb13-8" data-line-number="8">?lubridate</a>
 <a class="sourceLine" id="cb13-9" data-line-number="9"></a>
 <a class="sourceLine" id="cb13-10" data-line-number="10"><span class="kw">today</span>()</a>
-<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">## [1] &quot;2019-10-29&quot;</span></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">## [1] &quot;2019-10-30&quot;</span></a>
 <a class="sourceLine" id="cb13-12" data-line-number="12"><span class="kw">now</span>()</a>
-<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">## [1] &quot;2019-10-29 19:38:37 GMT&quot;</span></a>
+<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">## [1] &quot;2019-10-30 09:04:59 GMT&quot;</span></a>
 <a class="sourceLine" id="cb13-14" data-line-number="14"></a>
 <a class="sourceLine" id="cb13-15" data-line-number="15"><span class="kw">ymd</span>(<span class="st">&quot;2019/10/04&quot;</span>)</a>
 <a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co">## [1] &quot;2019-10-04&quot;</span></a>
