@@ -1,0 +1,688 @@
+---
+title: "Week 3 Tutorial: Linear Regression"
+subtitle: Introduction to Statistical Thinking and Data Analysis
+author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
+date: 21 October 2019; reviewed 28 October 2019
+output:
+  pdf_document: default
+header-includes:
+- \usepackage{xcolor}
+- \definecolor{darkred}{RGB}{139,0,0}
+---
+
+
+```{r include = FALSE}
+options(knitr.kable.NA = "")
+```
+
+1. Revisit the `perulung_ems.csv` dataset from the week 1 tutorial sheet, introduced on page 27 of Kirkwood and Sterne.
+
+    | Variable     | Description                                                      |
+    |--------------| -----------------------------------------------------------------|
+    | id           | Participant ID number                                            |
+    | fev1         | Forced Expiratory Volume in 1 second                             |
+    | age          | Age in years                                                     |
+    | height       | Height in centimeters                                            |
+    | sex          | Sex (0 = female, 1 = male)                                       |
+    | respsymptoms | Presence of respiratory symptoms (0 = no symptoms; 1 = symptoms) |
+
+    a. Calculate parameter estimates for a linear regression of the outcome FEV1 as a function of height, and the associated standard errors, t-statistics, and p-values using the formulas from Chapter 10 of Kirkwood and Sterne and the R code from lecture. Plot the fit of your model compared to the data. Check that your calculations agree with the outputs of the `lm(...)` function in R.
+    
+    \color{darkred}
+	
+    ```{r ex1a, message = FALSE, echo = FALSE, results = "hide"}
+    ## Load data and convert binary outcomes to factors
+    library(tidyverse)
+    perulung <- read.csv("perulung_ems.csv")
+    perulung$sex <- factor(perulung$sex, c(0, 1), c("female", "male"))
+    perulung$respsymptoms = factor(perulung$respsymptoms,
+                                   c(0, 1), c("no symptoms", "symptoms"))
+    
+    ## Calculate regression coefficient estimates
+    y <- perulung$fev1
+    x <- perulung$height
+    ybar <- mean(y)
+    xbar <- mean(x)
+    
+    beta1_hat <- sum((x - xbar) * (y - ybar)) / sum((x - xbar)^2)
+    beta0_hat <- ybar - beta1_hat * xbar
+    
+    ## Calculate residual standard deviation
+    ypred <- beta0_hat + beta1_hat * x
+    rss <- sum((y - ypred)^2)
+    df <- length(x) - 2
+    sigma_hat <- sqrt(rss / df)
+    
+    ## Standard error for regression parameters
+    se_beta1 <- sigma_hat / sqrt(sum((x - xbar)^2))
+    se_beta0 <- sigma_hat * sqrt(1/length(x) + xbar^2 / sum((x - xbar)^2))
+    
+    ## t-statistic, 95% CI, and p-value
+    beta0_tt <- beta0_hat / se_beta0
+    beta0_ci <- beta0_hat + c(-1,1) * qt(0.975, df) * se_beta0
+    beta0_p <- 2 * pt(abs(beta0_tt), df, lower.tail = FALSE)
+    
+    beta1_tt <- beta1_hat / se_beta1
+    beta1_ci <- beta1_hat + c(-1,1) * qt(0.975, df) * se_beta1
+    beta1_p <- 2 * pt(abs(beta1_tt), df, lower.tail = FALSE)
+    
+    ## Compare with lm(...)
+    fit1a <- lm(fev1 ~ height, data = perulung)
+    ```
+    
+    Parameter estimates, standard errors, 95% CI and p-value are in the table (see code below):
+    
+    ```{r}
+    data.frame(parameter = c("beta0 (Intercept)", "beta1 (height)", 
+                             "sigma (residual std. dev.)"),
+               estimate = c(beta0_hat, beta1_hat, sigma_hat),
+               std_error = c(se_beta0, se_beta1, NA),
+               t_stat    = c(beta0_tt, beta1_tt, NA),
+               ci_lower  = c(beta0_ci[1], beta1_ci[1], NA),
+               ci_upper  = c(beta0_ci[2], beta1_ci[2], NA),
+               p_value   = c(beta0_p, beta1_p, NA)) %>%
+      knitr::kable(digits = 3)
+    ```
+    
+    Plot of data and estimated regression line:  
+    
+    ```{r, fig.height = 2.7, fig.width = 3, fig.align = "center", fig.show = "hold"}
+    ## Using base R graphics
+    par(mar = c(3, 3, 0.5, 0.5), tcl = -0.25, mgp = c(2, 0.5, 0))
+    plot(fev1 ~ height, data = perulung, 
+         las = 1, xlab = "Height (cm)", ylab = "FEV1 (litres/second)")
+    abline(a = beta0_hat, b = beta1_hat, col = "red", lwd = 2)
+    
+    ## Using ggplot
+    ggplot(perulung, aes(height, fev1)) + 
+      geom_point() + 
+      geom_abline(slope = beta1_hat, intercept = beta0_hat, color = "red") +
+      labs(x = "Height (cm)", y = "FEV1 (litres/second")
+    ```
+    
+    These estimates exactly match the regression coefficients and residual standard devation estimates produced by the `lm(...)`:  
+    
+    ```{r}
+    fit1a <- lm(fev1 ~ height, data = perulung)
+    summary(fit1a)
+    confint(fit1a)
+    ```
+    
+    Code for exercise 1a:
+    ```{r ex1a, message = FALSE, echo = TRUE, results = "hide"}
+    ```
+    \color{black}
+
+    b. Interpret the regression coefficients. State the null and alternative hypothesis that is being tested with the _p_-value reported for the height coefficient and your assessment of this hypothesis.
+    
+    \color{darkred}
+    The estimated best fitting regression equation is: $$\textrm{FEV1} = `r round(beta0_hat, 3)` + `r round(beta1_hat, 3)` \times \textrm{Height}$$
+    
+    The estimate for the height coefficient of $\hat\beta_1 = `r round(beta1_hat, 3)`$ (95% CI `r round(beta1_ci[1], 3)`, `r round(beta1_ci[2], 3)`) indicates that on average FEV1 increases by `r round(beta1_hat, 3)` litres/second for each 1 centimeter greater height.
+    
+    The estimate for the intercept was $\hat\beta_0 = `r round(beta0_hat, 3)`$ (95% CI `r round(beta0_ci[1], 3)`, `r round(beta0_ci[2], 3)`). This is the predicted value for FEV1 when height is zero centimeters. Interpreting this coefficient is not useful because it is impossible that height is ever zero. In most cases, on should avoid interpreting predictions from a regression model outside of the range of values that are spanned by the data.
+    
+    The null hypothesis with which the _p_-value for the height coefficient is associated is that $\beta_1 = 0$, which implies there is no linear relationship between height and FEV1. The alternative hypothesis is that $\beta_1 \neq 0$---that there is some linear association between FEV1 and height. the value _p_ < 0.001 indicates strong evidence against the null hypothesis, and thus we conclude based on our sample that there is a positive association between height and FEV1 amongst children.
+    
+    \color{black}
+
+    c. State and check the assumptions of your regression model---do each of them appear to be satsified?
+  
+    \color{darkred}
+    The four assumptions of our linear regression model are (1) a linear relationship between FEV1 and height, (2) independent observations, (3) normality of residuals, and (4) constant variance of the results.
+    
+    Use residual versus fitted value and normal quantile-quantile plots to examine these assumptions:
+    ```{r, fig.height = 4, fig.width = 7}
+    par(mfrow = c(1,2))
+    plot(fit1a, 1:2)
+    ```
+    
+    * Linearity: overall this looks pretty good.  The smoothed trend fitted to the residuals shows some suggestion of a non-linear pattern towards larger fitted values, but there are few data points in that range.
+    * Independence: this is largely based on knowledge of the study design, rather than examination of the residuals. The data consist of a random sample of children in a deprived neighborhod in Lima, Peru. Since children were randomly sampled, we can be confident that the observations are independent.
+    * Normality: based on the normal Q-Q plot, overall this looks reasonably good, though there is some evidence of a slighly heavy lower tail indicating more extreme negative residuals than we would expect based on the normal distribution.
+    * Constant variance: Based on the residual versus fitted value plot, this looks fine. There is an ovular cloud of points, with no evidence of an increasing or decreasing spread over the range of fitted values.  
+    
+	\color{black}
+    
+
+    d. Convert height into a categorical three groups: height below 120cm, between 120 to 130cm, and above 130cm.  Refit your regression model for FEV1 this time using the height categories as your predictor. Interpret the regression coefficient estimates.
+    
+    \color{darkred}
+    
+    The function `cut()` will convert a numerical variable to a categorical variable. This could also be done using `ifelse()` statements.
+    ```{r}
+    perulung$height_cat <- cut(perulung$height, c(-Inf, 120, 130, Inf), 
+                               labels = c("<=120cm", "120-130cm", ">130cm"))
+    ```
+    
+    Review the frequency table for the categorical height variable.
+    ```{r}
+    table(perulung$height_cat)
+    ```
+    
+    Fit the linear regression model using height as a categorical variable:
+    ```{r}
+    fit1d <- lm(fev1 ~ height_cat, data = perulung)
+    summary(fit1d)
+    ```
+    
+    The summary output shows regression coefficients for the height categories `120-130cm` and `>130cm`.  No coefficient is reported for the `<=120cm` category because this has been taken as the 'reference' category. The other coefficients report the estimated difference in FEV1 relative to the reference category. Thus we interpret that the average FEV1 for a child 120-130cm is 0.24 litres/second greater than a child below 120cm tall (95% CI 0.19--0.28). The average FEV1 for a child above 130cm is 0.52 (95% CI 0.52--0.66) litres/second greater than for a child below 120cm.
+    
+    In the case of no other covariates, the `(Intercept)` term is the estimate for the mean FEV1 for the reference category. To see why this is the case, review the estimated regression equation: $$\textrm{FEV1} = 1.370 + 0.239 \times \texttt{[height\_cat = 120-130]} + 0.581 \times \texttt{[height\_cat = >130]}.$$
+    
+    If the height category is <=120cm, then the predicted value for FEV1 will be: $$\textrm{FEV1} = 1.370 + 0.239 \times 0 + 0.581 \times 0 = 1.370.$$
+    If the height category is 120-130cm, then the predicted value for FEV1 will be: $$\textrm{FEV1} = 1.370 + 0.239 \times 1 + 0.581 \times 0 = 1.609.$$
+    If the height category is >130cm, then the predicted value for FEV1 will be: $$\textrm{FEV1} = 1.370 + 0.239 \times 0 + 0.581 \times 1 = 1.951.$$
+    
+    Observe that these categorical linear regression estimates are equal to the sample mean for FEV1 within each height category:
+    
+    ```{r}
+    aggregate(fev1 ~ height_cat, perulung, mean)
+    ```
+    
+    \color{black}
+    
+
+    e. When analysing categorical predictors, it is often conventional to use the group with greatest frequency as the reference category (though there are other reasonable choices depending on the analysis). Change the reference category for your categorical height variable so that it is the group with the largest number of observations and refit your model. How do the parameter estimates change? What is the interpretation of the new parameters?
+    
+    \color{darkred}
+    The current reference category can be determined by examining the levels of the factor.
+    ```{r}
+    levels(perulung$height_cat)
+    ```
+    The first level is taken by R as the reference category and dropped from the regression coefficients.
+    The category 120-130cm had the largest number of observations with `r table(perulung$height_cat)[2]`. Use the `relevel()` function to set this as the reference category, and check the change by calling `levels()`.
+    ```{r}
+    perulung$height_cat <- relevel(perulung$height_cat, "120-130cm")
+    levels(perulung$height_cat)
+    ```
+    
+    Refit the regression model.
+    ```{r}
+    fit1e <- lm(fev1 ~ height_cat, perulung)
+    summary(fit1e)
+    ```
+    
+    The regression model output now reports coefficient estimates for the categories `<=120cm` and `>130cm`, with no coefficient reported for the group `120-130cm`. 
+	
+	The term `(Intercept)` is now interpreted as the mean FEV1 for a child with height 120-130cm. The estimate for this parameter is is 1.609, the same as the predicted value for the 120-130cm group in part (d).
+	
+	The coefficient for the <=120cm category indicates that the expected FEV1 for children with height <=120cm is 0.24 litres/second lower than children with height 120-130cm. Note the the estimate -0.239 is the inverse of the coefficient 0.239 estimated for the difference between the 120-130cm versus <=120cm group in part(d).
+	
+	The coefficient for the >130cm cateogory indicates that the expected FEV1 for children with height >130cm is 0.34 litres/second greater than the FEV1 for children 120-130cm.  Note that the estimate 0.342 is equal to the difference of the coefficients for the >130 and 120-130cm groups in part (d): 0.581 - 0.239 = 0.342.
+	
+	The estimates for the Residual standard error, degrees of freedom and $R^2$ are identical to the model fitted in part (d) with a different reference category.
+	
+    
+    \color{black}
+
+    f. Amongst the models estimated in parts (a), (d), and (e), which do you prefer and why?
+    
+    \color{darkred}
+    Based on the exploratory analysis of the sample data and knowledge of the process, it seems plausible that there is a continuous and relatively linear relationship between these variables. Thus the linear trend model fitted in part (a) would be preferred because it describes the relationship between the variables and is more powerful to detect an association.  
+    \color{black}
+
+    g. Fit a linear regression model to test the null hypothesis that FEV1 is not associated with respiratory symptoms. What is your conclusions about this hypothesis? How do your effect estimates, statistical inference, and conclusions compare to what you estimated using the equal variance t-test last week?
+    
+    \color{darkred}
+    The estimates from the linear regression and two sample t-test are identical. The coefficient estimate for the term sex = male is the same as the difference of the sample means, and the t-statistic, p-value, and 95% CI for the sex = male coefficient are identical to those estimated by the two-sample t-test with equal variances. Note that the equal variance assumption for the standard t-test is analagous to the constant variance assumption for linear regression.
+    
+    ```{r}
+    fit1g <- lm(fev1 ~ respsymptoms, perulung)
+    summary(fit1g)
+    confint(fit1g)
+    
+    t.test(perulung$fev1[perulung$respsymptoms == "no symptoms"], 
+           perulung$fev1[perulung$respsymptoms == "symptoms"], var.equal = TRUE)
+    
+    ```
+    \color{black}
+
+\newpage
+
+2. In this exercise we will use the NHANES dataset to study child growth by estimating the relationship between height in centimeters age in months for children aged zero to 10 years (less than 120 months).
+
+   Age in months is only reported for children of all ages in the 2009 to 2010 data. For 2011 and 2012, age in months is available only for children aged 0 to 2 years. This is fine for the purposes of our analysis; we will retain the subset of data for which age in months is recorded and below 120 months:
+
+   ```{r results = "hide"}
+   library(NHANES)
+   data(NHANES)
+   nhanes_child <- subset(NHANES, AgeMonths < 120)
+   ```
+
+   Height is measured in two different ways depending on the child age.  For children aged 2 and older, standing height is measured and recorded in the variable `Height`.  For children aged 0 to 3 years, recumbent length is measured and recorded in the variable `Length`.  
+
+   a. For children aged 24 to 47 months, both standing height (cm) and recumbent length (cm) were measured. Are standing height and recumbent length equivalent measures of height? Articulate, conduct, and report a hypothesis test to assess this question and report the estimated magnitude of any difference.  
+   
+   \color{darkred}
+  
+   Standing height and recumbent length were measured for 116 children aged 24 to 47 months. The mean height was 94.3cm (standard devation 5.8cm) and the average recumbent length was 95.5cm (sd 6.0cm) and the two measures were highly correlated (correlation = 0.98). We used a paired t-test to evaluate the null hypothesis of no difference between height measured as standing height or recumbent length. Recumbent length was on average 1.15cm (95% CI 0.96--1.35cm) greater than standing height.  The estimated t-value was 11.8 on 115 degrees of freedom for a two-sided p-value <0.001. This indicating that recumbent length results in on average greater measure of height than standing height for children aged 24 to 47 months.  
+   
+   ```{r results="hide", fig.height = 3, fig.width = 3, fig.show = "hold", fig.align = "center", out.width = "40%"}
+   ex3a <- subset(nhanes_child, !is.na(Height) & !is.na(Length))
+   nrow(ex3a)
+   summary(ex3a[c("AgeMonths", "Height", "Length")])
+   sd(ex3a$Height)
+   sd(ex3a$Length)
+   cor(ex3a$Height, ex3a$Length)
+   
+   par(mar = c(3, 3, 0.5, 0.5), tcl = -0.25, mgp = c(2, 0.5, 0))
+   plot(ex3a$Height, ex3a$Length)
+   abline(a = 0, b = 1)
+   
+   t.test(ex3a$Length, ex3a$Height, paired = TRUE)
+   ```
+   \color{black}
+
+   b. Proceed with your analysis assuming recumbent length is a reasonably good approximation for height for children under age 2. Create a single height variable that takes the variable `Length` for children under age 24 months and the variable `Height` for children age 24 to 119 months.  Fit a linear regression model to estimate the relationship between age in months and height and give interpretations of both parameters.  
+
+   \color{darkred}
+
+   ```{r ex3b}
+   nhanes_child$height_all <- ifelse(nhanes_child$AgeMonths < 24, nhanes_child$Length, nhanes_child$Height)
+   fit2b <- lm(height_all ~ AgeMonths, nhanes_child)
+   summary(fit2b)
+   ```
+
+   The estimated regression equation is: $$\textrm{Height (cm)} = 68.50 + 0.648 \times \textrm{Age (months)}.$$
+   
+   The intercept term 68.5 is the estimated height in centimeters at birth, when age is equal to zero. (Note that while the intercept term is not typically meaninfully interpreted, in this case it does make sense to interpret because age at birth is a meaningful outcome and our dataset includes children down to age zero months.)
+   
+   The slope 0.648 indicates an average height increase of 0.648cm per month of age.
+
+   The figure below shows the estimated regression line compared to the data.
+   
+   ```{r, fig.height = 3, fig.width = 3, fig.align = "center"}
+   par(mar = c(3, 3, 0.5, 0.5), tcl = -0.25, mgp = c(2, 0.5, 0))
+   plot(height_all ~ AgeMonths, nhanes_child)
+   abline(fit2b, col = "red", lwd = 2)
+   ```
+   
+   \color{black}
+   
+   c. Check the assumptions of your regression model fitted in part (b). Do any of the assumptions appear to be violated?  
+
+   \color{darkred}
+   
+   The plot of the estimated regression line to the observed data above gives some indication that the regression line does not optimally describe the data.
+   
+   The residuals vs. fitted value plot and normal Q-Q
+   ```{r ex3c, fig.height = 4, fig.width = 7, fig.align = "center"}
+   par(mfrow = c(1,2), tcl = -0.25, mgp = c(2, 0.5, 0))
+   plot(fit2b, 1, lwd = 3); plot(fit2b, 2)
+   ```
+   
+   * **Linearity:** The residuals vs. fitted value plot shows strong evidence of a non-linear trend to the residuals.
+   * **Independence:** Study participants were randomly sampled from the target population, which should satisfy the independence assumption.
+   * **Normality:** The curvature of the normal Q-Q plot suggests a left (negatively) skewed distribution, deviating from the normality assumption.
+   * **Constant variance:** The spread of the residuals increases with larger fitted values.
+   
+   \color{black}
+
+   d. Consider transformations for both your outcome variable height and predictor variable age in months in order to more satisfactorily meet the linear regression assumptions. (See Chapter 13 of Kirkwood and Sterne for ideas to address your observations in part (c).)  
+
+   \color{darkred}
+   
+   We must consider transformations to address deviations from the **linearity**, **normality**, and **constant variance** assumptions.
+   
+   First, to address the non-linear relationship between the covariate and outcome variable, a common strategy is to add terms or transform the predictor variable, for example adding square-root, quadratic, or other polynomial terms.
+   
+   I found that there was a much stronger relationship between height and the square root of AgeMonths. 
+   
+   ```{r ex3d, fig.height = 4, fig.width = 7, fig.align = "center"}
+   ## Square-root transform AgeMonths to improve linearity
+   fit2d1 <- lm(height_all ~ sqrt(AgeMonths), nhanes_child)
+   summary(fit2d1)
+
+   ## Plot predicted height versus observed data on transformed and
+   ## and original scales
+   par(mfrow = c(1,2), tcl = -0.25, mgp = c(2, 0.5, 0))
+   plot(height_all ~ sqrt(AgeMonths), nhanes_child,
+        main = "Transformed scale")
+   abline(fit2d1, col = "red", lwd = 3)
+
+   fit2d1_pred <- predict(fit2d1, newdata = data.frame(AgeMonths = 0:120))
+   plot(height_all ~ AgeMonths, nhanes_child,
+        main = "Original scale")
+   lines(0:120, fit2d1_pred, col = "red", lwd = 3)
+
+
+   ## Residual analysis
+   plot(fit2d1, 1:2, lwd = 3)
+   ```
+   
+   This has improved the linearity assumption, and now the heteroskedasticity is even more apparent. There is also some suggestion from the normal Q-Q plot of 'heavy tails' for the residual distribution. The example here of increasing variance with fitted value is very common (and naturally arises for many positive valued 'count' outcomes). Taking the log transformation of the outcome variable is often helpful to address increasing residual variance.
+   
+   
+   ```{r fig.height = 4, fig.width = 7, fig.align = "center"}
+   ## Log-transform height_all to address heteroskedasticity
+   fit2d2 <- lm(log(height_all) ~ sqrt(AgeMonths), nhanes_child)
+
+   ## Plot predicted height versus observed data on transformed and
+   ## and original scales
+   par(mfrow = c(1,2), tcl = -0.25, mgp = c(2, 0.5, 0))
+   plot(log(height_all) ~ sqrt(AgeMonths), nhanes_child,
+        main = "Transformed scale")
+   abline(fit2d2, col = "red", lwd = 3)
+
+   fit2d2_pred <- predict(fit2d2, newdata = data.frame(AgeMonths = 0:120))
+   plot(height_all ~ AgeMonths, nhanes_child, main = "Original scale")
+   lines(0:120, exp(fit2d2_pred), col = "red", lwd = 3)
+
+   ## Residual analysis
+   plot(fit2d2, 1:2, lwd = 3)
+   ```
+  
+   The log transformation has worked relatively well to address the non-constant variance of the residuals. But there now appears to again be a non-linear relationship between log(height) and sqrt(AgeMonths). To address this, I added both AgeMonths and sqrt(AgeMonths) as covariates to the model.
+   
+   ```{r fig.height = 4, fig.width = 3.5, fig.align = "center"}	
+   ## Add both AgeMonths and sqrt(AgeMonths) as predictors to improve linear trend
+   fit2d3 <- lm(log(height_all) ~ AgeMonths + sqrt(AgeMonths), nhanes_child)
+
+   ## Plot predicted height versus observed data on original scale
+   par(mfrow = c(1,1), tcl = -0.25, mgp = c(2, 0.5, 0))   
+   fit2d3_pred <- predict(fit2d3, newdata = data.frame(AgeMonths = 0:120))
+   plot(height_all ~ AgeMonths, nhanes_child, main = "Original scale")
+   lines(0:120, exp(fit2d3_pred), col = "red", lwd = 3)
+
+   ```{r fig.height = 4, fig.width = 7, fig.align = "center"}
+   ## Residual analysis
+   par(mfrow = c(1,2), tcl = -0.25, mgp = c(2, 0.5, 0))
+   plot(fit2d3, 1:2, lwd = 3)
+   ```
+   
+   All of the regression assumptions now appear to be satisified. The normal Q-Q plot shows that the empirical quantiles of the residuals are almost perfectly matched to the theoretical normal distribution.  The residuals versus. fitted value plot indicates some suggestion that the residual standard deviation is smaller at the center of AgeMonths than at small or large values, but overall this looks much better.
+   
+   \color{black}
+
+   e. Interpret the parameter estimates of your final model from part (d).  
+
+   \color{darkred}
+   The first step to interpreting parameter estimates of the final model is to write out the estimated regression equation:
+   
+   $$\textrm{log(height [cm])} = 3.969 - 0.002 \times \textrm{Age [months]} + 0.111 \times \sqrt{\textrm{Age [months]}}.$$
+   
+   Attempting to interpret this equation highlights the key challenges resulting from applying transformations to address deviations from regression assumptions.  There is no longer a simple general interprtation of of "an ___ centimeter change in height associated with every month increase in age."
+   
+   Instead, when there transformations of the predictor variable, it is common to report the expected change in the outcome variable for a few characteristic values of the covariate.  For example:
+   
+   * At age zero months, the average log height is 3.97. Or by exponentiating this, we can interpret that at age zero months, the expected height is exp(3.97) = 52.9cm.
+   * When age is zero months, the expected change in log height for a one month increase in age is 0.11. We can also exponeniate this _additive_ change in log height to estimate the _multiplicative_ change in height: when age is zero months, height is expected to increase by exp(0.11) = 1.12 times each month.
+   
+   * When age is 24 monhts, the expected change in log height for a one month increase in age is given by the predicted height at month 25 minus the predicted height at month 24:
+     $$\textrm{log(height) | age = 25 months} = 3.969 - 0.002 \times 25 + 0.111 \times \sqrt{25} = 4.4740$$
+	 $$\textrm{log(height) | age = 24 months} = 3.969 - 0.002 \times 24 + 0.111 \times \sqrt{24} = 4.4648$$
+	 
+ 	 Thus the expected change in log height at month 24 is 4.4740 - 4.4648 = 0.0091. Or the expected change in height is an exp(0.0091) = 1.009 times increase per month at age 24 monhts.
+	 
+   * Repeating this calculation at age 60 months (5 years), the expected change in log height between 60 and 61 month is 4.7118 - 4.7067 = 0.0051, or the expected change in height is a exp(0.0051) = 1.005 times increase in height.
+
+   ```{r}
+   summary(fit2d3)
+   ```
+
+\color{black}
+
+   _Comment:_ Even though the regression between height and age in months in part (b) does not satisfy the the linear regression assumptions, we might nonetheless be interested in estimating the best-fitting linear trend between these variables, and estimate a standard error for this slope. This is called a _Generalized Estimating Equation_ (GEE) approach.
+
+   Section 12.2 of Kirkwood and Sterne describes that one option to address deviations from the linear regression assumptions is to derive alternative standard errors that relax these assumptions. One such approach is to derive standard errors that rely solely on the large sample properties of the Central Limit Theorem, but do not require an uncorrelated normal distribution for the model residuals. These are typically referred to as _robust standard errors_ because they are robust to the assumptions of least-squares linear regression.
+
+   The R package `sandwich` implements calculation of robust parameter covariance matrix.  (The name _sandwich_ comes from the form of the mathematical formula used to estimate the covariance matrix.). The function below wraps the key function `sandwich::vcovHC(...)` to produce 95% confidence intervals for the regression coefficients based on the robust standard errors.
+
+   ```{r}
+   ## install.packages("sandwich")
+   library(sandwich)
+
+   confint_robust <- function(object, parm, level = 0.95, type = "HC3") {
+
+     cf <- coef(object)
+     vcov <- sandwich::vcovHC(object, type = type)
+
+      pnames <- names(cf)
+      if (missing(parm))
+          parm <- pnames
+      else if (is.numeric(parm))
+          parm <- pnames[parm]
+      a <- (1 - level)/2
+      a <- c(a, 1 - a)
+      pct <- stats:::format.perc(a, 3)
+      fac <- qnorm(a)
+      ci <- array(NA, dim = c(length(parm), 2L), dimnames = list(parm, pct))
+      ses <- sqrt(diag(vcov))[parm]
+      ci[] <- cf[parm] + ses %o% fac
+      ci
+   }
+   ```  
+
+   f. Load the `confint_robust()` function into R and use it to calculate robust 95% CIs for the model you estimated in part (b).  How do the 95% CIs compare those estimated by the base `confint()` function?  Intuitively, can you explain why you think this is the case?
+ 
+   \color{darkred}
+   ```{r}
+   confint(fit2b)
+   confint_robust(fit2b)
+   ```
+   
+   The robust confidence intervals are slightly wider than the model-based confidence intervals produced by `confint()`. The reason for this is because the confidence intervals rely on less stringent assumptions about the distribution of the residuals. In general, in statistics when we make fewer or weaker or assumptions, it will result in greater uncertainty about parameter estimates. But the uncertainty ranges are more likely to be accurate in the cases where the assumptions would be violated. For this reason, robust standard errors are popular and frequently reported in analyses with sufficiently large sample size to satisfy the Central Limit Theorem.
+   This is often given scant mention beyond a sentence in the methods section stating _"We calculated robust standard errors / 95% confidence intervals."_
+   \color{black}
+   
+   
+\newpage 
+
+3. _Consequences of violating regression assumptions._ In exercise 2, we demonstrated that regressing child height on age in months did not satisify several of the linear regression assumptions. In this exercise, we will use simulation to explore the consequences of this for our statistical inference.
+
+   Similarly to exercise 3 last week, this exercise will use the `nhanes_child` dataset constructed in exercise 2 as a 'true' population from which to simulate smaller samples and study the properties of statistical inference for linear regression coefficient estimates. Consider the regression parameter estimates using the full dataset in exercise 2(b) as true population values for $\beta_0$ and $\beta_1$.
+   
+   Do the following steps:
+
+   a. Simulate smaller datasets by sampling rows from the `nhanes_child` dataset. Sample a large number of datasets with replacement of size 10, 25, 50, 100, and 500. Since both the outcome height and covariate AgeMonths are needed, entire rows must be resampled rather than simply resampling values from a vector. Instead of using the function `sample()`, use `sample.int()` to randomly sample rows to retain, and then subset the data frame to only these rows. Example code for generating one simulated dataset:
+
+      ```
+      maxrow <- nrow(nhanes_child)
+      n <- <sample sizze>
+      df <- nhanes_child[sample.int(maxrow, n, replace = TRUE), ]
+      ```
+
+   \color{darkred}
+   
+   ```{r ex3a, cache = TRUE}
+   #' @param n simulated sample size.
+   #' @param data a data frame from which to subsample with replacement.
+   #' @param formula a formula with a numeric outcome and covariate (y ~ x).
+   #' @param beta1_true the true value for the slope.
+   #'
+   #' @return
+   #' A numeric vector consisting of three elements:
+   #'   1. The estimated regression slope from the simulated dataset.
+   #'   2. A binary outcome (0/1) whether the least squares 95% CI contains
+   #'      the true slope.
+   #'   3. A binary outcome (0/1) whether the robust 95% CI contains the true
+   #'      slope.
+   #'
+   sim_lm <- function(n, data, formula, beta1_true) {
+     
+     df_sim <- data[sample.int(nrow(data), n, replace = TRUE), ]
+     fit <- lm(formula, df_sim)
+     
+     ci_ls <- confint(fit)[2,]
+     ci_robust <- confint_robust(fit)[2,]
+     
+     covers <- c(coef(fit)[2],
+                 ci_ls[1] < beta1_true & beta1_true < ci_ls[2],
+                 ci_robust[1] < beta1_true & beta1_true < ci_robust[2])
+     names(covers) <- c("estimate", "least_squares", "robust")
+     covers
+   }
+
+   nsim <- 3000
+   data <- nhanes_child
+   formula <- height_all ~ AgeMonths
+   b1_true <- coef(lm(height_all ~ AgeMonths, nhanes_child))[2]
+   
+   sim_n10 <- replicate(nsim, sim_lm(10, data, formula, b1_true))
+   sim_n25 <- replicate(nsim, sim_lm(25, data, formula, b1_true))
+   sim_n50 <- replicate(nsim, sim_lm(50, data, formula, b1_true))
+   sim_n100 <- replicate(nsim, sim_lm(100, data, formula, b1_true))
+   sim_n500 <- replicate(nsim, sim_lm(500, data, formula, b1_true))
+
+   ex3a <- bind_rows(
+     data.frame(n = 10, t(sim_n10)),
+     data.frame(n = 25, t(sim_n25)),
+     data.frame(n = 50, t(sim_n50)),
+     data.frame(n = 100, t(sim_n100)),
+     data.frame(n = 500, t(sim_n500))
+   )
+   ```
+   
+   \color{black}
+
+   b. For each simulated dataset, fit a linear regression model for the height outcome constructed in exercise 2(b) and AgeMonths as the linear predictor (the same regression model estimated in 2(b)). Extract the $\hat \beta_1$ coefficient estimate for the slope associated with age. For each sample size, plot a histogram of the distribution of $\hat \beta_1$ estimates and compare them to the true best population value (the coefficient estimated in exercise 2(b)).  What do you observe about the distribution of $\hat \beta_1$.
+   
+   \color{darkred}
+   
+   The distribution of $\hat \beta_1$ converges to become closer to the true value of $\beta_1$ as the sample size increases.
+   
+   ```{r, fig.height = 2, fig.width = 7}
+   ex3a %>%
+     ggplot(aes(estimate)) +
+     geom_histogram(aes(y = ..density..), bins = 100) +
+     geom_vline(xintercept = b1_true, color = "red") +
+     facet_wrap(~n, scales = "free_y", nrow = 1) +
+     theme_light() +
+     ggtitle("beta1: slope for change in height by AgeMonths")
+   ```
+
+   \color{black}
+
+   c. For the regression model fitted to each simulated dataset, extract the 95% confidence interval using the `confint()` function. For each simulated sample size, calculate the proportion of 95% confidence intervals that contain the true value of $\beta_1$. How does this change with sample size relative to the nominal 95% coverage target?
+
+   \color{darkred}
+   For the least-squares 95% CI, the coverage is around 90-91% for all simulated sample sizes. The coverage of the 95% CI does not converge to the theoretical 95% level as the sample size increases due to the violations of the regression assumptions identified in exercise 2.
+   
+   ```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+   ex3a %>%
+     mutate(n = as.factor(n)) %>%
+     group_by(n) %>%
+     summarise(lsq_coverage = mean(least_squares)) %>%
+     ggplot(aes(n, lsq_coverage)) +
+     geom_col() +
+     geom_hline(yintercept = 0.95, linetype = "dashed") +
+     coord_cartesian(ylim = c(0.8, 1.0)) +
+     theme_light() +
+     labs(title = "Coverage of least-squares 95% CI",
+          y = "95% CI coverage probability")
+   ```
+   
+   \color{black}
+
+   d. Repeat your confidence interval coverage calculation from part (c) using the `confint_robust()` function from part 2(f). For each sample size, compare the coverage of the robust confidence intervals with the coverage of the least-squares regression confidence intervals from part (c). Is this what you you expected?
+
+   \color{darkred}
+   At small sample sizes (n = 10), the robust confidence intervals do not have better coverage than the least squares confidence intervals. But as the sample size increases, the coverage of the robust CIs increases to the nomial 95% level.
+   
+   The reason for this is that robust confidence intervals rely on the Central Limit Theorem to avoid the normality assumptions required by standard least squares regression.  When $n$ is small, there are not sufficient observations for the CLT to apply, but this improves as $n$ increases.xsggxo
+   
+   ```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+   ex3a %>%
+     mutate(n = as.factor(n)) %>%
+     gather(CI_type, covers, least_squares, robust) %>%
+     group_by(n, CI_type) %>%
+     summarise(coverage = mean(covers)) %>%
+     ggplot(aes(n, coverage, fill = CI_type)) +
+     geom_col(position = "dodge") +
+     geom_hline(yintercept = 0.95, linetype = "dashed") +
+     coord_cartesian(ylim = c(0.8, 1.0)) +
+     theme_light() +
+     labs(title = "Coverage of least-squares 95% CI",
+          y = "95% CI coverage probability")
+   ```
+   
+   \color{black}
+
+
+   e. For a bit of bonus fun, replicate this simulation study investigating a linear regression between the three outcome variables studied last week (Height, BMI, and AlcoholYear) and adult age as a covariate.
+
+
+\color{darkred}
+
+```{r, cache = TRUE, warning = FALSE}
+set.seed(6841871)
+  
+nhanes20pl <- NHANES[NHANES$Age >= 20, ]
+
+## Height ~ Age 
+data <- nhanes20pl[!is.na(nhanes20pl$Height), ]
+formula <- Height ~ Age
+b1_true <- coef(lm(formula, data))[2]
+
+height_n10 <- replicate(nsim, sim_lm(10, data, formula, b1_true))
+height_n25 <- replicate(nsim, sim_lm(25, data, formula, b1_true))
+height_n50 <- replicate(nsim, sim_lm(50, data, formula, b1_true))
+height_n100 <- replicate(nsim, sim_lm(100, data, formula, b1_true))
+height_n500 <- replicate(nsim, sim_lm(500, data, formula, b1_true))
+
+## BMI ~ Age 
+data <- nhanes20pl[!is.na(nhanes20pl$BMI), ]
+formula <- BMI ~ Age
+b1_true <- coef(lm(formula, data))[2]
+
+bmi_n10 <- replicate(nsim, sim_lm(10, data, formula, b1_true))
+bmi_n25 <- replicate(nsim, sim_lm(25, data, formula, b1_true))
+bmi_n50 <- replicate(nsim, sim_lm(50, data, formula, b1_true))
+bmi_n100 <- replicate(nsim, sim_lm(100, data, formula, b1_true))
+bmi_n500 <- replicate(nsim, sim_lm(500, data, formula, b1_true))
+
+## AlcoholYear ~ Age 
+data <- nhanes20pl[!is.na(nhanes20pl$AlcoholYear), ]
+formula <- AlcoholYear ~ Age
+b1_true <- coef(lm(formula, data))[2]
+
+alc_n10 <- replicate(nsim, sim_lm(10, data, formula, b1_true))
+alc_n25 <- replicate(nsim, sim_lm(25, data, formula, b1_true))
+alc_n50 <- replicate(nsim, sim_lm(50, data, formula, b1_true))
+alc_n100 <- replicate(nsim, sim_lm(100, data, formula, b1_true))
+alc_n500 <- replicate(nsim, sim_lm(500, data, formula, b1_true))
+
+ex3e <- bind_rows(
+  data.frame(outcome = "Height", n = 10, t(height_n10)),
+  data.frame(outcome = "Height", n = 25, t(height_n25)),
+  data.frame(outcome = "Height", n = 50, t(height_n50)),
+  data.frame(outcome = "Height", n = 100, t(height_n100)),
+  data.frame(outcome = "Height", n = 500, t(height_n500)),
+  data.frame(outcome = "BMI", n = 10, t(bmi_n10)),
+  data.frame(outcome = "BMI", n = 25, t(bmi_n25)),
+  data.frame(outcome = "BMI", n = 50, t(bmi_n50)),
+  data.frame(outcome = "BMI", n = 100, t(bmi_n100)),
+  data.frame(outcome = "BMI", n = 500, t(bmi_n500)),
+  data.frame(outcome = "Alcohol days per year", n = 10, t(alc_n10)),
+  data.frame(outcome = "Alcohol days per year", n = 25, t(alc_n25)),
+  data.frame(outcome = "Alcohol days per year", n = 50, t(alc_n50)),
+  data.frame(outcome = "Alcohol days per year", n = 100, t(alc_n100)),
+  data.frame(outcome = "Alcohol days per year", n = 500, t(alc_n500))  
+)
+
+```
+
+For the Height and BMI outcomes, at small samples the least-squares 95% CI perform _better_ than the robust CIs because the normality assumption is relatively well statisfied by the sample size is not large enough for the CLT to apply. At larger samples, both CIs perform similarly well.
+
+
+```{r, fig.height = 7, fig.width = 5, fig.align = "center"}
+
+ex3e %>%
+  mutate(n = as.factor(n)) %>%
+  gather(CI_type, covers, least_squares, robust) %>%
+  group_by(outcome, n, CI_type) %>%
+  summarise(coverage = mean(covers)) %>%
+  ungroup() %>%
+  mutate(outcome = fct_relevel(outcome, "Height", "BMI")) %>%
+  ggplot(aes(n, coverage, fill = CI_type)) +
+  geom_col(position = "dodge") +
+  geom_hline(yintercept = 0.95, linetype = "dashed") +
+  facet_wrap(~outcome, nrow = 3) +
+  coord_cartesian(ylim = c(0.8, 1.0)) +
+  theme_light() +
+  labs(title = "Coverage of least-squares 95% CI",
+       y = "95% CI coverage probability")
+```
+
+\color{black}
