@@ -1,0 +1,191 @@
+---
+title: "Session 6:  Dealing with data II"
+author: Dr Juliette Unwin
+date: 13th November 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover data management including
+
+* tidyr package
+* joining data frames.
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/X5YtLkfmutrwj5fk8
+
+<img class="plain"  text-align:middle  src="../images/weeksix.png">
+
+***
+## tidyr
+According to the tidyr website (https://tidyr.tidyverse.org), the goal of tidyr is to help you create tidy data. Tidy data is data where:
+
+* Every column is variable.
+* Every row is an observation.
+* Every cell is a single value.
+
+***
+## tidyr functions
+
+* __Pivotting__, which converts between long and wide forms. Replaces the older spread() and gather() functions. 
+
+* __Rectangling__, which turns deeply nested lists (as from JSON) into tidy tibbles. 
+
+* __Nesting__ converts grouped data to a form where each group becomes a single row containing a nested data frame, and unnesting does the opposite.
+
+* __Splitting__ and __combining__ character columns.
+
+* Dealing with missing values.
+
+***
+## Long forms
+
+Particular important in plotting.
+```{r echo = TRUE, collapse = TRUE}
+library(tidyverse)
+relig_income
+
+# New tidyr
+longer_pivot <- relig_income %>% 
+  pivot_longer(-religion, names_to = "income", values_to = "count")
+
+# Old tidyr
+longer_gather <- relig_income %>% 
+  gather(-religion, key = "income", value = "count")
+
+p <- ggplot(longer_gather) +
+  geom_col(aes(x = income, y=count, group=religion, fill = religion) )
+print(p)
+```
+
+***
+## Wide forms
+
+You can also use pivot_wider() to perform simple aggregation.
+
+```{r echo = TRUE, collapse = TRUE}
+us_rent_income
+
+us_rent_wide <- us_rent_income %>% 
+  pivot_wider(names_from = variable, values_from = c(estimate, moe))
+```
+
+*** 
+## Making data rectangular
+e.g. reading in data from JSON format
+unnest_wider() takes every component and makes a new column.
+unnest_longer() takes every component and makes a new row.
+
+```{r echo = TRUE, collapse = TRUE}
+library(repurrrsive)
+users <- tibble(user = gh_users)
+users$user[[1]]
+
+users_wider<- users %>% unnest_wider(user)
+
+users %>% hoist(user, 
+  followers = "followers", 
+  login = "login", 
+  url = "html_url"
+)
+```
+
+***
+## Nesting
+```{r echo = TRUE, collapse = TRUE}
+df <- tribble(
+  ~g, ~x, ~y,
+   1,  1,  2,
+   2,  4,  6,
+   2,  5,  7,
+   3, 10,  NA
+)
+nest_df <- df %>% nest(data = c(x, y))
+```
+
+***
+## Making models of nested data frames
+
+```{r echo = TRUE, collapse = TRUE}
+mtcars_nested <- mtcars %>% 
+  group_by(cyl) %>% 
+  nest()
+
+mtcars_nested
+
+mtcars_nested <- mtcars_nested %>% 
+  mutate(model = map(data, function(df) lm(mpg ~ wt, data = df)))
+mtcars_nested
+```
+
+***
+## Separating data
+```{r echo = TRUE, collapse = TRUE}
+df <- data.frame(x = c(NA, "a.b", "a.d", "b.c"))
+df
+df %>% separate(x, c("A", "B"))
+```
+
+***
+## Extracting data
+```{r echo = TRUE, collapse = TRUE}
+
+df <- data.frame(x = c(NA, "a-b", "a-d", "b-c", "d-e"))
+df
+df %>% extract(x, "A")
+# Extracting using regex
+df %>% extract(x, c("A", "B"), "([[:alnum:]]+)-([[:alnum:]]+)")
+```
+
+***
+## Uniting
+```{r echo = TRUE, collapse = TRUE}
+df <- expand_grid(x = c("a", NA), y = c("b", NA))
+df
+
+df %>% unite("z", x:y, remove = FALSE)
+```
+
+***
+## Dropping missing values
+```{r echo = TRUE, collapse = TRUE}
+df <- tibble(x = c(1, 2, NA), y = c("a", NA, "b"))
+df %>% drop_na()
+df %>% drop_na(x)
+```
+
+***
+## Replacing missing values
+```{r echo = TRUE, collapse = TRUE}
+  df <- tibble(x = c(1, 2, NA), y = c("a", NA, "b"), z = list(1:5, NULL, 10:20))
+  df %>% replace_na(list(x = 0, y = "unknown"))
+```
+
+***
+## Joining data frames
+https://dplyr.tidyverse.org/reference/join.html
+```{r echo = TRUE, collapse = TRUE}
+names <- data.frame("id" = 1:3,
+                    "names" = c("Alice", "George", "Katie"))
+ages <- data.frame("id" = 1:3,
+                   "ages" = c(15,  47, 29))
+data <- left_join(names, ages)
+
+data2 <- left_join(names, ages, by = "id")
+
+```
