@@ -1,0 +1,50 @@
+---
+title: "Session 7: Good Programming Practices"
+author: Dr Juliette Unwin
+date: 27th November 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover good R programming practices.
+
+* Consistency
+  * Variable naming conventions.
+  * Style guide (http://adv-r.had.co.nz/Style.html)
+  
+* Efficiency
+  * Re using code .............Functions / scripts.
+  * Avoiding loops
+  * Using packages
+    * Package management
+    * Use packages
+  * Split Your Code into Short, Focused Units
+
+* Sharing code
+  * setwd() / project files
+  * Comment your code
+  * MWE
+  * Code review
+  * Version control?
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/oY3U2Rj2uGT7ya7t8
+
+<img class="plain"  text-align:middle  src="../images/weekseven.png">
+
+***
