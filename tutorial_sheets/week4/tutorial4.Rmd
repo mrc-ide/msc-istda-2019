@@ -1,0 +1,101 @@
+---
+title: "Week 4 Tutorial: Multiple regression and comparing proportions"
+subtitle: Introduction to Statistical Thinking and Data Analysis
+author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
+date: 28 October 2019
+output:
+  pdf_document: default
+header-includes:
+- \usepackage{xcolor}
+- \definecolor{darkred}{RGB}{139,0,0}
+---
+
+1. The dataset `neutron.csv` contains data from a clinical trial comparing two forms of radiotherapy for cancer treatment. Cancer patients were randomly allocated to receive the standard therapy using photon particles or a new form using neutrons. Randomisation was stratified for four sites of cancer. The outcomes of interest is whether the new neutron treatment affects cancer survival compared to standard of care photon therapy. The table below describes the variables in this dataset.
+
+   |Variable   |Description                                             |
+   |:----------|:-------------------------------------------------------|
+   |id         |Patient ID                                              |
+   |stime      |Survival time in days                                   |
+   |death      |Death status (0 = alive; 1 = dead)                      |
+   |treatment  |Treatment received (Neutrons, Photons)                  |
+   |site       |Site of cancer (Bladder, Cervix, Prostate, Rectum)      |
+   |phase      |Randomisation phase (0 = first phase; 1 = second phase) |
+   |meta       |Metastases diagnosed before death (Yes, No)             |
+   |metatime   |Time to metastases (days)                               |
+   |death1year |Death within 1 year of recruitment (Yes, No)            |
+
+
+    a. Assuming that the treatment has no effect on survival, is the probability of death within one year below 60%?
+	   
+	   i. Use the neutron dataset to estimate the probability of death within 1 year and calculate a 95% confidence interval.
+	   
+	   ii. Articulate a null and alternative hypothesis to address the question. Construct an appropriate test statistic and calculate a one-sided p-value.  Interpret the results of your test.
+	   
+	   iii. Use the binomial distribution to calculate the probability observing the number of deaths seen in our sample or fewer, if the true probability of death within one year is 60%. (Hint: use the function `pbinom()` in R. Also think about how to get the same result using the function `dbinom()`.)
+	   
+	b. Does neutron treatment compared to receiving proton treatment affect the probability of death within one year?
+	
+	   i. Construct a 2x2 contingency table summarising the relationship between treatment assigment and death within one year. Calculate the sample proportion to estimate the probability of death and the odds of death for each treatment group.
+	   
+	   ii. Estimate the risk difference, risk ratio, and odds ratio and 95% confidence intervals for each outcome. Interpret your estimates for each of these measures of difference.  
+	   
+	   iii. State the relevant null hypothesis for each of the measures of difference. Calculate the z-test statistic and p-value for each measure and interpret the results.
+	   
+	   iv. For applied purposes, we typically choose and focus on one measure of difference and a single test statistic. This is specified during the analysis plan before conducting any data analysis. Which measure of difference would you choose and why?
+	   
+	c. Are patients who experienced metastasis more likely to die within one year?
+	
+	   i. Construct a new variable `meta1year` classifying a binary outcome for patients who experienced metastasis within one year. This should use the variables `meta` and `metatime`.
+	   
+	   ii. Construct a 2x2 contingency table summarising the relationship between metastasis within one year and death within one year. Calculate the sample proportions and odds.
+	   
+	   iii. Calculate the risk difference, risk ratio, and odds ratio for death within one year for those who experience metastasis and those who do not.
+	   
+	   iv. Conduct and interpret a hypothesis test for this outcome.
+	   
+\newpage
+
+2. This exercise will practice multiple linear regression and interpretation of categorical outcomes.  We will revisit the NHANES dataset for adults to examine the association of BMI with characteristics include age, sex, race, and household income. 
+
+   Construct a dataset for adults aged 20 and older retaining only the variables of interest for this analysis:
+   
+   ```{r}
+   library(NHANES)
+   data(NHANES)
+   nhanes20pl <- NHANES[NHANES$Age >= 20,
+                     c("BMI", "Age", "Gender", "Race1", "HHIncome", "HHIncomeMid")]
+   nhanes20pl <- nhanes20pl[complete.cases(nhanes20pl), ]
+   ```
+   
+   The function `complete.cases(...)` returns a logical (TRUE/FALSE) vector for each row of the data frame with a `TRUE` if there are no missing values and `FALSE` if the any variable in the row has a missing value.  Thus the second line subsets the `nhanes20pl` dataset to retain only the respondents who have complete data for all of the specified variables. This is convenient for efficiently subsetting the data, but in most cases for applied analysis not recommended for practice. It is usually preferred to review each variable of interest individual for missing data to ensure there are no unexpected loss of data.
+   
+   a. Review summary statistics and frequency distributions for each of the variables of interest.  For each of the categorical variables, choose an appropriate reference category.
+   
+   b. Estimate a linear regression model for the outcome `BMI` as a function of `Age`. Interpret the estimated regression coefficients and 95% confidence intervals.
+   
+   c. Estimate a multiple linear regression model for `BMI` as a funtion of `Age` and `Gender`.
+   
+      i. Write out the estimated regression equation and interpret the regression coefficients from your new model. How has incorporating gender affected the estimated association between age and BMI?
+	  
+      ii. Use the function `anova(fit2b, fit2c)` to conduct an analysis of variance to compare the model estimated in part (c) to the model estimated in part (b). State the hypothesis that is tested by the reported p-value and interpret the results of this hypothesis test.
+	  
+	  iii. Compare the F-statistic and p-value reported by the `anova(...)` function to the t-statistic and p-value reported by `summary(fit2c)`.
+
+   d. Now add the variable `Race1` to your model and repeat questions (i) to (iii) to compare the new model to the model estimated in part (c).
+   
+   e. Finally, add the variable `HHIncome` to your regression model. Repeat questions (i) to (iii) from part (c), and address 
+      
+	  iv. Change the reference category for the `HHIncome` variable, refit the regression model, and repeat your `summary(...)` and `anova(...)`.  What has changed and what has not changed?
+	  
+	  v. Create a plot summarising the estimates of relationship between BMI and household income category based on your regression coefficient estimates. (Hint: use the function `coef(fit1e)` and `confint(fitto extract the coefficient estimates from the fitted model object.
+
+   f. The variable `HHIncomeMid` is a continuous variable coded as the midpoints for each income category.  Refit your regression model from part (e) using this variable instead of `HHIncome`.  Interpret the estimate for the coefficient for `HHIncomeMid`. How do the conclusions compare to those drawn in part (e)?  Which model do you prefer?
+   
+   g. Often the ability to easily grasp the importance or magnitude of an association depends on whether it is presented on an intuitive scale.  For example, it might be more natural for us to think about the change in BMI per $10,000 change in household income rather than the change in BMI per $1 change in household income.  Create a new variable for the household income divided by 10,000
+   
+      ```{r} 
+      nhanes20pl$HHIncome10k <- nhanes20pl$HHIncomeMid / 10000
+      ```
+	  
+	  Refit your regression model from part (f) using this variable instead of HHIncomeMid. Interpret the coefficient for this variable. How have the estimates for the standard error, confidence interval, t-statistic and p-value changed?
+ 
