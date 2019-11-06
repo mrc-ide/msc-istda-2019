@@ -75,6 +75,8 @@ data_nhanes <- readRDS("../data/nhanes.RDS")
 ## Filtering
 ```{r echo = TRUE, collapse = TRUE}
 # Filter data on sex == 1
+filtered_data <- filter(data_nhanes, sex==1)
+head(filtered_data)
 
 ```
 
@@ -82,21 +84,28 @@ data_nhanes <- readRDS("../data/nhanes.RDS")
 ## Using pipes
 This is from the _magrittr_ package.
 ```{r echo = TRUE, collapse = TRUE}
-
+new_data <- data_nhanes %>% 
+  filter(sex == 1) %>%
+  filter(age < 8)
+head(new_data)
 ```
 
 *** 
 ## Mutate
 ```{r echo = TRUE, collapse = TRUE}
 # Add in an extra column of height squared
-
+mutate_data <- data_nhanes %>%
+  mutate(height_sq = height^2)
+head(mutate_data)
 ```
 
 ***
 ## Select
 ```{r echo = TRUE, collapse = TRUE}
 # Select only id and age columns
-
+select_data <- data_nhanes %>%
+  select(id, age)
+head(select_data)
 # There are lots of interesting ways you can select columns
 # ? select_helpers
 ```
@@ -105,7 +114,10 @@ This is from the _magrittr_ package.
 ## Arrange
 ```{r echo = TRUE, collapse = TRUE}
 # Arrange in descending order (desc) of height.
-
+sort_data <- data_nhanes %>%
+  arrange(desc(height)) %>%
+  arrange(desc(age))
+head(sort_data)
 ```
 
 ***
