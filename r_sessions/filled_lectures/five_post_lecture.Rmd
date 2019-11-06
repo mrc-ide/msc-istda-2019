@@ -64,10 +64,9 @@ library(dplyr)
 
 
 ***
-We are going to use the NHANES data set for this example
+We are going to use the peru lung data set for this example
 ```{r echo = TRUE, collapse = TRUE}
-library(NHANES)
-data_nhanes <- readRDS("../data/nhanes.RDS")
+data_peru <- read.csv("../data/perulung_ems.csv")
 ```
 
 
@@ -75,7 +74,7 @@ data_nhanes <- readRDS("../data/nhanes.RDS")
 ## Filtering
 ```{r echo = TRUE, collapse = TRUE}
 # Filter data on sex == 1
-filtered_data <- filter(data_nhanes, sex==1)
+filtered_data <- filter(data_peru, sex==1)
 head(filtered_data)
 
 ```
@@ -84,7 +83,7 @@ head(filtered_data)
 ## Using pipes
 This is from the _magrittr_ package.
 ```{r echo = TRUE, collapse = TRUE}
-new_data <- data_nhanes %>% 
+new_data <- data_peru %>% 
   filter(sex == 1) %>%
   filter(age < 8)
 head(new_data)
@@ -94,7 +93,7 @@ head(new_data)
 ## Mutate
 ```{r echo = TRUE, collapse = TRUE}
 # Add in an extra column of height squared
-mutate_data <- data_nhanes %>%
+mutate_data <- data_peru %>%
   mutate(height_sq = height^2)
 head(mutate_data)
 ```
@@ -103,7 +102,7 @@ head(mutate_data)
 ## Select
 ```{r echo = TRUE, collapse = TRUE}
 # Select only id and age columns
-select_data <- data_nhanes %>%
+select_data <- data_peru %>%
   select(id, age)
 head(select_data)
 # There are lots of interesting ways you can select columns
@@ -114,7 +113,7 @@ head(select_data)
 ## Arrange
 ```{r echo = TRUE, collapse = TRUE}
 # Arrange in descending order (desc) of height.
-sort_data <- data_nhanes %>%
+sort_data <- data_peru %>%
   arrange(desc(height)) %>%
   arrange(desc(age))
 head(sort_data)
@@ -123,7 +122,7 @@ head(sort_data)
 ***
 ## Summarise
 ```{r echo = TRUE, collapse = TRUE}
-data_nhanes %>%
+data_peru %>%
   group_by(sex) %>%
   summarise(
     n = n(),
@@ -140,7 +139,7 @@ data_nhanes %>%
 * Work out the mean mass and number of characters for each species.
 Choose only those groups that have more than one character and have an average mass 
 greater than 50.
-* Plot a graph of the average height for each gender of characters who have been in 5 or more films.
+* Plot a graph of the average height for each gender of characters who have been in 3 or more films.
 
 ***
 ## Some examples for us to work through together
@@ -184,16 +183,20 @@ starwars %>%
 
 ***
 ## Some examples for us to work through together
-Plot a graph of the average height for each gender of characters who have been in 5 or more films.
+Plot a graph of the average height for each gender of characters who have been in 3 or more films.
 ```{r echo = TRUE, collapse = TRUE}
 new_data <- starwars %>%  
- filter(homeworld == "Tatooine") %>%
+ filter(lengths(films) > 3) %>%
  group_by(gender) %>%
   summarise(
     n = n(),
     height = mean(height, na.rm = TRUE)
   ) 
+```
 
+***
+## Some examples for us to work through together
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
 library(ggplot2)
 p <- ggplot(new_data) +
   geom_col(mapping = aes(x = gender, y = height))
