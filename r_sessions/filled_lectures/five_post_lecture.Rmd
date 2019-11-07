@@ -1,0 +1,204 @@
+---
+title: "Session 5: Dealing with data I"
+author: Dr Juliette Unwin
+date: 6th November 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+library(knitr)
+opts_chunk$set(echo = FALSE)
+#opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover:
+
+* Tidyverse (https://www.tidyverse.org/packages/)
+* Dplyr
+
+and is based on Chapter 9 from R for data science.
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/kBXFh9mNcLGcZ5Z29
+
+<img class="plain"  text-align:middle  src="../images/weekfive.png">
+
+***
+## What is tidyverse?
+
+A group of packages for data science:
+
+* __ggplot2__ - plotting
+* __dplyr__ - data manipulation
+* __tidyr__ - creating tidy data
+* readr - reading data
+* purr - functional programming
+* tibble - modern data frame
+* stringr - strings
+* forcats - factors
+
+***
+We are going to focus on dplyr today.
+```{r echo = TRUE, collapse = TRUE}
+#install.packages("tidyverse")
+library(tidyverse)
+#install.packages("dplyr")
+library(dplyr)
+```
+***
+## Functionality of dplyr
+* filter() picks cases based on their values.
+* mutate() adds new variables that are functions of existing variables
+* select() picks variables based on their names.
+* arrange() changes the ordering of the rows.
+* summarise() reduces multiple values down to a single summary.
+
+
+***
+We are going to use the peru lung data set for this example
+```{r echo = TRUE, collapse = TRUE}
+data_peru <- read.csv("../data/perulung_ems.csv")
+```
+
+
+***
+## Filtering
+```{r echo = TRUE, collapse = TRUE}
+# Filter data on sex == 1
+filtered_data <- filter(data_peru, sex==1)
+head(filtered_data)
+
+```
+
+***
+## Using pipes
+This is from the _magrittr_ package.
+```{r echo = TRUE, collapse = TRUE}
+new_data <- data_peru %>% 
+  filter(sex == 1) %>%
+  filter(age < 8)
+head(new_data)
+```
+
+*** 
+## Mutate
+```{r echo = TRUE, collapse = TRUE}
+# Add in an extra column of height squared
+mutate_data <- data_peru %>%
+  mutate(height_sq = height^2)
+head(mutate_data)
+```
+
+***
+## Select
+```{r echo = TRUE, collapse = TRUE}
+# Select only id and age columns
+select_data <- data_peru %>%
+  select(id, age)
+head(select_data)
+# There are lots of interesting ways you can select columns
+# ? select_helpers
+```
+
+***
+## Arrange
+```{r echo = TRUE, collapse = TRUE}
+# Arrange in descending order (desc) of height.
+sort_data <- data_peru %>%
+  arrange(desc(height)) %>%
+  arrange(desc(age))
+head(sort_data)
+```
+
+***
+## Summarise
+```{r echo = TRUE, collapse = TRUE}
+data_peru %>%
+  group_by(sex) %>%
+  summarise(
+    n = n(),
+    age = mean(age, na.rm = TRUE),
+    height = mean(height, na.rm = TRUE))
+```
+
+***
+## Some examples for us to work through together
+
+* Create a table with name, height and mass of Starwars characters who are taller than 150cm.
+* How many characters are taller than 150cm?
+* Calculate the BMI of starwars characters.  Choose those charactes that are overweight and sort them in descending order of weight.
+* Work out the mean mass and number of characters for each species.
+Choose only those groups that have more than one character and have an average mass 
+greater than 50.
+* Plot a graph of the average height for each gender of characters who have been in 3 or more films.
+
+***
+## Some examples for us to work through together
+
+Create a table with name, height and mass of Starwars characters who are taller than 150cm.
+```{r echo = TRUE, collapse = TRUE}
+starwars %>% 
+  select(name:mass) %>%
+  filter(height > 150)
+```
+How many characters are taller than 150cm?
+
+
+***
+## Some examples for us to work through together
+Calculate the BMI of starwars characters.  Choose those charactes that are overweight and sort them in descending order of weight.
+```{r echo = TRUE, collapse = TRUE}
+starwars %>% 
+  mutate(name, bmi = mass / ((height / 100)  ^ 2)) %>%
+  select(name:mass, bmi) %>%
+  filter(height > 25) %>%
+  arrange(mass)
+```
+
+
+***
+## Some examples for us to work through together
+Work out the mean mass and number of characters for each species.
+Choose only those groups that have more than one character and have an average mass 
+greater than 50.
+```{r echo = TRUE, collapse = TRUE}
+starwars %>%  
+ group_by(species) %>%
+  summarise(
+    n = n(),
+    mass = mean(mass, na.rm = TRUE)
+  ) %>%
+  filter(n > 1,
+         mass > 50)
+```
+
+***
+## Some examples for us to work through together
+Plot a graph of the average height for each gender of characters who have been in 3 or more films.
+```{r echo = TRUE, collapse = TRUE}
+new_data <- starwars %>%  
+ filter(lengths(films) > 3) %>%
+ group_by(gender) %>%
+  summarise(
+    n = n(),
+    height = mean(height, na.rm = TRUE)
+  ) 
+```
+
+***
+## Some examples for us to work through together
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
+library(ggplot2)
+p <- ggplot(new_data) +
+  geom_col(mapping = aes(x = gender, y = height))
+print(p)
+```

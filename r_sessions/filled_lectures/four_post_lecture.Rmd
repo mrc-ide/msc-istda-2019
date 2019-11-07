@@ -53,10 +53,12 @@ What types of data may you want to load in?
 data <- read.csv("../data/perulung_ems.csv")
 
 # Getting / setting working directory
+getwd()
+#setwd("")
 ```
 ***
 ## Project files
-
+Project files can be a useful way of making sure your file path is always correct
 ***
 ## Loading in text files
 ```{r echo = TRUE, collapse = TRUE}
@@ -64,9 +66,10 @@ df <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.
                  header = FALSE)
 
 # Headers
-
+df2 <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.txt", 
+                 header = TRUE)
 # Separation
-
+# Check the sep optional argument
 ```
 ***
 ## Loading in r objects
@@ -114,6 +117,7 @@ ages <- c(3, 5, 5, 6, 7, 8, 9, 3, 7, 7, 7)
 factor_ages <- factor(ages)
 
 # Check if factos
+is.factor(ages)
 ```
 
 ***
@@ -142,7 +146,8 @@ ordered_months <- c("January","February","March",
                     "October","November","December")
 
 # Order the factors - check ordered with table
-
+o_mons <- factor(x=mons, levels = ordered_months, ordered=is.ordered(mons))
+o_mons
 ```
 
 ***
@@ -152,7 +157,10 @@ df <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.
                  header = FALSE)
 
 # Check stringsAsFactors
-
+head(df)
+df <- read.table("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/test.txt", 
+                 header = FALSE, stringsAsFactors = FALSE)
+head(df)
 ```
 
 ***
@@ -166,11 +174,16 @@ data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
 head(data)
 
 # Calculating difference in dates
+diff = data$Date - data$Date[1]
+diff
 
 # Turning into numeric
-
+numeric = as.numeric(data$Date)
+numeric
 # Converting dates to numeric: origin = "1970-01-01"
+as.Date(numeric, origin = "1970-01-01")
 
+# zoo is another good pacakge for dates
 ```
 
 ***
@@ -201,8 +214,21 @@ When would you use each type of loop?
 
 ***
 ```{r echo = TRUE, collapse = TRUE}
+# Example of a for loop
+a = 7
+if (a < 5) {
+  a + 5
+} else if (a > 5) {
+  a - 7
+}
 
+count = 0
+# Example of a while loop
+while (a <5 & count < 10){
+  count = count +1
+}
 ```
+
 ***
 ## Avoiding loops
 
@@ -218,11 +244,12 @@ for (i in 1:length(vec_num)){
   empty_vector[i] <- (complicated_function(vec_num[i]))
 }
 
-
 # Use lapply
-
+list <- lapply(vec_num, complicated_function)
+vec <- unlist(list)
 
 # Use sapply
-
+vec2 <- sapply(vec_num, complicated_function)
+vec2
 ```
 

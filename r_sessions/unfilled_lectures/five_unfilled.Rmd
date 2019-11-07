@@ -1,0 +1,165 @@
+---
+title: "Session 5: Dealing with data I"
+author: Dr Juliette Unwin
+date: 6th November 2019
+output: 
+  revealjs::revealjs_presentation:
+    css: ../styles.css
+    center: true
+    includes:
+      in_header: ../header-footer.html
+---
+
+```{r include = FALSE}
+library(knitr)
+opts_chunk$set(echo = FALSE)
+#opts_knit$set(root.dir = '../')
+```
+
+***
+Today's session will cover:
+
+* Tidyverse (https://www.tidyverse.org/packages/)
+* Dplyr
+
+and is based on Chapter 9 from R for data science.
+
+***
+
+What do you remember from last week? 
+
+https://forms.gle/kBXFh9mNcLGcZ5Z29
+
+<img class="plain"  text-align:middle  src="../images/weekfive.png">
+
+***
+## What is tidyverse?
+
+A group of packages for data science:
+
+* __ggplot2__ - plotting
+* __dplyr__ - data manipulation
+* __tidyr__ - creating tidy data
+* readr - reading data
+* purr - functional programming
+* tibble - modern data frame
+* stringr - strings
+* forcats - factors
+
+***
+We are going to focus on dplyr today.
+```{r echo = TRUE, collapse = TRUE}
+#install.packages("tidyverse")
+library(tidyverse)
+#install.packages("dplyr")
+library(dplyr)
+```
+***
+## Functionality of dplyr
+* filter() picks cases based on their values.
+* mutate() adds new variables that are functions of existing variables
+* select() picks variables based on their names.
+* arrange() changes the ordering of the rows.
+* summarise() reduces multiple values down to a single summary.
+
+
+***
+We are going to use the NHANES data set for this example
+```{r echo = TRUE, collapse = TRUE}
+library(NHANES)
+data_nhanes <- readRDS("../data/nhanes.RDS")
+```
+
+
+***
+## Filtering
+```{r echo = TRUE, collapse = TRUE}
+# Filter data on sex == 1
+
+```
+
+***
+## Using pipes
+This is from the _magrittr_ package.
+```{r echo = TRUE, collapse = TRUE}
+
+```
+
+*** 
+## Mutate
+```{r echo = TRUE, collapse = TRUE}
+# Add in an extra column of height squared
+
+```
+
+***
+## Select
+```{r echo = TRUE, collapse = TRUE}
+# Select only id and age columns
+
+# There are lots of interesting ways you can select columns
+# ? select_helpers
+```
+
+***
+## Arrange
+```{r echo = TRUE, collapse = TRUE}
+# Arrange in descending order (desc) of height.
+
+```
+
+***
+## Summarise
+```{r echo = TRUE, collapse = TRUE}
+data_nhanes %>%
+  group_by(sex) %>%
+  summarise(
+    n = n(),
+    age = mean(age, na.rm = TRUE),
+    height = mean(height, na.rm = TRUE))
+```
+
+***
+## Some examples for us to work through together
+
+* Create a table with name, height and mass of Starwars characters who are taller than 150cm.
+* How many characters are taller than 150cm?
+* Calculate the BMI of starwars characters.  Choose those charactes that are overweight and sort them in descending order of weight.
+* Work out the mean mass and number of characters for each species.
+Choose only those groups that have more than one character and have an average mass 
+greater than 50.
+* Plot a graph of the average height for each gender of characters who have been in 5 or more films.
+
+***
+## Some examples for us to work through together
+
+Create a table with name, height and mass of Starwars characters who are taller than 150cm.
+```{r echo = TRUE, collapse = TRUE}
+
+```
+How many characters are taller than 150cm?
+
+
+***
+## Some examples for us to work through together
+Calculate the BMI of starwars characters.  Choose those charactes that are overweight and sort them in descending order of weight.
+```{r echo = TRUE, collapse = TRUE}
+
+```
+
+
+***
+## Some examples for us to work through together
+Work out the mean mass and number of characters for each species.
+Choose only those groups that have more than one character and have an average mass 
+greater than 50.
+```{r echo = TRUE, collapse = TRUE}
+
+```
+
+***
+## Some examples for us to work through together
+Plot a graph of the average height for each gender of characters who have been in 5 or more films.
+```{r echo = TRUE, collapse = TRUE}
+
+```
