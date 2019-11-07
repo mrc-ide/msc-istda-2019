@@ -1,0 +1,648 @@
+---
+title: "Week 4 Tutorial: Multiple regression and comparing proportions -- Solutions"
+subtitle: Introduction to Statistical Thinking and Data Analysis
+author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
+date: 28 October 2019; reviewed 4 November 2019; _updated 6 November 2019_
+output:
+  pdf_document: default
+header-includes:
+- \usepackage{xcolor}
+- \definecolor{darkred}{RGB}{139,0,0}
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+1. The dataset `neutron.csv` contains data from a clinical trial comparing two forms of radiotherapy for cancer treatment. Cancer patients were randomly allocated to receive the standard therapy using photon particles or a new form using neutrons. Randomisation was stratified for four sites of cancer. The outcomes of interest is whether the new neutron treatment affects cancer survival compared to standard of care photon therapy. The table below describes the variables in this dataset.
+
+   |Variable   |Description                                             |
+   |:----------|:-------------------------------------------------------|
+   |id         |Patient ID                                              |
+   |stime      |Survival time in days                                   |
+   |death      |Death status (0 = alive; 1 = dead)                      |
+   |treatment  |Treatment received (Neutrons, Photons)                  |
+   |site       |Site of cancer (Bladder, Cervix, Prostate, Rectum)      |
+   |phase      |Randomisation phase (0 = first phase; 1 = second phase) |
+   |meta       |Metastases diagnosed before death (Yes, No)             |
+   |metatime   |Time to metastases (days)                               |
+   |death1year |Death within 1 year of recruitment (Yes, No)            |
+
+
+    a. Assuming that the treatment has no effect on survival, is the probability of death within one year below 60%?
+	   
+	   ```{r ex1a, echo = FALSE, results = "hide"}
+	   ## Code for exercise 1a.
+	   
+	   neutron <- read.csv("neutron.csv")
+	   nrow(neutron)
+	   table(neutron$death1year)
+	   
+	   ## Part (i)
+	   n <- nrow(neutron)
+	   p <- sum(neutron$death1year == "Yes") / n
+	   se <- sqrt(p * (1-p) / n)
+	   ci <- p + c(-1, 1) * qnorm(0.975) * se
+	   
+	   ## Part (ii)
+	   se0 <- sqrt(0.6 * (1-0.6) / n)
+	   z <- (p - 0.6) / se0
+	   pnorm(z, lower.tail = TRUE)
+	   
+	   ## Without continuity correction
+	   prop.test(82, 154, p = 0.6, alternative = "less", correct = FALSE)  
+	   
+	   ## With continuity correction
+	   prop.test(82, 154, p = 0.6, alternative = "less")  
+	   ```
+	   
+	   i. Use the neutron dataset to estimate the probability of death within 1 year and calculate a 95% confidence interval.
+	   
+	   \color{darkred}
+	   * Eighty two out of 154 trial participants died within one year. 
+	   * The estimated probability of death within one year is 82 / 154 = 0.53.
+	   * The standard error for the probability of death within one year is $\sqrt{0.53 \times (1 - 0.53) / 154} = `r sprintf("%.3f", se)`$.
+	   * The 95% confidence interval is $0.532 \pm 1.95 \times `r sprintf("%.3f", se)` = `r sprintf("(%.2f, %.2f)", ci[1], ci[2])`$.
+	   
+	   The estimated probability of death within one year is 0.53. We are 95% confident that the true probability of death within one year of cancer diagnosis is between `r sprintf("%.2f", ci[1])` and `r sprintf("%.2f", ci[2])`.
+	   
+	   \color{black}
+	   
+	   ii. Articulate a null and alternative hypothesis to address the question. Construct an appropriate test statistic and calculate a one-sided p-value.  Interpret the results of your test.
+	   
+	   \color{darkred}
+	   
+	   * Null hypothesis (H0): The proportion of cancer patients who die within one year is greater than or equal to 0.6.
+	   * Alternative hypothesis (H1): The proportion of cancer patients who die within one year is less than 0.6.
+	   
+	   * Under the **assumption that the null hypothesis is true**, the standard error for the sample proportion is $\sqrt{0.6 \times (1 - 0.6) / 154} = 0.039$.
+	   * The z-value is $(0.532 - 0.6) / 0.039 = -1.711$.
+	   * The one-sided p-value is probability of observing a value this extreme or smaller, given by the proportion of the standard normal distribution below this value: `pnorm(-1.711)` = 0.044.
+	   
+	   Based on this evidence, we would **reject** the null hypothesis at the $\alpha = 0.05$ level and conclude that our data provide evidence to conclude that one-year mortality is below 60%. Note that this analysis returns the same p-value as `prop.test(82, 154, p = 0.6, alternative = "less", correct = FALSE)`.  
+	   
+	   However, note that using the continuity correction (the default for the `prop.test(...)` function), the one-sided p-value is `r round(prop.test(82, 154, p = 0.6, alternative = "less")$p.value, 3)`, slightly above the $\alpha = 0.05$ threshold.
+	   
+	   The main takeaway from this example is to reinforce the arbitrariness of the $\alpha = 0.05$ threshold for 'statistical significance'---there is no practical difference between a p-value of 0.044 and 0.052.
+	   
+	   In an actual applied analysis I would most likely:
+	   
+	   * Report the test for proportion with continuity correction.
+	   * Interpret the result as _moderate evidence_ that the one-year probability of death is below 60%, noting the p-value of 0.052.
+	   
+	   \color{black}
+	   
+	   iii. Use the binomial distribution to calculate the probability observing the number of deaths seen in our sample or fewer, if the true probability of death within one year is 60%. (Hint: use the function `pbinom()` in R. Also think about how to get the same result using the function `dbinom()`.)
+	   
+	   \color{darkred}
+	   
+	   The probability of observing $\leq 82$ deaths out of 154 patients if the true one-year probability of deaths is 0.6 is `pbinom(82, 154, 0.6)` = `r round(pbinom(82, 154, 0.6), 3)`. This can equivalently be calculated as `sum(dbinom(0:82, 154, 0.6))` = `r round(sum(dbinom(0:82, 154, 0.6)), 3)`. This is the probability that we would observe 82 deaths or fewer under the null hypothesis that the probability of death is 0.6. As expected, this probability based on the binomial distribution is close to the one-sided p-value with continuity correction, which is based on the normal approximation to the binomial distribution.
+	   
+	   ```{r ex1aiii, echo = FALSE, fig.height = 2.5, fig.width = 3, message = FALSE, warning = FALSE}
+	   library(tidyverse)
+	   df <- tibble(x = 0:154) %>%
+	           mutate(probability = dbinom(x, 154, 0.6))
+	   
+	   ggplot(df, aes(x, probability)) + 
+	   geom_col(color = "grey40", fill = NA, size = 0.05) + 
+	   geom_col(data = filter(df, x <= 82), color = "grey40", fill = "lightblue3", size = 0.05) +
+	   theme_bw()
+	   
+	   ggplot(data.frame(x = (c(0, 1) - 0.6) / se0), aes(x)) +
+	   stat_function(fun = dnorm, geom = "area", fill = "lightblue3", 
+	                 xlim = c(-0.6/se, z), n = 501) +
+	   stat_function(fun = dnorm, color = "grey40", n = 501) + 
+	   labs(x = "z", y = "density") +
+	   theme_bw()
+	   ```
+	   
+	   
+	   
+	   ```{r ex1a, eval = FALSE}
+	   ```
+	   ```{r ex1aiii, eval = FALSE}
+	   ```
+	   
+	   \color{black}
+	   
+	b. Does neutron treatment compared to receiving proton treatment affect the probability of death within one year?
+	
+	   ```{r, ex1b, echo = FALSE, results = "hide"}
+	   tab1b <- table(neutron$treatment, neutron$death1year)
+	   tab1b_out <- rbind(tab1b, Total = colSums(tab1b))
+	   
+	   x <- tab1b_out[ , "Yes"]
+	   n <- rowSums(tab1b_out)
+	   prop <- x / n
+	   odds <- prop / (1 - prop)
+	   tab1b_out <- cbind(tab1b_out, Total = n, Proportion = prop, Odds = odds)
+	   
+	   rd <- prop[1] - prop[2]
+	   rr <- prop[1] / prop[2]
+	   or <- odds[1] / odds[2]
+	   
+	   ## Risk difference SE for 95% CI
+	   rd_se <- sqrt(sum(prop[1:2] * (1 - prop[1:2]) / n[1:2]))
+	   rd_ci <- rd + c(-1, 1) * qnorm(0.975) * rd_se
+	   
+	   ## RD SE based on null hypothesis that RD = 0 --> use pooled proportion
+	   rd_se0 <- sqrt(prop[3] * (1 - prop[3]) * sum(1/n[1:2]))
+	   rd_z <- rd / rd_se0
+	   rd_pval <- 2 * pnorm(-abs(rd_z))
+	   
+	   prop.test(x[1:2], n[1:2])
+	   
+	   ## Log risk ratio inference
+	   log_rr <- log(rr)
+	   log_rr_se <- sqrt(sum(1/x[1:2]) - sum(1/n[1:2]))
+	   log_rr_ci <- log_rr + c(-1, 1) * qnorm(0.975) * log_rr_se
+	   rr_ci <- exp(log_rr_ci)
+	   log_rr_z <- log_rr / log_rr_se
+	   log_rr_pval <- 2 * pnorm(-abs(log_rr_z))
+	   
+	   ## Log odds ratio SE
+	   log_or <- log(or)
+	   log_or_se <- sqrt(sum(1/x[1:2]) + sum(1/(n[1:2] - x[1:2])))
+	   log_or_ci <- log_or + c(-1, 1) * qnorm(0.975) * log_or_se
+	   or_ci <- exp(log_or_ci)
+	   log_or_z <- log_or / log_or_se
+	   log_or_pval <- 2 * pnorm(-abs(log_or_z))
+	   ```
+	   i. Construct a 2x2 contingency table summarising the relationship between treatment assignment and death within one year. Calculate the sample proportion to estimate the probability of death and the odds of death for each treatment group.
+	   
+	   \color{darkred}
+	   
+	   By convention, the 2x2 contingency table presents the exposure (treatment assignment) in the rows and the outcome (death within 1 year: Yes/No) in the columns.
+
+	   ```{r, echo = FALSE}
+	   knitr::kable(tab1b_out, digits = 3)
+	   ```
+	   
+	   The proportion of trial participants who died within 1 year amongst those who received Neutron therapy was 0.576 compared to 0.468 of those who received Proton therapy.  The odds of death was 1.36 in the Neutron group versus 0.88 in the Proton group. (Recall that Neutron therapy was the new therapy being trialed against the standard of care Proton therapy; thus a higher proportion of deaths among the Neutron therapy group is surprising.)
+	   
+	   \color{black}
+	   
+	   ii. Estimate the risk difference, risk ratio, and odds ratio and 95% confidence intervals for each outcome. Interpret your estimates for each of these measures of difference.  
+	   
+	   \color{darkred}
+	   
+	   * **Risk difference**: The proportion of patients receiving Neutron therapy who will die within one year was 0.11 greater than the proportion of patients receiving Proton therapy (95% CI -0.05 to 0.27). 
+	   
+	     A (recommended) more natural interpretation of risk difference: per 100 cancer patients treated, 11 more are expected to die if receiving Neutron therapy compared to Proton therapy, with 95% CI range from 5 fewer deaths to 27 more deaths.
+	     
+	     With the continuity correction, the 95% CI for the risk difference was -0.065 to 0.282.
+	     
+	   * **Relative risk**: The risk of death within one year for patients receiving Neutron therapy was 1.23 times greater than for patients receiving proton therapy (95% CI 0.90 to 1.70).  Or more colloquially: Patients receiving Neutron therapy have 23% greater risk of dying, with 95% CI ranging from 10% reduced risk of death to 70% greater risk of death.
+	   
+	   * **Odds ratio**: The odds of death within one year was 1.55 times greater (95% CI 0.81 to 2.97).
+	   
+	   \color{black}
+	   
+	   iii. State the relevant null hypothesis for each of the measures of difference. Calculate the z-test statistic and p-value for each measure and interpret the results.
+	   
+	   \color{darkred}
+	   
+	   For the **risk difference** the null hypothesis is that the RD = 0.
+	   
+	   * Assuming the null hypothesis of RD = 0, the standard error using a pooled proportion from both groups was `r round(rd_se0, 3)`.
+	   * The z-statistic was `r round(rd, 3)` / `r round(rd_se0, 3)` = `r round(rd_z, 3)`
+	   * The two-sided p-value = `r round(rd_pval, 3)`.
+	   * With continuity correction, the two-sided p-value = `r round(prop.test(x[1:2], n[1:2])$p.value, 3)`.
+	   
+	   For the **risk ratio** the null hypothesis is that the RR = 1, or equivalently that the log(RR) = 0.
+	   
+	   * The log risk ratio = `r round(log_rr, 3)`.
+	   * The standard error for the log RR = `r round(log_rr_se, 3)`.
+	   * The z-statistic = `r round(log_rr_z, 3)`.
+	   * The two-sided p-value = `r round(log_rr_pval, 3)`.
+	   
+	   For the **odds ratio** the null hypothesis is that the OR = 1, or equivalently that the log(OR) = 0.
+	   
+	   * The log odds ratio = `r round(log_or, 3)`.
+	   * The standard error for the log OR = `r round(log_or_se, 3)`.
+	   * The z-statistic = `r round(log_or_z, 3)`.
+	   * The two-sided p-value = `r round(log_or_pval, 3)`.
+	   
+	   For all three test statistics, the p-value is well above the $\alpha = 0.05$ critical value. Consequently we conclude that the trial data do not provide any evidence that the one-year risk of death is difference for patients receiving Neutron therapy versus Photon therapy.
+	   
+	   This make sense considering all three tests are based on comparing the same 2x2 contingency table!
+	   
+	   \color{black}
+	   
+	   iv. For applied purposes, we typically choose and focus on one measure of difference and a single test statistic. This is specified during the analysis plan before conducting any data analysis. Which measure of difference would you choose and why?
+	   
+	    \color{darkred}
+	   
+	    The measures capture slightly different things, and so the the choice of which measure is more relevant depends on the objective. If the objective is to focus on the relative differences between the two treatments, the relative risk might be more appropriate---for example the risk difference will change with time (6 months versus 2 years) if the relative risk is the same over this period.  On the other hand, if the objective is estimate expected public health impact, the risk difference is likely more appropriate.
+	    
+	    In most cases, contemporary guidance favours reporting risk difference and risk ratio over odds ratio due to the poor understanding of odds ratios by most people, unless only the odds ratio is available due to study design (case-control) or analytical reasons (e.g. logistic regression).
+	   
+	    The CONSORT statement on guidelines for clinical trial reporting recommends to report both risk difference and risk ratio for trials measuring binary outcomes (http://www.consort-statement.org/checklists/view/32--consort-2010/112-binary-outcomes):
+	    
+	    _**17b. Binary outcomes**_  
+      _For binary outcomes, presentation of both absolute and relative effect sizes is recommended._
+	    
+	    _When the primary outcome is binary, both the relative effect (risk ratio (relative risk) or odds ratio) and the absolute effect (risk difference) should be reported (with confidence intervals), as neither the relative measure nor the absolute measure alone gives a complete picture of the effect and its implications. Different audiences may prefer either relative or absolute risk, but both doctors and lay people tend to overestimate the effect when it is presented in terms of relative risk.(243) (244) (245) The size of the risk difference is less generalisable to other populations than the relative risk since it depends on the baseline risk in the unexposed group, which tends to vary across populations. For diseases where the outcome is common, a relative risk near unity might indicate clinically important differences in public health terms. In contrast, a large relative risk when the outcome is rare may not be so important for public health (although it may be important to an individual in a high risk category)._
+	   
+	   
+   R code for analysis of Exercise 1b:
+	 ```{r ex1b, eval = FALSE}
+	 ```
+	    
+   \color{black}
+	   
+	c. Are patients who experienced metastasis more likely to die within one year?
+	
+	   ```{r, ex1c, echo = FALSE, results = "hide"}
+	   neutron$meta1year <- as.integer(neutron$meta == "Yes" & neutron$metatime < 365.25)
+	   neutron$meta1year <- factor(neutron$meta1year, c(1, 0), c("Metastasised", "Not metastasised"))
+	   
+	   tab1c <- table(neutron$meta1year, neutron$death1year)
+	   tab1c_out <- rbind(tab1c, Total = colSums(tab1c))
+	   
+	   x <- tab1c_out[ , "Yes"]
+	   n <- rowSums(tab1c_out)
+	   prop <- x / n
+	   odds <- prop / (1 - prop)
+	   tab1c_out <- cbind(tab1c_out, Total = n, Proportion = prop, Odds = odds)
+	   
+	   rd <- prop[1] - prop[2]
+	   rr <- prop[1] / prop[2]
+	   or <- odds[1] / odds[2]
+	   
+	   ## Risk difference SE for 95% CI
+	   rd_se <- sqrt(sum(prop[1:2] * (1 - prop[1:2]) / n[1:2]))
+	   rd_ci <- rd + c(-1, 1) * qnorm(0.975) * rd_se
+	   
+	   ## RD SE based on null hypothesis that RD = 0 --> use pooled proportion
+	   rd_se0 <- sqrt(prop[3] * (1 - prop[3]) * sum(1/n[1:2]))
+	   rd_z <- rd / rd_se0
+	   rd_pval <- 2 * pnorm(-abs(rd_z))
+	   
+	   prop.test(x[1:2], n[1:2])
+	   
+	   ## Log risk ratio inference
+	   log_rr <- log(rr)
+	   log_rr_se <- sqrt(sum(1/x[1:2]) - sum(1/n[1:2]))
+	   log_rr_ci <- log_rr + c(-1, 1) * qnorm(0.975) * log_rr_se
+	   rr_ci <- exp(log_rr_ci)
+	   log_rr_z <- log_rr / log_rr_se
+	   log_rr_pval <- 2 * pnorm(-abs(log_rr_z))
+	   
+	   ## Log odds ratio SE
+	   log_or <- log(or)
+	   log_or_se <- sqrt(sum(1/x[1:2]) + sum(1/(n[1:2] - x[1:2])))
+	   log_or_ci <- log_or + c(-1, 1) * qnorm(0.975) * log_or_se
+	   or_ci <- exp(log_or_ci)
+	   log_or_z <- log_or / log_or_se
+	   log_or_pval <- 2 * pnorm(-abs(log_or_z))
+	   ```
+	   
+	   i. Construct a new variable `meta1year` classifying a binary outcome for patients who experienced metastasis within one year. This should use the variables `meta` and `metatime`.
+	   
+	   \color{darkred}
+	   
+	   Create a binary outcome indicating whether metastasis occurred (`neutron$meta == "Yes"`) and, if so, then the metastasis time is less than 1 year (`neutron$metatime < 365.25` days).
+	   ```{r, eval = FALSE}
+	   neutron$meta1year <- as.integer(neutron$meta == "Yes" & neutron$metatime < 365.25)
+	   ```
+	   The condition `neutron$metatime < 365.2` will evaluate to `NA` for any records for which `neutron$metatime` is `NA`, but we use the fact that the `&` operation will only check the second condition if the first condition is equal to TRUE.  Note that:
+	   
+	   * `FALSE & NA` = `FALSE`
+	   * `TRUE & NA` = `NA`
+	   * `TRUE | NA` = `TRUE`
+	   * `FALSE | NA` = `NA`
+	   
+	   \color{black}
+	   
+	   ii. Construct a 2x2 contingency table summarising the relationship between metastasis within one year and death within one year. Calculate the sample proportions and odds.
+	   
+	   \color{darkred}
+	   
+	   Construct the contingency table with the metastasis within 1 year as the exposure (rows) the outcome death within 1 year (Yes/No) in the columns.
+
+	   ```{r, echo = FALSE}
+	   knitr::kable(tab1c_out, digits = 3)
+	   ```
+	   
+	   Thirty-three out of 154 patients experienced metastasis within one year; of these 28/33 (85%) died within one year. Fifty-four of the 121 (45%) of patients who did not experience metasisis died within one year. The odds of death for patients experiencing metasisis was 5.60 compared to 0.81 for those who did not.
+
+	   \color{black}
+	   
+	   iii. Calculate the risk difference, risk ratio, and odds ratio for death within one year for those who experience metastasis and those who do not.
+	   
+	     \color{darkred}
+	   
+	   * **Risk difference**: Out of 100 cancer patients who experience metastasis within 1 year, 40 more (95% CI 25 to 55 more) will be expected to die within 1 year compared to 100 cancer patients who did not experience metastasis. 
+	   
+	   * **Relative risk**: Patients experiencing metastasis were 90% more likely (95% CI 49 to 143%) to die within 1 year than patients who did not experience metastasis.
+	   
+	   * **Odds ratio**: The odds of death within one year was 6.95 times greater (95% CI 2.51 to 19.2) for patients experiencing metastasis.
+	   
+	   \color{black}
+	   
+	   iv. Conduct and interpret a hypothesis test for this outcome.
+	   
+	   \color{darkred}
+	   
+	   **Risk difference**
+	   
+	   * The sample risk difference is `r round(rd, 3)`.
+	   * Assuming the null hypothesis of RD = 0, SE(RD) = `r round(rd_se0, 3)`.
+	   * z-statistic = `r round(rd, 3)` / `r round(rd_se0, 3)` = `r round(rd_z, 3)`
+	   * Two-sided p-value < 0.001
+	   
+	   **Risk ratio**
+	   
+	   * Log risk ratio = `r round(log_rr, 3)`.
+	   * SE(log RR) = `r round(log_rr_se, 3)`.
+	   * z-statistic = `r round(log_rr_z, 3)`.
+	   * Two-sided p-value < 0.001
+	   
+	   **Odds ratio**
+	   
+	   * Log odds ratio = `r round(log_or, 3)`.
+	   * SE(log RR) = `r round(log_or_se, 3)`.
+	   * z-statistic = `r round(log_or_z, 3)`.
+	   * Two-sided p-value = `r round(log_or_pval, 3)`.
+	   
+	   There is very strong evidence that patients who experience metastasis after starting therapy are also more likely to die within one year of diagnosis
+	   
+	   \color{black}
+	   
+   \color{darkred}
+   R code for analysis of Exercise 1c:
+	 ```{r ex1c, eval = FALSE}
+	 ```
+	    
+   \color{black}
+	   
+\newpage
+
+2. This exercise will practice multiple linear regression and interpretation of categorical outcomes.  We will revisit the NHANES dataset for adults to examine the association of BMI with characteristics include age, sex, race, and household income. 
+
+   Construct a dataset for adults aged 20 and older retaining only the variables of interest for this analysis:
+   
+   ```{r}
+   library(NHANES)
+   data(NHANES)
+   nhanes20pl <- NHANES[NHANES$Age >= 20,
+                     c("BMI", "Age", "Gender", "Race1", "HHIncome", "HHIncomeMid")]
+   nhanes20pl <- nhanes20pl[complete.cases(nhanes20pl), ]
+   ```
+   
+   The function `complete.cases(...)` returns a logical (TRUE/FALSE) vector for each row of the data frame with a `TRUE` if there are no missing values and `FALSE` if the any variable in the row has a missing value.  Thus the second line subsets the `nhanes20pl` dataset to retain only the respondents who have complete data for all of the specified variables. This is convenient for efficiently subsetting the data, but in most cases for applied analysis not recommended for practice. It is usually preferred to review each variable of interest individual for missing data to ensure there are no unexpected loss of data.
+   
+   a. Review summary statistics and frequency distributions for each of the variables of interest.  For each of the categorical variables, choose an appropriate reference category.
+   
+   \color{darkred}
+   
+   ```{r, fig.height = 3.5, fig.width = 3.7, out.width = "32%", results = "hold", fig.show = "hold", cache = TRUE}
+   library(tidyverse)
+   ggplot(nhanes20pl, aes(BMI)) + geom_histogram(bins = 50, alpha = 0.5, color = "grey30")
+   ggplot(nhanes20pl, aes(Age)) + geom_histogram(bins = 50, alpha = 0.5, color = "grey30")
+   ggplot(nhanes20pl, aes(Gender)) + geom_bar()
+   ggplot(nhanes20pl, aes(Race1)) + geom_bar() +
+     theme(axis.text.x = element_text(angle = 30, hjust = 1))
+   ggplot(nhanes20pl, aes(HHIncome)) + geom_bar() +
+     theme(axis.text.x = element_text(angle = 45, hjust = 1))
+   ggplot(nhanes20pl, aes(HHIncomeMid)) + geom_histogram(bins = 50, alpha = 0.5, color = "grey30")
+   ```
+   
+   * For `Gender` keep `female` as the reference category.
+   * For `Race1`, change the reference category to `White`, which comprises around 70% of respondents.
+   * For `HHIncome`, change the reference category to `25,000-34,9999`, which is a relatively centrally located group amongst the ordered categorical values.
+   
+   ```{r}
+   nhanes20pl$Race1 <- relevel(nhanes20pl$Race1, "White")
+   nhanes20pl$HHIncome <- relevel(nhanes20pl$HHIncome, "25000-34999")
+   ```
+   
+   b. Estimate a linear regression model for the outcome `BMI` as a function of `Age`. Interpret the estimated regression coefficients and 95% confidence intervals.
+   
+   \color{darkred}
+   
+   ```{r}
+   fit2b <- lm(BMI ~ Age, nhanes20pl)
+   summary(fit2b)
+   confint(fit2b)
+   ```
+   
+   On average BMI is 0.015 kg/m^2^ greater (95% CI 0.005 to 0.024 kg/m^2^) for every additional year of age amongst American adults.
+   
+   The intercept term 28.2 is the predicted BMI for Age equals zero years, but we should not interpret this value because the youngest age in our dataset is 20 years old, so this represents an extrapolation substantially outside the range of the data.
+   
+   _Note: as studied in previous exercises, the normality of residuals assumption (especially) doesn't appear to be well met here for the BMI outcome. Put this aside and move on with the exercise for this purpose.._
+   
+   ```{r, fig.height = 3,5, fig.width = 7, fig.align = "center"}
+   par(mfrow = c(1,2), mgp = c(2, 0.5, 0), tcl = -0.25, mar = c(3, 3, 0.5, 0.5))
+   plot(fit2b, 1:2)
+   ```
+   
+   \color{black}
+   
+   c. Estimate a multiple linear regression model for `BMI` as a function of `Age` and `Gender`.
+   
+      i. Write out the estimated regression equation and interpret the regression coefficients from your new model. How has incorporating gender affected the estimated association between age and BMI?
+      
+      \color{darkred}
+      
+      ```{r}
+      fit2c <- lm(BMI ~ Age + Gender, nhanes20pl)
+      summary(fit2c)
+      ```
+      
+      The estimated regression equation is:
+      $$\textrm{BMI} = 28.075 + 0.015 \times \textrm{Age} + 0.152 \times \textrm{[Gender = male]}.$$
+      
+      The coefficient for Gender is 0.15, indicating that in our sample, on average BMI for males is 0.15 kg/m^2^ greter than females, adjusted for the relationship between age BMI.  However, the 95% CI for the relationship between Age and BMI is -0.17 to 0.47. Thus, our sample does not provide evidence that gender is associated with BMI adjusted for the effect of age.
+      
+      The estimated slope for BMI as a function of age is 0.015, very close to the slope of 0.014 estimated in part (b).
+      
+      \color{black}
+      
+	  
+      ii. Use the function `anova(fit2b, fit2c)` to conduct an analysis of variance to compare the model estimated in part (c) to the model estimated in part (b). State the hypothesis that is tested by the reported p-value and interpret the results of this hypothesis test.
+      
+      \color{darkred}
+      
+      The _Analysis of Variance_ (ANOVA) is used to compare _nested_ models, in which all of the terms of the first model are also contained in the second model. Specifically the ANOVA evaluates whether the amount of variation in the outcome variable explained by the additional covariates is more than would be expected by random chance if we added in that many more $\beta$ coefficients.  This is based on the ratio of the mean amount of variation explained by each of the additional $\beta$ coefficients divided by the mean variation for each residual. This is the $F statistic$. 
+      
+      The null hypothesis for the F-test is that all of the additional $\beta$ coefficients are equal to 0, that is $\beta_{m+1} = \beta_{m+2} = \beta_{m+3} = \ldots = \beta_{n} = 0$. If this null hypothesis is true, then the expected value of the F statistic is 1.0 and the distribution follows and F-distribution. Thus we test the evidence against the null hypothesis by testing whether it is improbable to observe such a large F statistic if it is true that all of the additional $\beta_i = 0$.
+      
+      The model in part (c) has one additional coefficient compared to the model in part (b)---the coefficient for Gender == male.  Thus the null hypothesis for the F-test is $\beta_\textrm{male} = 0$.
+      
+      ```{r}
+      anova(fit2b, fit2c)
+      ```
+	    The F statistic is 0.853 and the p-value is 0.356.  Thus we **fail to reject** the null hypothesis that $\beta_\textrm{male} = 0$. Our sample does not provide evidence that BMI is different for males versus females, adjusting for height.
+	    
+	    Note: to calculate this p-value manually in R, use the function `pf(...)` which calculates the cumulative probability function of the F distribution: 
+	    ```{r}
+	    pf(0.8531, df1 = 1, df2 = 6573, lower.tail = FALSE)
+	    ```
+	   \color{black}
+	    
+	    
+	  iii. Compare the F-statistic and p-value reported by the `anova(...)` function to the t-statistic and p-value reported by `summary(fit2c)`.
+	   
+	   \color{darkred}
+
+	   For a single additional $\beta$ coefficient, the null hypothesis for the F test is the same as the null hypothesis for the t-statistic in the regression table in part (i)---that $\beta_\textrm{male} = 0.$
+	   
+	   The t-statistic was 0.924. The F-statistic for the difference between `fit2b` and `fit2c` was 0.8531, which is the square of the t-statistic (0.924 = 0.8531^2^). The p-value was the same for both tests at 0.3557.
+	   
+	   \color{black}
+	  
+
+   d. Now add the variable `Race1` to your model and repeat questions (i) to (iii) to compare the new model to the model estimated in part (c).
+   
+   \color{darkred}
+   
+   	```{r}
+    fit2d <- lm(BMI ~ Age + Gender + Race1, nhanes20pl)
+    summary(fit2d)
+    ```
+    
+    The estimated regression equation is: 
+    $$
+    \begin{aligned}
+    \textrm{BMI} = &27.58 + 0.019 \times \textrm{Age} + 0.175 \times \textrm{[Gender = male]} + 2.788 \times \textrm{[Race = Black]} + \\
+         & 0.614 \times \textrm{[Race = Hispanic[]} + 1.407 \times \textrm{[Race = Mexican]} -1.900 \times \textrm{[Race = Other]}.
+    \end{aligned}
+    $$
+    
+    * The average BMI for black adults was 2.79 kg/m^2^ greater (95% CI 2.27--3.31) than the average BMI for white adults, adjustd for age and sex.
+    * The average BMI for hispanic adults was 0.61 kg/m^2^ greater (95% CI -0.09--1.32) than the average BMI for white adults, adjustd for age and sex.
+    * The average BMI for Mexican adults was 1.41 kg/m^2^ greater (95% CI 0.80--2.02) than the average BMI for white adults, adjustd for age and sex.
+    * The average BMI for adults of other race was 1.90 kg/m^2^ lower (95% CI 1.27--2.52) than the average BMI for white adults, adjustd for age and sex.
+    
+    The estimated linear association with age was an increase of 0.019  kg/m^2^ (95% CI 0.009--0.028)in BMI for every additional year of age, after adjusting for race. This is slightly steeper than the 0.015 kg/m^2^ change in BMI per year of age before adjusting for race.
+    
+    ```{r}
+    anova(fit2c, fit2d)
+    ```
+    
+    The null hypothesis for the F test is that all of the $\beta$ coefficient for Race are simultaneously equal to zero: $\beta_\textrm{Black} = \beta_\textrm{Hispanic} = \beta_\textrm{Mexican} = \beta_\textrm{Other} = 0.$
+    
+    The observed F-statistic was 44.9 and the associated p-value was $<$0.001, indicating strong evidence that BMI is associated with race in the population.
+    
+    In this case, since the null hypothesis is simultaneously testing multiple regression coefficients, there is no simple relationship between the t-statistics or p-values for any single coefficent and the overall ANOVA comparison between the models. Note that the F test tells us that _overall_ race is associated with BMI (adjusted for age and gender), it does not tell us _which_ of the regression coefficients are different from zero or the relative importance of race groups to the overall association.
+    
+  \color{black}
+   
+   e. Finally, add the variable `HHIncome` to your regression model. Repeat questions (i) to (iii) from part (c), and address 
+   
+   \color{darkred}
+   
+   ```{r}
+   fit2e <- lm(BMI ~ Age + Gender + Race1 + HHIncome, nhanes20pl)
+   summary(fit2e)
+   ```
+   * Adjusting for gender, race, and household income, each year of additional age is associated with a 0.017 (95% CI 0.007--0.026) kg/m^2^ greater BMI among American adults.  Further adjusting for age has very slightly attenuated this slope compared to adjusting for only gender and race estimated in part (d).
+   * The overall pattern of association between BMI and Race is similar to the model in part (d) before adding HHIncome, but the magnitude of estimated effect size is different for several groups. The esimated difference in BMI for Black adults compared to White adults has decreased to 2.52 from 2.79 in part (d). For Hispanic compared to White it has reduced from 0.61 to 0.39. For Mexicans compared to Whites, the estimated difference has reduced from 1.41 to 1.04.  This indicates that some of the observed association between race and BMI may be explained by differences in household incomes for different race groups.
+   
+   Writing out the regression equation and effects for all eleven HHIncome categories is onerous, but note that based on the regression table, only the income categories $55,000--$64,999 and more than $99,999 have estimated BMI more than 1 kg/m^2^ different from the reference category $25,000--$34,999.  The p-value for both of these groups is <0.01.
+   ```{r}
+   anova(fit2d, fit2e)
+   ```
+   
+   The F statistic for the ANOVA comparing the model with HHIncome to the previous model is 4.72 with associated p-value <0.001. Thus our sample provides strong evidence that household income category is associated with BMI.
+   
+   \color{black}
+   
+   iv. Change the reference category for the `HHIncome` variable, refit the regression model, and repeat your `summary(...)` and `anova(...)`.  What has changed and what has not changed?
+   
+   \color{darkred}
+   
+   Change the reference category to more than $99,999 and re-estimate the regression model and ANOVA table.
+   
+   ```{r, results = "hold"}
+   nhanes20pl$HHIncomeB <- relevel(nhanes20pl$HHIncome, "more 99999")
+   
+   fit2eB <- lm(BMI ~ Age + Gender + Race1 + HHIncomeB, nhanes20pl)
+   summary(fit2eB)
+   anova(fit2d, fit2eB)
+   ```
+   
+   * After changing the reference category, the coefficient estimates for the HHIncome categories and associated standard errors, t-statistics, and p-values have changed. This is because the regression coefficients are now estimating a different quantity: the difference between each category and the group $>$ $99,999 rather than the difference to the group $25,000--$34,999.
+   * The estimate for the intercept has changed: 26.92 when the reference group is $>$ $99,999 versus 28.31 when the reference group was $25,000--$34,999.  This is because the intercept estimates the predicted BMI for the reference category and when all other covariates are equal to zero.
+   * The coefficient estimates and inference (SEs, t-statistics, p-values) for the other regression terms (Age, Gender Race1) are **the same**.
+   * The ANOVA table is **exactly the same**.  This is because we are testing the same null hypotheses that all of the $\beta_\textrm{HHIncome} = 0$.
+   
+   \color{black}
+   
+   v. Create a plot summarising the estimates of relationship between BMI and household income category based on your regression coefficient estimates. (Hint: use the function `coef(fit1e)` and `confint(fit1e)` to extract the coefficient estimates from the fitted model object.
+   
+      \color{darkred}
+	  
+      ```{r, fig.height = 4, fig.width = 6, fig.align = "center"}
+      est <- coef(fit2e)
+      ci <- confint(fit2e)
+      
+      est <- est[grepl("HHIncome", names(est))]
+      ci <- ci[grepl("HHIncome", rownames(ci)), ]
+      
+      est <- c(est[1:5], 0.0, est[6:11])
+      ci <- rbind(ci[1:5, ], 0.0, ci[6:11, ])
+      names(est) <- sub("HHIncome", "", names(est))
+      names(est)[6] <- "25000-34999 (Ref)"
+      df <- data.frame(HHIncome = names(est),
+                       est = est,
+                       ci_lower = ci[ ,1],
+                       ci_upper = ci[ ,2])
+
+      ggplot(df, aes(HHIncome, est, ymin = ci_lower, ymax = ci_upper)) +
+        geom_hline(yintercept = 0, linetype = "dashed", color = "grey30") +
+        geom_pointrange(fatten = 1.0) +
+        theme_bw() +
+        theme(panel.grid = element_blank(),
+             axis.text.x = element_text(angle = 45, hjust = 1.0))
+      ```
+      
+      The plot (1) illustrates the relatively wide 95% confidence intervals for the regression coefficient for each of the income groups, but (2) illustrates a generally declining trend in BMI as household income increases.
+      
+      \color{black}
+
+   f. The variable `HHIncomeMid` is a continuous variable coded as the midpoints for each income category.  Refit your regression model from part (e) using this variable instead of `HHIncome`.  Interpret the estimate for the coefficient for `HHIncomeMid`. How do the conclusions compare to those drawn in part (e)?  Which model do you prefer?
+   
+   \color{darkred}
+   
+   ```{r}
+   fit2f <- lm(BMI ~ Age + Gender + Race1 + HHIncomeMid, nhanes20pl)
+   summary(fit2f)
+   anova(fit2d, fit2f)
+   ```
+   
+   The regression coefficient associated with HHIncomeMid is -0.0000138. Thus we estimate that on average for every $1 increase in household income, BMI decreases by 0.0000138 kg/m^2^ (95% CI 0.0000088--0.0000189), adjusted for age, gender, and race. This is highly statistically significant (p < 0.001).
+   
+   Note that we are not able to directly compare models `fit2e` and `fit2f` using ANOVA because model `fit2f` is not nested within model `fit2e`.
+   
+   \color{black}
+   
+   g. Often the ability to easily grasp the importance or magnitude of an association depends on whether it is presented on an intuitive scale.  For example, it might be more natural for us to think about the change in BMI per $10,000 change in household income rather than the change in BMI per $1 change in household income.  Create a new variable for the household income divided by 10,000
+   
+      ```{r} 
+      nhanes20pl$HHIncome10k <- nhanes20pl$HHIncomeMid / 10000
+      ```
+	  
+	  Refit your regression model from part (f) using this variable instead of HHIncomeMid. Interpret the coefficient for this variable. How have the estimates for the standard error, confidence interval, t-statistic and p-value changed?
+	  
+	  \color{darkred}
+	  
+	  ```{r}
+	  fit2g <- lm(BMI ~ Age + Gender + Race1 + HHIncome10k, nhanes20pl)
+	  summary(fit2g)
+	  ```
+	  The regression coefficient associated with HHIncome10k is -0.138. Thus we estimate that on average for every $10,000 increase in household income, adult BMI decreases by 0.138 kg/m^2^ (95% CI 0.088--0.189), adjusted for age, gender, and race.
+	  
+	  * The regression coefficient estimate is the value estimated in part (g) multiplied times 10,000, the value which we divided the HHIncomMid variable by.
+	  * The standard error is also multiplied times 10,000.
+	  * The t-statistic (ration of the coefficient and the standard error) and p-value are **exactly the same**.
+	  * The estimates and inference for other parameter coefficients are **exactly the same**.
+	  
+	  Re-scaling variables to be on intuitive or naturally interpretable scales when reporting regression outputs is generally good practice. These transformations of covariates should generally be done during the analysis plan stage, **before** fitting any regression models and interpreting results.
+	  
+	  \color{black}
+   
+ 
