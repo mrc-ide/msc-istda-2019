@@ -62,20 +62,7 @@ relig_income
 longer_pivot <- relig_income %>% 
   pivot_longer(-religion, names_to = "income", values_to = "count")
 
-# Old tidyr
-longer_gather <- relig_income %>% 
-  gather(-religion, key = "income", value = "count")
-
-p <- ggplot(longer_gather) +
-  geom_col(aes(x = income, y = count, group = religion, fill = religion) ) + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-print(p)
-
-p2 <- ggplot(longer_gather) +
-  geom_col(aes(x = income, y = count)) + 
-  facet_wrap(vars(religion)) + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-print(p2)
+# Old tidyr # - religion
 ```
 
 ***
@@ -86,14 +73,9 @@ You can also use pivot_wider() to perform simple aggregation.
 ```{r echo = TRUE, collapse = TRUE}
 head(us_rent_income)
 
-us_rent_wide <- us_rent_income %>% 
-  pivot_wider(names_from = variable, values_from = c(estimate, moe))
-
-head(us_rent_wide)
 
 # Extra description of what has gone on
-us_rent_income[which(us_rent_income$NAME == 'Alaska'),]
-us_rent_wide[which(us_rent_wide$NAME == 'Alaska'),]
+
 ```
 
 *** 
@@ -130,8 +112,6 @@ df <- tribble(
    2,  5,  7,
    3, 10,  NA
 )
-nest_df <- df %>% nest(data = c(x, y))
-print(nest_df)
 ```
 
 ***
@@ -148,9 +128,6 @@ mtcars_nested
 # map
 # The map functions transform their input by applying a function to each element 
 # and returns a vector the same length as the input.
-mtcars_nested_model <- mtcars_nested %>% 
-  mutate(model = map(data, function(df) lm(mpg ~ wt, data = df)))
-mtcars_nested_model
 ```
 
 ***
@@ -187,15 +164,14 @@ df %>% unite("z", x:y, remove = FALSE)
 ## Dropping missing values
 ```{r echo = TRUE, collapse = TRUE}
 df <- tibble(x = c(1, 2, NA), y = c("a", NA, "b"))
-df %>% drop_na()
-df %>% drop_na(x)
+#drop_na
 ```
 
 ***
 ## Replacing missing values
 ```{r echo = TRUE, collapse = TRUE}
   df <- tibble(x = c(1, 2, NA), y = c("a", NA, "b"), z = list(1:5, NULL, 10:20))
-  df %>% replace_na(list(x = 0, y = "unknown"))
+  #replace_na
 ```
 
 ***
@@ -206,10 +182,6 @@ names <- data.frame("id" = 1:3,
                     "names" = c("Alice", "George", "Katie"))
 ages <- data.frame("id" = 1:3,
                    "ages" = c(15,  47, 29))
-data <- left_join(names, ages)
-
-data2 <- left_join(names, ages, by = "id")
-
 ```
 
 ***
@@ -255,19 +227,6 @@ from x.
     d) Make the plot
 
 ```{r echo = TRUE, collapse = TRUE}
-library(NHANES)
-data <- NHANES
-
-long_data <- data %>%
-  select(AgeDecade, Weight, BMI) %>%
-  drop_na() %>%
-  group_by(AgeDecade) %>%
-  summarise(BMI = mean(BMI, na.rm = TRUE), 
-            Weight = mean(Weight, na.rm = TRUE)) %>%
-  gather(key="key", value = "value", -AgeDecade)
-
-ggplot(long_data) + 
-  geom_point(aes(x = AgeDecade, y = value, col = key))
 ```
 
 ***
@@ -279,16 +238,6 @@ is a positive or negative relationship.
     d) Facet wrap
   
 ```{r echo = TRUE, collapse = TRUE}
-library(NHANES)
-data <- NHANES
-
-data <- data %>%
-  select(Race1, BMI, Poverty) 
-
-ggplot(data) + 
-  geom_point(aes(x = Poverty, y = BMI)) + 
-  geom_smooth(aes(x = Poverty, y = BMI), method='lm') + 
-  facet_wrap(vars(Race1)) 
 ```
 
 ***
@@ -297,12 +246,6 @@ four variables that you think will predict the weight of individuals the best.  
 variables significant?
 
 ```{r echo = TRUE, collapse = TRUE}
-nested_data <- NHANES %>% 
-  group_by(Race1) %>% 
-  nest()
-
-nested_model <- nested_data %>% 
-  mutate(model = map(data, function(df) lm(Weight ~ Age + Height + Gender, data = df)))
 ```
 
 ***
@@ -313,8 +256,4 @@ nested_model <- nested_data %>%
    
   
 ```{r echo = TRUE, collapse = TRUE}
-kids <- read.csv("../data/kids.csv")
-household <- read.csv("../data/household.csv")
-data <- left_join(kids, household) 
-cleaned_up_data <- data %>% drop_na()
 ```
