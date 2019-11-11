@@ -1,0 +1,5 @@
+Variable,Description,Class,Levels
+id,Unique patient identifier,integer,NA
+gender,Gender,factor,"Men, Women"
+sim,Treatment allocated,factor,"Placebo, Simvastatin"
+dead,Death status,factor,"Alive, Dead"

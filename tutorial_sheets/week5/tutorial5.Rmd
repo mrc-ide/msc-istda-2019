@@ -1,0 +1,131 @@
+---
+title: "Week 5 Tutorial: Logistic regression"
+subtitle: Introduction to Statistical Thinking and Data Analysis
+author: MSc in Epidemiology and MSc in Health Data Analytics, Imperial College London
+date: 4 November 2019
+output:
+  pdf_document: default
+header-includes:
+- \usepackage{xcolor}
+- \definecolor{darkred}{RGB}{139,0,0}
+---
+
+1. Revisit the dataset `neutron.csv` about a clinical trial comparing two forms of radiotherapy for cancer treatment. Cancer patients were randomly allocated to receive the standard therapy using photon particles or a new form using neutrons. Randomisation was stratified for four sites of cancer. The outcomes of interest is whether the new neutron treatment affects cancer survival compared to standard of care photon therapy. The table below describes the variables in this dataset.
+
+   |Variable   |Description                                             |
+   |:----------|:-------------------------------------------------------|
+   |id         |Patient ID                                              |
+   |stime      |Survival time in days                                   |
+   |death      |Death status (0 = alive; 1 = dead)                      |
+   |treatment  |Treatment received (Neutrons, Photons)                  |
+   |site       |Site of cancer (Bladder, Cervix, Prostate, Rectum)      |
+   |phase      |Randomisation phase (0 = first phase; 1 = second phase) |
+   |meta       |Metastases diagnosed before death (Yes, No)             |
+   |metatime   |Time to metastases (days)                               |
+   |death1year |Death within 1 year of recruitment (Yes, No)            |
+
+
+    a. Conduct a chi-squared test of the null hypothesis that there is no difference in the risk of death in 1 year for patients receiving neutron therapy compared to proton therapy.
+	
+	   i. Reconstruct the 2x2 contingency table from exercise 1(b) in tutorial 4.  Then calculate the _expected_ cell counts if the null hypothesis is true that there is no difference in the probability of death by treatment group.
+	   
+	   ii. Calculate the chi-squared test statistic using the formula in section 17.2 of Kirkwood and Sterne. Calculate the associated p-value using the `pchisq(...)` function in R.
+	   
+	   iii. Check your calculation with the output of the `chisq.test(..., correct = FALSE)` function in R. Interpret the result of your hypothesis test.
+	   
+	   iv. Compare your chi-squared test statistic and p-value to the test statistics and p-values for the risk difference, risk ratio, and odds ratio calculated from exercise 1(b) on tutorial 4.
+	   
+	   v. Use `chisq.test(..., correct = TRUE)` to recalculate the chi-squared test with the Yates continuity correction. How has this changed the result?
+	
+	
+	b. Fit a logistic regression model to estimate the odds ratio of death within one year for patients receiving Neutron therapy compared to Proton therapy.  
+	
+	   i. Choose an appropriate reference treatment group for this comparison and fit the logistic regression model.
+	   
+       ii. Write down the estimated regression equation.
+	   
+       iii. Use the regression equation to find the predicted log-odds and odds in each treatment group.
+	   
+       iv. Interpret the odds ratio and its 95% confidence interval.
+	   
+       v. Compare the odds ratio, test statistic, and p-value to the inference from part 1(b) of the week 4 tutorial and the chi-squared test in part (a) above.
+	
+	c. Randomization was stratified by site of cancer, which means that we should adjust for cancer site in the analysis. First, examine the relationship between cancert site and death within one year.  
+	
+	   i. Construct a contingency table to summarise the data about risk of death within 1 year by cancer site.  
+	   
+	   ii. Calculate the sample proportion and odds of death within 1 year by cancer site.  
+	   
+	   iii. Calculate the expected cell counts under the null hypothesis that there is no difference in probability of death by cancer site.  
+	   
+	   iv. Calculate the chi-squared test statistic and p-value. Compare your results to the output reported by `chisq.test(..., correct = TRUE)`.  
+	  
+   
+   d. Fit a logistic regression model for the risk of death within one year by cancer site. Make `cervix` the reference category for site. 
+   
+      i. Write out the estimated regression equation.  
+	  
+	  ii. Calculate and interpret the odds ratio and 95% confidence interval associated with each of the reported regression coefficients.
+	
+   e. Fit a logistic regression for the effect of Neutron therapy versus Proton therapy adjusted for cancer site.
+   
+      i. Name the baseline treatment group.  
+	  
+      ii. Write out the regression equation.  
+	  
+      iii. Find the odds of death for a patient with cancer of the cervix who receives neutron therapy.  
+	  
+      iv. Find the odds of death for a patient with cancer of the bladder who receives neutron therapy.  
+	  
+      v. Find the odds of death for a patient with cancer of the rectum who receives photon therapy.  
+	  
+      vi. Interpret the odds ratio for treatment group and its 95% confidence interval and compare to the unadjusted odds ratio reported in part (b).
+
+	
+	  
+	   
+\newpage
+
+2. The dataset ‘4s_trial.csv’ contains data from the Scandinavian Simvastatin Survival Study (4S) trial, looking at number of deaths for those allocated to placebo compared to those allocated to the simvastatin group. This trial recruited patients with coronary heart disease aged 35 to 70. The table below describes the variables in this dataset.
+
+```{r, echo=FALSE,eval=TRUE}
+knitr::kable(read.csv("4s_trial_dictionary.csv"),caption="4s_trial.csv description. Contains data from the Scandinavian Simvastatin Survival Study (4S) trial")
+```
+
+   a. Tabulate the results in any appropriate way
+
+   b. Produce any appropriate bar chart of the data.
+
+   c. Use logistic regression to estimate the odds ratio of death for those allocated to simvastatin compared to those allocated to placebo.
+
+      i. Name the baseline group
+      ii. Write the regression equation.
+      iii. Find the odds of death in each treatment group.
+      iv. Express the null hypothesis that simvastatin allocation has no effect on risk of death in terms of the regression equation and interpret a test of this hypothesis.
+      v. Interpret the odds ratio and its 95% confidence interval.
+      
+   d. Use logistic regression to find the effect of simvastatin on odds of death in separately in women and men.
+
+   e. Use logistic regression to find the effect of simvastatin on odds of death, adjusted for gender. Use women as the reference category for gender.
+
+      i. Name the baseline treatment group.
+	  
+      ii. Write the regression equation.
+	  
+      iii. Use the estimated regression equation to find the predicted odds of death in women allocated to simvastatin and in women allocated to placebo. Then calculate the predicted odds of death for men allocated to simvastatin and to placebo.
+	  
+	  iv. Convert the predicted odds of death by sex and treatment to the predicted probabiliyt of death.
+	  
+	  v. Use the predicted odds and probability of death to estimate the (1) odds ratio, (2) risk ratio, and (3) risk difference of death by treatment group for women and for men.
+     
+   f. Use logistic regression to perform a hypothesis test asking: Is the effect of simvastin on odds of death is different in men to its effect in women? (Hint: consider an interaction in your regression.)
+   
+      i. Name the baseline group(s).
+	  
+      ii. Write down the regression equation for this model.
+	  
+      iii. Calculate the predicted odds in women allocated to each treatment group.
+	  
+      iv. Interpret the hypothesis test that the effect of simvastin allocation differs by gender.
+	  
+      v. Based on these trial results, do you recommend that women should take simvastatin to lower their risk of death?
