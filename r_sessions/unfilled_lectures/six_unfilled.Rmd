@@ -63,6 +63,7 @@ longer_pivot <- relig_income %>%
   pivot_longer(-religion, names_to = "income", values_to = "count")
 
 # Old tidyr # - religion
+#theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
 ***
@@ -73,6 +74,8 @@ You can also use pivot_wider() to perform simple aggregation.
 ```{r echo = TRUE, collapse = TRUE}
 head(us_rent_income)
 
+us_rent_wide <- us_rent_income %>% 
+  pivot_wider(names_from = variable, values_from = c(estimate, moe))
 
 # Extra description of what has gone on
 
@@ -112,6 +115,9 @@ df <- tribble(
    2,  5,  7,
    3, 10,  NA
 )
+
+library(tidyr)
+nest_df <- df %>% nest(data = c(x, y))
 ```
 
 ***
@@ -128,6 +134,7 @@ mtcars_nested
 # map
 # The map functions transform their input by applying a function to each element 
 # and returns a vector the same length as the input.
+# model = map(data, function(df) lm(mpg ~ wt, data = df))
 ```
 
 ***
@@ -135,6 +142,7 @@ mtcars_nested
 ```{r echo = TRUE, collapse = TRUE}
 df <- data.frame(x = c(NA, "a.b", "a.d", "b.c"))
 df
+?separate
 df %>% separate(x, c("A", "B"))
 ```
 
@@ -182,6 +190,8 @@ names <- data.frame("id" = 1:3,
                     "names" = c("Alice", "George", "Katie"))
 ages <- data.frame("id" = 1:3,
                    "ages" = c(15,  47, 29))
+
+joined_data <- left_join(names, ages)
 ```
 
 ***
