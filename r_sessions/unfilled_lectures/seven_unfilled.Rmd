@@ -112,7 +112,6 @@ object+7
 ```{r echo = TRUE, collapse = TRUE}
 my_function<-function(x){x*2+5}
 
-sapply(1:10, my_function)
 ```
 
 ***
@@ -126,7 +125,7 @@ sapply(1:10, my_function)
 
 ***
 
-Questions from last times quiz
+## Questions from last times quiz
 
 ***
 ## Kables
@@ -138,9 +137,6 @@ library(kableExtra)
 library(dplyr)
 
 kable(head(mtcars))
-
-kable(head(mtcars)) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F)
 
 kable(head(mtcars)) %>%
   kable_styling("striped", full_width = F) %>%
@@ -156,8 +152,8 @@ new_data <- starwars %>%
   group_by(gender) %>% 
   summarise(n = n(), height = mean(height, na.rm = TRUE))
 
-new_data2 <- starwars %>%  
-  group_by(gender) %>% 
-  summarise(n = n(), height = mean(height, na.rm = TRUE)) %>%  
-  filter(lengths(films) > 3)
+#new_data2 <- starwars %>%  
+#  group_by(gender) %>% 
+#  summarise(n = n(), height = mean(height, na.rm = TRUE)) %>%  
+#  filter(lengths(films) > 3)
 ```
