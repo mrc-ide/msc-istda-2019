@@ -56,7 +56,7 @@ According to the tidyr website (https://tidyr.tidyverse.org), the goal of tidyr 
 Particular important in plotting.
 ```{r echo = TRUE, collapse = TRUE}
 library(tidyverse)
-relig_income
+#relig_income
 
 # New tidyr
 longer_pivot <- relig_income %>% 
@@ -65,12 +65,18 @@ longer_pivot <- relig_income %>%
 # Old tidyr
 longer_gather <- relig_income %>% 
   gather(-religion, key = "income", value = "count")
+```
 
+***
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
 p <- ggplot(longer_gather) +
   geom_col(aes(x = income, y = count, group = religion, fill = religion) ) + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 print(p)
+```
 
+***
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
 p2 <- ggplot(longer_gather) +
   geom_col(aes(x = income, y = count)) + 
   facet_wrap(vars(religion)) + 
@@ -84,12 +90,11 @@ print(p2)
 You can also use pivot_wider() to perform simple aggregation.
 
 ```{r echo = TRUE, collapse = TRUE}
-head(us_rent_income)
+#head(us_rent_income)
 
 us_rent_wide <- us_rent_income %>% 
   pivot_wider(names_from = variable, values_from = c(estimate, moe))
-
-head(us_rent_wide)
+#head(us_rent_wide)
 
 # Extra description of what has gone on
 us_rent_income[which(us_rent_income$NAME == 'Alaska'),]
@@ -105,11 +110,11 @@ unnest_longer() takes every component and makes a new row.
 ```{r echo = TRUE, collapse = TRUE}
 library(repurrrsive) # This line just gives us the data example we need for this example
 users <- tibble(user = gh_users)
-head(users)
-users$user[[1]]
+#head(users)
+#users$user[[1]]
 
 users_wider<- users %>% unnest_wider(user)
-head(users_wider)
+#head(users_wider)
 
 # Enables you to select the columns you want and puts everything else into a column called user
 users %>% hoist(user,
@@ -145,11 +150,8 @@ mtcars_nested <- mtcars %>%
   nest()
 mtcars_nested
 
-# map
-# The map functions transform their input by applying a function to each element 
-# and returns a vector the same length as the input.
 mtcars_nested_model <- mtcars_nested %>% 
-  mutate(model = map(data, function(df) lm(mpg ~ wt, data = df)))
+    mutate(model = map(data, function(df) lm(mpg ~ wt, data = df)))
 mtcars_nested_model
 ```
 
@@ -157,16 +159,13 @@ mtcars_nested_model
 ## Separating data
 ```{r echo = TRUE, collapse = TRUE}
 df <- data.frame(x = c(NA, "a.b", "a.d", "b.c"))
-df
 df %>% separate(x, c("A", "B"))
 ```
 
 ***
 ## Extracting data
 ```{r echo = TRUE, collapse = TRUE}
-
 df <- data.frame(x = c(NA, "a-b", "a-d", "b-c", "d-e"))
-df
 df %>% extract(x, "A")
 # Extracting using regex
 # [:alnum:]
@@ -254,6 +253,7 @@ from x.
     c) Use gather to make the data format long
     d) Make the plot
 
+***
 ```{r echo = TRUE, collapse = TRUE}
 library(NHANES)
 data <- NHANES
@@ -266,6 +266,10 @@ long_data <- data %>%
             Weight = mean(Weight, na.rm = TRUE)) %>%
   gather(key="key", value = "value", -AgeDecade)
 
+```
+
+***
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
 ggplot(long_data) + 
   geom_point(aes(x = AgeDecade, y = value, col = key))
 ```
@@ -284,7 +288,10 @@ data <- NHANES
 
 data <- data %>%
   select(Race1, BMI, Poverty) 
+```
 
+***
+```{r echo = TRUE, collapse = TRUE, fig.align='center', fig.width=6, fig.height=4}
 ggplot(data) + 
   geom_point(aes(x = Poverty, y = BMI)) + 
   geom_smooth(aes(x = Poverty, y = BMI), method='lm') + 

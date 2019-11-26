@@ -21,30 +21,124 @@ opts_knit$set(root.dir = '../')
 Today's session will cover good R programming practices.
 
 * Consistency
-  * Variable naming conventions.
-  * Style guide (http://adv-r.had.co.nz/Style.html)
-  
+
 * Efficiency
-  * Re using code .............Functions / scripts.
-  * Avoiding loops
-  * Using packages
-    * Package management
-    * Use packages
-  * Split Your Code into Short, Focused Units
 
 * Sharing code
-  * setwd() / project files
-  * Comment your code
-  * MWE
-  * Code review
-  * Version control?
+  
+* Kables
 
 ***
 
-What do you remember from last week? 
+What do you remember from last time? 
 
 https://forms.gle/oY3U2Rj2uGT7ya7t8
 
 <img class="plain"  text-align:middle  src="../images/weekseven.png">
 
 ***
+"Good coding style is like correct punctuation: you can manage without it, butitsuremakesthingseasiertoread"
+
+Tidyverse style guide
+
+***
+## File naming conventions
+
+* File names should be meaningful and end in .R. Avoid using special characters in file names - stick with numbers, letters, -, and _.
+
+* If files should be run in a particular order, prefix them with numbers. If it seems likely you’ll have more than 10 files, left pad with zero:
+
+***
+## Inside file conventions
+
+* Use commented lines of - and = to break up your file into easily readable chunks.
+```{r echo = TRUE, collapse = TRUE}
+# Load data ---------------------------
+
+# Plot data ---------------------------
+```
+
+* If your script uses add-on packages, load them all at once at the very beginning of the file. 
+
+***
+## File naming (tidyverse style guide)
+
+* Variable and function names should use only lowercase letters, numbers, and _. 
+
+* Use underscores (_) (so called snake case) to separate words within a name.
+
+***
+## Syntax
+* Always put a space after a comma, never before, just like in regular English.
+
+* Do not put spaces inside or outside parentheses for regular function calls.
+
+* Place a space before and after () when used with if, for, or while.
+
+* Place a space after () used for function arguments.
+
+***
+## Style guide packages
+https://style.tidyverse.org
+https://styler.r-lib.org
+
+```{r echo = TRUE, collapse = TRUE}
+#install.packages("styler")
+#install.packages("prettycode")
+
+library("styler")
+ugly_code <- "a=function( x){1+1}           "
+style_text(ugly_code)
+```
+
+***
+## Style guide packages
+Using Addins / Style selection
+```{r echo = TRUE, collapse = TRUE}
+library("styler")
+
+ugly_function <- function(object) {
+object+7
+}
+```
+
+*** 
+## Code efficiency
+* Use functions for repeated code
+    * makes code shorter
+    * helps with reproducibility  - can test separately
+    
+* Use the apply family instead of for / while loops
+```{r echo = TRUE, collapse = TRUE}
+my_function<-function(x){x*2+5}
+
+sapply(1:10, my_function)
+```
+
+***
+## Code sharing
+
+* Use either project files or `setwd()` so can rasily run the code on different computers.
+
+* Use the same style guide so less likely to make mistakes with file names and load the wrong variables.
+
+* Use comments to explain what code does.
+
+***
+## Kables
+
+Rmarkdown form of tables - https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
+```{r echo = TRUE, collapse = TRUE}
+library(knitr)
+library(kableExtra)
+library(dplyr)
+
+kable(head(mtcars))
+
+kable(head(mtcars)) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
+
+kable(head(mtcars)) %>%
+  kable_styling("striped", full_width = F) %>%
+  row_spec(0, angle = -45)
+```

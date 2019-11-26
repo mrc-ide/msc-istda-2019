@@ -109,7 +109,7 @@ Some simple functions are inbuilt
 
 ```{r echo = TRUE, collapse = TRUE}
 # Round
-
+round(3.4)
 # Factorials
 
 # Mean
